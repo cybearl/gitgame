@@ -1,0 +1,78 @@
+{
+    // Deno
+    "deno.enable": true,
+    "deno.lint": false,
+    // Web languages
+    "[typescript][typescriptreact][javascript][css][json][jsonc]": {
+        "editor.codeActionsOnSave": {
+            "source.action.useSortedAttributes.biome": "explicit",
+            "source.action.useSortedKeys.biome": "explicit",
+            "source.action.useSortedProperties.biome": "explicit",
+            "source.fixAll.biome": "explicit",
+            "source.organizeImports.biome": "explicit"
+        },
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.formatOnSave": true
+    },
+    // Exclude common build and cache directories from the file explorer
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        ".git": true,
+        ".pytest_cache": true,
+        "**/__pycache__": true,
+        "**/.augment": true,
+        "**/.classpath": true,
+        "**/.codex": true,
+        "**/.contentlayer": true,
+        "**/.cursor": true,
+        "**/.dart_tool": true,
+        "**/.factorypath": true,
+        "**/.gemini": true,
+        "**/.gitattributes": true,
+        "**/.idea": true,
+        "**/.idx": true,
+        "**/.junie": true,
+        "**/.metadata": true,
+        "**/.next": true,
+        "**/.nyc_output": true,
+        "**/.openhands": true,
+        "**/.packages": true,
+        "**/.project": true,
+        "**/.pytest_cache": true,
+        "**/.ruler": true,
+        "**/.settings": true,
+        "**/.windsurf": true,
+        "**/.yarn": true,
+        "**/.yarnrc": true,
+        "**/blob_storage": true,
+        "**/Cargo.lock": true,
+        "**/contracts/src/cache": true,
+        "**/contracts/src/deployments": true,
+        "**/CVS": true,
+        "**/next-env.d.ts": true,
+        "**/pubspec.lock": true,
+        "packages/contracts/cache": true
+    },
+    // CSpell
+    "cSpell.words": [
+        "addgroup",
+        "buildsystems",
+        "buildtrees",
+        "changefreq",
+        "declspec",
+        "dllimport",
+        "lastmod",
+        "redirectregex",
+        "replaceme",
+        "runnersvc",
+        "tmpfs",
+        "urlset"
+    ],
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    }
+}

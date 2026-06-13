@@ -1,0 +1,88 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
+    "files": {
+        "ignoreUnknown": true,
+        "includes": [
+            "**",
+            "!dist",
+            "!deno.lock",
+            "!.vscode",
+            "!.adonisjs"
+        ]
+    },
+    "assist": {
+        "actions": {
+            "source": {
+                "organizeImports": "on",
+                "useSortedAttributes": "off",
+                "useSortedKeys": "off",
+                "useSortedProperties": "off"
+            }
+        }
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4
+    },
+    "javascript": {
+        "formatter": {
+            "arrowParentheses": "asNeeded",
+            "bracketSpacing": true,
+            "enabled": true,
+            "jsxQuoteStyle": "double",
+            "lineEnding": "lf",
+            "lineWidth": 120,
+            "quoteStyle": "double",
+            "semicolons": "asNeeded",
+            "trailingCommas": "all"
+        },
+        "jsxRuntime": "reactClassic"
+    },
+    "css": {
+        "parser": {
+            "tailwindDirectives": true
+        }
+    },
+    "json": {
+        "formatter": {
+            "enabled": true
+        }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "complexity": {
+                "noForEach": "off"
+            },
+            "correctness": {
+                "noUnusedVariables": "warn",
+                "noUnusedImports": "warn",
+                "useImportExtensions": "error"
+            },
+            "style": {
+                "noNegationElse": "warn",
+                "useFragmentSyntax": "off",
+                "noNonNullAssertion": "off",
+                "useImportType": "off"
+            },
+            "suspicious": {
+                "noArrayIndexKey": "off",
+                "noEmptyBlockStatements": "error",
+                "useAwait": "off",
+                "noExplicitAny": "off",
+                "noUnknownAtRules": "off"
+            }
+        },
+        "domains": {
+            "next": "none",
+            "react": "none"
+        }
+    },
+    "vcs": {
+        "clientKind": "git",
+        "enabled": true,
+        "useIgnoreFile": true
+    }
+}
