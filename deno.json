@@ -7,8 +7,8 @@
         "build:mac": "deno compile --allow-run --allow-read --allow-write --allow-env --allow-net --target x86_64-apple-darwin --output dist/gitgame-mac main.ts"
     },
     "imports": {
-        "@std/path": "jsr:@std/path@^1.0.0",
-        "@std/fmt": "jsr:@std/fmt@^1.0.0",
+        "@/": "./src/",
+        "@cybearl/cypack": "npm:@cybearl/cypack@^1.11.6",
         "cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.7",
         "cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.7"
     },
