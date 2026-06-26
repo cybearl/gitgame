@@ -1,15 +1,5 @@
 {
-    "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
-    "files": {
-        "ignoreUnknown": true,
-        "includes": [
-            "**",
-            "!dist",
-            "!deno.lock",
-            "!.vscode",
-            "!.adonisjs"
-        ]
-    },
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
     "assist": {
         "actions": {
             "source": {
@@ -52,32 +42,7 @@
     "linter": {
         "enabled": true,
         "rules": {
-            "recommended": true,
-            "complexity": {
-                "noForEach": "off"
-            },
-            "correctness": {
-                "noUnusedVariables": "warn",
-                "noUnusedImports": "warn",
-                "useImportExtensions": "error"
-            },
-            "style": {
-                "noNegationElse": "warn",
-                "useFragmentSyntax": "off",
-                "noNonNullAssertion": "off",
-                "useImportType": "off"
-            },
-            "suspicious": {
-                "noArrayIndexKey": "off",
-                "noEmptyBlockStatements": "error",
-                "useAwait": "off",
-                "noExplicitAny": "off",
-                "noUnknownAtRules": "off"
-            }
-        },
-        "domains": {
-            "next": "none",
-            "react": "none"
+            "recommended": true
         }
     },
     "vcs": {

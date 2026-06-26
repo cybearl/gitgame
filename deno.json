@@ -1,16 +1,8 @@
 {
-    "version": "0.1.0",
-    "tasks": {
-        "dev": "deno run --allow-run --allow-read --allow-write --allow-env --allow-net main.ts",
-        "build:windows": "deno compile --allow-run --allow-read --allow-write --allow-env --allow-net --target x86_64-pc-windows-msvc --output dist/gitgame.exe main.ts",
-        "build:linux": "deno compile --allow-run --allow-read --allow-write --allow-env --allow-net --target x86_64-unknown-linux-gnu --output dist/gitgame main.ts",
-        "build:mac": "deno compile --allow-run --allow-read --allow-write --allow-env --allow-net --target x86_64-apple-darwin --output dist/gitgame-mac main.ts"
-    },
+    "version": "0.2.0",
+    "tasks": {},
     "imports": {
-        "@/": "./src/",
-        "@cybearl/cypack": "npm:@cybearl/cypack@^1.11.6",
-        "cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.7",
-        "cliffy/prompt": "jsr:@cliffy/prompt@^1.0.0-rc.7"
+        "@cybearl/cypack": "npm:@cybearl/cypack@^1.11.10"
     },
     "compilerOptions": {
         "strict": true,

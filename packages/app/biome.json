@@ -1,0 +1,53 @@
+{
+    "$schema": "../../node_modules/@biomejs/biome/configuration_schema.json",
+    "root": false,
+    "extends": "//",
+    "files": {
+        "ignoreUnknown": true,
+        "includes": [
+            "**",
+            "!node_modules",
+            "!build",
+            "!.vscode"
+        ]
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "a11y": {
+                "noAutofocus": "off",
+                "useButtonType": "off",
+                "noStaticElementInteractions": "off"
+            },
+            "complexity": {
+                "noForEach": "off",
+                "noUselessFragments": "off"
+            },
+            "correctness": {
+                "noEmptyPattern": "off",
+                "noUnusedImports": "warn",
+                "noUnusedVariables": "warn",
+                "useExhaustiveDependencies": "warn"
+            },
+            "performance": {
+                "noImgElement": "off"
+            },
+            "style": {
+                "noNegationElse": "warn",
+                "noNonNullAssertion": "off",
+                "useFragmentSyntax": "off"
+            },
+            "suspicious": {
+                "noArrayIndexKey": "off",
+                "noEmptyBlockStatements": "error",
+                "noExplicitAny": "off",
+                "noUnknownAtRules": "off",
+                "useAwait": "warn",
+                "noDocumentCookie": "off"
+            }
+        },
+        "domains": {
+            "react": "recommended"
+        }
+    }
+}

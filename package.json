@@ -1,0 +1,33 @@
+{
+    "name": "@cybearl/gitgame",
+    "productName": "gitgame",
+    "description": "A small tool with a web interface to simplify UE5-based game development with Git LFS.",
+    "author": "Cybearl <contact@cybearl.com> (https://www.cybearl.com/)",
+    "license": "MIT",
+    "private": true,
+    "packageManager": "yarn@1.22.22",
+    "homepage": "https://github.com/cybearl/gitgame",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cybearl/gitgame.git"
+    },
+    "bugs": {
+        "url": "https://github.com/cybearl/gitgame/issues"
+    },
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "workspaces": {
+        "packages": [
+            "packages/*"
+        ],
+        "nohoist": []
+    },
+    "scripts": {
+        "app": "yarn workspace @cybearl/gitgame-app"
+    },
+    "devDependencies": {
+        "typescript": "^5.8.3"
+    },
+    "resolutions": {}
+}

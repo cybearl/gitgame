@@ -2,6 +2,13 @@
     // Deno
     "deno.enable": true,
     "deno.lint": false,
+    // BiomeJS
+    "biome.suggestInstallingGlobally": false,
+    "biome.lsp.bin": {
+        "win32": "./bin/biome-win32-x64.exe",
+        "linux": "./bin/biome-linux-x64",
+        "darwin": "./bin/biome-darwin-x64"
+    },
     // Web languages
     "[typescript][typescriptreact][javascript][css][json][jsonc]": {
         "editor.codeActionsOnSave": {
