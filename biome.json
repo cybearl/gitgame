@@ -1,5 +1,14 @@
 {
-    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "$schema": "https://biomejs.dev/schemas/2.5.1/schema.json",
+    "files": {
+        "ignoreUnknown": true,
+        "includes": [
+            "**",
+            "!node_modules",
+            "!dist",
+            "!.vscode"
+        ]
+    },
     "assist": {
         "actions": {
             "source": {
@@ -27,7 +36,7 @@
             "semicolons": "asNeeded",
             "trailingCommas": "all"
         },
-        "jsxRuntime": "reactClassic"
+        "jsxRuntime": "transparent"
     },
     "css": {
         "parser": {
@@ -42,7 +51,41 @@
     "linter": {
         "enabled": true,
         "rules": {
-            "recommended": true
+            "preset": "recommended",
+            "a11y": {
+                "noAutofocus": "off",
+                "useButtonType": "off",
+                "noStaticElementInteractions": "off"
+            },
+            "complexity": {
+                "noForEach": "off",
+                "noUselessFragments": "off"
+            },
+            "correctness": {
+                "noEmptyPattern": "off",
+                "noUnusedImports": "warn",
+                "noUnusedVariables": "warn",
+                "useExhaustiveDependencies": "warn"
+            },
+            "performance": {
+                "noImgElement": "off"
+            },
+            "style": {
+                "noNegationElse": "warn",
+                "noNonNullAssertion": "off",
+                "useFragmentSyntax": "off"
+            },
+            "suspicious": {
+                "noArrayIndexKey": "off",
+                "noEmptyBlockStatements": "error",
+                "noExplicitAny": "off",
+                "noUnknownAtRules": "off",
+                "useAwait": "warn",
+                "noDocumentCookie": "off"
+            }
+        },
+        "domains": {
+            "react": "recommended"
         }
     },
     "vcs": {

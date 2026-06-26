@@ -5,9 +5,8 @@
     // BiomeJS
     "biome.suggestInstallingGlobally": false,
     "biome.lsp.bin": {
-        "win32": "./bin/biome-win32-x64.exe",
-        "linux": "./bin/biome-linux-x64",
-        "darwin": "./bin/biome-darwin-x64"
+        "win32-x64": "./bin/biome-win32-x64.exe",
+        "linux-x64": "./bin/biome-linux-x64"
     },
     // Web languages
     "[typescript][typescriptreact][javascript][css][json][jsonc]": {
@@ -62,22 +61,10 @@
         "**/CVS": true,
         "**/next-env.d.ts": true,
         "**/pubspec.lock": true,
-        "packages/contracts/cache": true
     },
     // CSpell
     "cSpell.words": [
-        "addgroup",
-        "buildsystems",
-        "buildtrees",
-        "changefreq",
-        "declspec",
-        "dllimport",
-        "lastmod",
-        "redirectregex",
-        "replaceme",
-        "runnersvc",
-        "tmpfs",
-        "urlset"
+        "asynciterable",
     ],
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"
