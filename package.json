@@ -5,6 +5,7 @@
     "author": "Cybearl <contact@cybearl.com> (https://www.cybearl.com/)",
     "license": "MIT",
     "private": true,
+    "packageManager": "yarn@1.22.22",
     "homepage": "https://github.com/cybearl/gitgame",
     "repository": {
         "type": "git",
@@ -12,5 +13,32 @@
     },
     "bugs": {
         "url": "https://github.com/cybearl/gitgame/issues"
-    }
+    },
+    "engines": {
+        "node": ">=22.0.0"
+    },
+    "main": "./out/main/index.js",
+    "scripts": {
+        "dev": "electron-vite dev",
+        "build": "electron-vite build",
+        "preview": "electron-vite preview",
+        "typecheck": "tsc --noEmit"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.5.1",
+        "@types/node": "^24.12.2",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^5.0.0",
+        "electron": "^42.5.0",
+        "electron-vite": "^5.0.0",
+        "react": "^19.2.5",
+        "react-dom": "^19.2.5",
+        "typescript": "^5.8.3",
+        "vite": "^7.0.0"
+    },
+    "resolutions": {
+        "@types/node": "^24.12.2"
+    },
+    "dependencies": {}
 }
