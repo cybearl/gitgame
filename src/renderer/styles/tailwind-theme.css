@@ -1,0 +1,17 @@
+@theme {
+    /* Overall colors */
+    --color-active: #000080;
+    --color-inactive: #808080;
+    --color-primary-active: #FFFFFF;
+    --color-primary-inactive: #C0C0C0;
+
+    /* Window borders */
+    --color-primary-border: #FFFFFF;
+    --color-secondary-border: #C0C0C0;
+    --color-tertiary-border: #808080;
+    --color-quaternary-border: #000000;
+
+
+    /* The MS Sans Serif font registered in `./fonts.css`, with system fallbacks */
+    --font-sans: "ms_sans_serif", "Microsoft Sans Serif", system-ui, sans-serif;
+}

@@ -19,13 +19,21 @@
     },
     "main": "./out/main/index.js",
     "scripts": {
+        "postinstall": "node node_modules/electron/install.js",
         "dev": "electron-vite dev",
         "build": "electron-vite build",
         "preview": "electron-vite preview",
         "typecheck": "tsc --noEmit"
     },
+    "dependencies": {
+        "@cybearl/cypack": "^1.11.10",
+        "@react95/icons": "^2.5.0",
+        "react95": "^4.0.0",
+        "styled-components": "^6.4.3"
+    },
     "devDependencies": {
         "@biomejs/biome": "^2.5.1",
+        "@tailwindcss/vite": "^4.3.1",
         "@types/node": "^24.12.2",
         "@types/react": "^19.2.14",
         "@types/react-dom": "^19.2.3",
@@ -34,11 +42,11 @@
         "electron-vite": "^5.0.0",
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
+        "tailwindcss": "^4.3.1",
         "typescript": "^5.8.3",
         "vite": "^7.0.0"
     },
     "resolutions": {
         "@types/node": "^24.12.2"
-    },
-    "dependencies": {}
+    }
 }

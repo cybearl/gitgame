@@ -1,13 +1,4 @@
 {
-    // Deno
-    "deno.enable": true,
-    "deno.lint": false,
-    // BiomeJS
-    "biome.suggestInstallingGlobally": false,
-    "biome.lsp.bin": {
-        "win32-x64": "./bin/biome-win32-x64.exe",
-        "linux-x64": "./bin/biome-linux-x64"
-    },
     // Web languages
     "[typescript][typescriptreact][javascript][css][json][jsonc]": {
         "editor.codeActionsOnSave": {
@@ -15,6 +6,7 @@
             "source.action.useSortedKeys.biome": "explicit",
             "source.action.useSortedProperties.biome": "explicit",
             "source.fixAll.biome": "explicit",
+            "source.fixAll.eslint": "explicit",
             "source.organizeImports.biome": "explicit"
         },
         "editor.defaultFormatter": "biomejs.biome",
@@ -68,5 +60,7 @@
     ],
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"
-    }
+    },
+    "javascript.preferences.importModuleSpecifier": "shortest",
+    "typescript.preferences.importModuleSpecifier": "non-relative"
 }
