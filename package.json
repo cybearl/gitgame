@@ -1,5 +1,6 @@
 {
     "name": "@cybearl/gitgame",
+    "version": "1.0.0",
     "productName": "gitgame",
     "description": "A small tool with a web interface to simplify UE5-based game development with Git LFS.",
     "author": "Cybearl <contact@cybearl.com> (https://www.cybearl.com/)",

@@ -7,7 +7,7 @@ type MainLayoutFrameProps = {
 
 export default function MainLayoutFrame({ children }: MainLayoutFrameProps) {
     return (
-        <Frame variant="window" className="w-full h-full p-1.5">
+        <Frame variant="window" className="w-full h-full p-1.5 bg-secondary!">
             <div className="flex h-full w-full flex-col">{children}</div>
         </Frame>
     )

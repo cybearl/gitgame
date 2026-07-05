@@ -15,8 +15,8 @@ export default function TitleBar({ title, icon }: TitleBarProps) {
     return (
         <div
             className={cn(
-                "z-10 flex shrink-0 items-center gap-1.5 select-none",
-                states?.isFocused ? "bg-active text-primary-active" : "bg-inactive text-primary-inactive",
+                "z-10 flex shrink-0 items-center gap-8 select-none justify-between",
+                states?.isFocused ? "bg-active text-primary" : "bg-inactive text-secondary",
                 window.api.platform.isMacOS ? "pr-1.5" : "px-1.5",
             )}
             style={
@@ -28,11 +28,14 @@ export default function TitleBar({ title, icon }: TitleBarProps) {
             }
             onDoubleClick={() => window.api.window.toggleMaximize()}
         >
-            <div className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden font-bold">
+            <div className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden font-bold max-w-max">
                 {!window.api.platform.isMacOS && (
                     <img src={icon} alt="" className="size-4 [image-rendering:pixelated]" />
                 )}
-                <span className="truncate text-base">{title}</span>
+
+                <span title={title} className="truncate text-base">
+                    {title}
+                </span>
             </div>
 
             {!window.api.platform.isMacOS && (

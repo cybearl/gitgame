@@ -3,7 +3,6 @@
 @import "./fonts.css";
 
 @layer base {
-
     /*
      * Inlined from `react95`'s `styleReset` so the renderer no longer needs a
      * styled-components `createGlobalStyle` wrapper just to inject these rules.
@@ -124,7 +123,7 @@
         padding: 0;
         font-family: var(--font-sans);
         line-height: 1.5;
-        color: #C0C0C0;
+        background-color: #c0c0c0;
     }
 
     ol,
@@ -161,7 +160,8 @@
     }
 
     code {
-        font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+        font-family:
+            source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
     }
 
     input[type="number"]::-webkit-outer-spin-button,
@@ -181,4 +181,15 @@
         width: 100%;
         height: 100%;
     }
+}
+
+/*
+ * This Chromium build does not paint `background-image` on `::-webkit-scrollbar-button`
+ * (the button bevel renders but the arrow glyph never does, regardless of image
+ * encoding or sizing), so hide the arrow buttons entirely, leaving the dithered
+ * track and beveled thumb. `!important` overrides react95's `display: block`.
+ */
+::-webkit-scrollbar-button {
+    /* biome-ignore lint/complexity/noImportantStyles: forced against React95 own styling */
+    display: none !important;
 }

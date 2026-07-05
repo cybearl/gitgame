@@ -1,5 +1,17 @@
+import dialogApiRoutes from "@preload/routes/dialog"
+import gitApiRoutes from "@preload/routes/git"
+import lfsApiRoutes from "@preload/routes/lfs"
+import projectApiRoutes from "@preload/routes/project"
+import shellApiRoutes from "@preload/routes/shell"
+import treeApiRoutes from "@preload/routes/tree"
 import windowApiRoutes from "@preload/routes/window"
 import { contextBridge } from "electron"
+import type { ConfirmDialogOptions, DialogOptions } from "@/main/types/dialog"
+import type { GitBranch, GitCommit, GitStatus } from "@/main/types/git"
+import type { LfsLock, LfsLockResult } from "@/main/types/lfs"
+import type { OpenProjectResult } from "@/main/types/project"
+import type { AppPreferences, Project } from "@/main/types/store"
+import type { FileTreeNode } from "@/main/types/tree"
 
 /**
  * A snapshot of the current state of the application window.
@@ -29,6 +41,39 @@ export type GitgameApi = {
         toggleMaximize: () => void
         close: () => void
     }
+    git: {
+        isRepository: (dir: string) => Promise<boolean>
+        getRepositoryRoot: (dir: string) => Promise<string>
+        getStatus: (dir: string) => Promise<GitStatus>
+        listBranches: (dir: string) => Promise<GitBranch[]>
+        getLog: (dir: string, limit?: number) => Promise<GitCommit[]>
+    }
+    lfs: {
+        listLocks: (dir: string) => Promise<LfsLock[]>
+        getLockableFiles: (dir: string) => Promise<string[]>
+        lockPaths: (dir: string, paths: string[]) => Promise<LfsLockResult[]>
+        unlockPaths: (dir: string, paths: string[], force?: boolean) => Promise<LfsLockResult[]>
+    }
+    tree: {
+        getFileTree: (dir: string) => Promise<FileTreeNode[]>
+    }
+    project: {
+        addLocal: () => Promise<OpenProjectResult>
+        open: (dir: string) => Promise<OpenProjectResult>
+        getRecent: () => Promise<Project[]>
+        removeRecent: (dir: string) => Promise<Project[]>
+        getPreferences: () => Promise<AppPreferences>
+        setPreferences: (preferences: Partial<AppPreferences>) => Promise<AppPreferences>
+    }
+    shell: {
+        openExternal: (url: string) => void
+    }
+    dialog: {
+        confirm: (options: ConfirmDialogOptions) => Promise<boolean>
+        error: (title: string, content: string) => void
+        getOptions: () => Promise<DialogOptions | null>
+        respond: (result: boolean) => void
+    }
 }
 
 /**
@@ -42,6 +87,12 @@ const api: GitgameApi = {
         isMacOS: process.platform === "darwin",
     },
     window: windowApiRoutes,
+    git: gitApiRoutes,
+    lfs: lfsApiRoutes,
+    tree: treeApiRoutes,
+    project: projectApiRoutes,
+    shell: shellApiRoutes,
+    dialog: dialogApiRoutes,
 } as const
 
 // Exposes the API surface to the renderer process
