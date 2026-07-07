@@ -1,0 +1,18 @@
+#!/bin/sh
+# Block direct pushes to main, escape hatch: "ALLOW_PUSH_MAIN=1 git push"
+protected="refs/heads/main"
+
+while read local_ref local_sha remote_ref remote_sha; do
+    if [ "$remote_ref" = "$protected" ]; then
+        if [ "$ALLOW_PUSH_MAIN" = "1" ]; then
+            echo "pre-push: \"ALLOW_PUSH_MAIN=1 set\", allowing push to main."
+        else
+            echo ""
+            echo "  Direct push to 'main' is blocked."
+            echo "  Open a PR from a feature branch, or set \"ALLOW_PUSH_MAIN=1\" to override."
+            echo ""
+            exit 1
+        fi
+    fi
+done
+exit 0

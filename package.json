@@ -24,7 +24,9 @@
         "dev": "electron-vite dev",
         "build": "electron-vite build",
         "preview": "electron-vite preview",
-        "typecheck": "tsc --noEmit"
+        "typecheck": "tsc --noEmit",
+        "hooks:install": "node -e \"if(require('fs').existsSync('.git'))require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'inherit'})\"",
+        "prepare": "npm run hooks:install"
     },
     "dependencies": {
         "@cybearl/cypack": "^1.11.10",
