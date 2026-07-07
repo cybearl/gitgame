@@ -1,0 +1,51 @@
+appId: com.cybearl.gitgame
+productName: GitGame
+copyright: Copyright © ${author}
+
+directories:
+    output: dist
+    buildResources: build
+
+files:
+    - out/**/*
+    - package.json
+    - "!**/*.map"
+
+asar: true
+
+publish:
+    - provider: github
+      owner: cybearl
+      repo: gitgame
+      releaseType: release
+
+win:
+    target:
+        - target: nsis
+          arch: [x64]
+    artifactName: ${productName}-${version}-win-${arch}.${ext}
+
+nsis:
+    oneClick: false
+    perMachine: false
+    allowElevation: true
+    allowToChangeInstallationDirectory: true
+    deleteAppDataOnUninstall: false
+
+mac:
+    category: public.app-category.developer-tools
+    target:
+        - target: dmg
+          arch: [x64, arm64]
+    artifactName: ${productName}-${version}-mac-${arch}.${ext}
+    hardenedRuntime: true
+    gatekeeperAssess: false
+
+linux:
+    target:
+        - target: AppImage
+          arch: [x64]
+        - target: deb
+          arch: [x64]
+    category: Development
+    artifactName: ${productName}-${version}-linux-${arch}.${ext}

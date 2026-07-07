@@ -1,3 +1,4 @@
+import appApiRoutes from "@preload/routes/app"
 import dialogApiRoutes from "@preload/routes/dialog"
 import gitApiRoutes from "@preload/routes/git"
 import lfsApiRoutes from "@preload/routes/lfs"
@@ -28,6 +29,9 @@ export type WindowState = {
  * The type for the API surface exposed to the renderer process via `window.api`.
  */
 export type GitgameApi = {
+    app: {
+        version: string
+    }
     platform: {
         value: NodeJS.Platform
         isWindows: boolean
@@ -80,6 +84,7 @@ export type GitgameApi = {
  * The API surface exposed to the renderer process via `window.api`.
  */
 const api: GitgameApi = {
+    app: appApiRoutes,
     platform: {
         value: process.platform,
         isWindows: process.platform === "win32",

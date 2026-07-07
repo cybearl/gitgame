@@ -6,6 +6,8 @@ const CONSTANTS = {
     macOSTrafficLightsHeight: 14,
     macOSTitleBarLeftPadding: 80,
     ipc: {
+        // App
+        appGetVersion: "app:get-version",
         // Window
         windowGetState: "window:get-state",
         windowStateChanged: "window:state-changed",

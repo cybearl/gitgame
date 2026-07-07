@@ -1,0 +1,32 @@
+{
+    "branches": ["main"],
+    "plugins": [
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        [
+            "@semantic-release/github",
+            {
+                "assets": [
+                    {
+                        "path": "release-artifacts/*.exe",
+                        "label": "Windows installer (${nextRelease.gitTag})"
+                    },
+                    {
+                        "path": "release-artifacts/*.dmg",
+                        "label": "macOS installer (${nextRelease.gitTag})"
+                    },
+                    {
+                        "path": "release-artifacts/*.AppImage",
+                        "label": "Linux AppImage (${nextRelease.gitTag})"
+                    },
+                    {
+                        "path": "release-artifacts/*.deb",
+                        "label": "Linux .deb (${nextRelease.gitTag})"
+                    },
+                    { "path": "release-artifacts/*.blockmap" },
+                    { "path": "release-artifacts/latest*.yml" }
+                ]
+            }
+        ]
+    ]
+}
