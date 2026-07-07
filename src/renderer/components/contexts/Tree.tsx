@@ -2,6 +2,7 @@ import { useProjectContext } from "@renderer/components/contexts/Project"
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react"
 import type { LfsLock, LfsLockResult } from "@/main/types/lfs"
 import type { FileTreeNode } from "@/main/types/tree"
+import { indexLocks } from "@/renderer/lib/utils/lockStates"
 
 /**
  * The type for the tree context.
@@ -48,8 +49,7 @@ export default function TreeProvider({ children }: TreeProviderProps) {
         }
 
         try {
-            const locks = await window.api.lfs.listLocks(projectPath)
-            setLocksByPath(new Map(locks.map(lock => [lock.path, lock])))
+            setLocksByPath(indexLocks(await window.api.lfs.listLocks(projectPath)))
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)))
         }
@@ -69,15 +69,21 @@ export default function TreeProvider({ children }: TreeProviderProps) {
 
         setIsLoading(true)
 
-        // The tree loads independently of the locks so a locks/remote failure
-        // does not blank out the tree
+        // Sets the cached locks immediately if available
         try {
-            setFileTree(await window.api.tree.getFileTree(projectPath))
-        } catch (err) {
-            setError(err instanceof Error ? err : new Error(String(err)))
+            setLocksByPath(indexLocks(await window.api.lfs.getCachedLocks(projectPath)))
+        } catch {
+            // A cache miss is expected on first-ever open and must not block refresh
         }
 
-        await refreshLocks()
+        // The tree and the locks load in parallel so a slow git-lfs call does not
+        // delay the tree render, and each surfaces as soon as it is ready
+        const treePromise = window.api.tree
+            .getFileTree(projectPath)
+            .then(setFileTree)
+            .catch(err => setError(err instanceof Error ? err : new Error(String(err))))
+
+        await Promise.all([treePromise, refreshLocks()])
 
         setIsLoading(false)
     }, [projectPath, refreshLocks])

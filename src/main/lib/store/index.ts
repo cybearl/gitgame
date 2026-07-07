@@ -52,6 +52,10 @@ function normalizeConfig(partial: Partial<AppConfig>): AppConfig {
             ...(partial.preferences ?? {}),
         },
         recentProjects: Array.isArray(partial.recentProjects) ? partial.recentProjects : [],
+        lfsLockCache:
+            partial.lfsLockCache && typeof partial.lfsLockCache === "object" && !Array.isArray(partial.lfsLockCache)
+                ? partial.lfsLockCache
+                : {},
     }
 }
 

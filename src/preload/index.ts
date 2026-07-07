@@ -54,6 +54,7 @@ export type GitgameApi = {
     }
     lfs: {
         listLocks: (dir: string) => Promise<LfsLock[]>
+        getCachedLocks: (dir: string) => Promise<LfsLock[]>
         getLockableFiles: (dir: string) => Promise<string[]>
         lockPaths: (dir: string, paths: string[]) => Promise<LfsLockResult[]>
         unlockPaths: (dir: string, paths: string[], force?: boolean) => Promise<LfsLockResult[]>

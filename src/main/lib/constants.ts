@@ -22,6 +22,7 @@ const CONSTANTS = {
         gitGetLog: "git:get-log",
         // LFS
         lfsListLocks: "lfs:list-locks",
+        lfsGetCachedLocks: "lfs:get-cached-locks",
         lfsGetLockableFiles: "lfs:get-lockable-files",
         lfsLockPaths: "lfs:lock-paths",
         lfsUnlockPaths: "lfs:unlock-paths",

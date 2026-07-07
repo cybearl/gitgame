@@ -11,6 +11,7 @@ const DEFAULT_APP_CONFIG: AppConfig = {
         startupBehavior: "reopen-last",
     },
     recentProjects: [],
+    lfsLockCache: {},
 }
 
 export default DEFAULT_APP_CONFIG
