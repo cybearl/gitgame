@@ -159,7 +159,7 @@ export default function DetailsPane({ selectedNode, className }: DetailsPaneProp
 
             <Separator />
 
-            <ScrollView className="min-h-0 flex-1">
+            <ScrollView className="min-h-0 flex-1 [&>div]:relative [&>div]:z-10">
                 <div className="p-3">
                     {selectedNode ? (
                         <GroupBox

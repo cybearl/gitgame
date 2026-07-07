@@ -62,7 +62,7 @@ export default function Workspace() {
                 <img
                     src="./assets/images/cthulhu.png"
                     alt=""
-                    className="w-[8%] opacity-15 [image-rendering:pixelated]"
+                    className="w-[8%] opacity-15 [image-rendering:pixelated] select-none"
                 />
             </div>
 
