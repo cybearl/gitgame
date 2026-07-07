@@ -1,4 +1,6 @@
 import { cn } from "@cybearl/cypack/frontend"
+import fileIcon from "@react95-icons/FileText_16x16_4.png"
+import folderIcon from "@react95-icons/Folder_16x16_4.png"
 import lockIcon from "@react95-icons/Lock_16x16_4.png"
 import Tooltip from "@renderer/components/ui/Tooltip"
 import type { TreeLeaf } from "react95"
@@ -34,8 +36,8 @@ function buildFolderTooltip(lockState: NodeLockState, owners: LockOwnerCount[]):
 }
 
 /**
- * Renders the lock indicator shown in a node's icon slot, or `undefined` when
- * the node has no active or derived lock to display.
+ * Renders the lock indicator shown alongside a node's label, or `undefined`
+ * when the node has no active or derived lock to display.
  * @param node The file tree node.
  * @param lockState The computed lock state of the node.
  * @param fileLock The active lock on the node, if it is a locked file.
@@ -77,8 +79,27 @@ export function renderLockIcon(
 }
 
 /**
+ * Renders the default type icon shown when a node has no lock indicator to
+ * display, picking the folder or file variant based on the node's type.
+ * @param node The file tree node.
+ * @returns The type icon element.
+ */
+export function renderTypeIcon(node: FileTreeNode) {
+    return (
+        <img
+            src={node.type === "folder" ? folderIcon : fileIcon}
+            alt=""
+            decoding="sync"
+            fetchPriority="high"
+            className="size-4 [image-rendering:pixelated]"
+        />
+    )
+}
+
+/**
  * Maps the repository file tree to the leaf shape consumed by react95's
- * `TreeView`, keyed by repository-relative path and carrying a lock indicator.
+ * `TreeView`, keyed by repository-relative path and carrying either a lock
+ * indicator or the default folder/file icon.
  * @param nodes The file tree nodes to map.
  * @param lockStates The computed lock states keyed by path.
  * @param lockOwners The locked-file counts by owner keyed by path.
@@ -99,7 +120,7 @@ export function buildTree(
         return {
             id: node.path,
             label: node.name,
-            icon: renderLockIcon(node, lockState, fileLock, owners),
+            icon: renderLockIcon(node, lockState, fileLock, owners) ?? renderTypeIcon(node),
             items: node.children ? buildTree(node.children, lockStates, lockOwners, locksByPath) : undefined,
         }
     })

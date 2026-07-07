@@ -3,6 +3,7 @@
 @import "./fonts.css";
 
 @layer base {
+
     /*
      * Inlined from `react95`'s `styleReset` so the renderer no longer needs a
      * styled-components `createGlobalStyle` wrapper just to inject these rules.
@@ -184,12 +185,26 @@
 }
 
 /*
- * This Chromium build does not paint `background-image` on `::-webkit-scrollbar-button`
- * (the button bevel renders but the arrow glyph never does, regardless of image
- * encoding or sizing), so hide the arrow buttons entirely, leaving the dithered
- * track and beveled thumb. `!important` overrides react95's `display: block`.
+ * Hiding scrollbar buttons since the icons are invisible there for some reason.
  */
 ::-webkit-scrollbar-button {
     /* biome-ignore lint/complexity/noImportantStyles: forced against React95 own styling */
     display: none !important;
+}
+
+/**
+ * Fixes the vertical positioning of the summary element's pseudo-element `+`/`-`
+ * glyph. Restoring `content-box` reinstates the intended 13x13 toggle after
+ * Tailwind's `border-box` preflight, and `padding-top` nudges the glyph down
+ * inside the box so it sits optically centered rather than hugging the top
+ * edge of the 9px content area. Tune the padding if the glyph needs more shift.
+ */
+details > summary::before {
+    box-sizing: content-box;
+    left: 50%;
+    padding-top: 1px !important;
+    padding-right: 1px !important;
+    padding-bottom: 1px !important;
+    padding-left: 2px !important;
+    transform: translateX(-10%);
 }

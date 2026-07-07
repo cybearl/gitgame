@@ -47,7 +47,7 @@ export default function TitleBar({ title, icon }: TitleBarProps) {
                         onClick={() => window.api.window.minimize()}
                         className="w-6! h-5.5! min-w-0!"
                     >
-                        <img src="/assets/icons/window/minimize.png" alt="minimize" className="w-4" />
+                        <img src="./assets/icons/window/minimize.png" alt="minimize" className="w-4" />
                     </Button>
                     <Button
                         size="sm"
@@ -56,7 +56,7 @@ export default function TitleBar({ title, icon }: TitleBarProps) {
                         onClick={() => window.api.window.toggleMaximize()}
                         className="w-6! h-5.5! min-w-0!"
                     >
-                        <img src="/assets/icons/window/maximize.png" alt="maximize" className="w-4" />
+                        <img src="./assets/icons/window/maximize.png" alt="maximize" className="w-4" />
                     </Button>
                     <Button
                         size="sm"
@@ -65,7 +65,7 @@ export default function TitleBar({ title, icon }: TitleBarProps) {
                         onClick={() => window.api.window.close()}
                         className="w-6! h-5.5! min-w-0! ml-1"
                     >
-                        <img src="/assets/icons/window/close.png" alt="close" className="w-4 " />
+                        <img src="./assets/icons/window/close.png" alt="close" className="w-4 " />
                     </Button>
                 </div>
             )}

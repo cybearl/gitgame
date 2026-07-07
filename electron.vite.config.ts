@@ -32,6 +32,7 @@ export default defineConfig({
     },
     renderer: {
         root: path.resolve(__dirname, "src", "renderer"),
+        base: "./",
         resolve: { alias: aliases },
         plugins: [react(), tailwindcss()],
         build: {
