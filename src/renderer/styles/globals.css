@@ -3,7 +3,6 @@
 @import "./fonts.css";
 
 @layer base {
-
     /*
      * Inlined from `react95`'s `styleReset` so the renderer no longer needs a
      * styled-components `createGlobalStyle` wrapper just to inject these rules.
@@ -202,9 +201,13 @@
 details > summary::before {
     box-sizing: content-box;
     left: 50%;
+    /* biome-ignore lint/complexity/noImportantStyles: forced against React95 own styling */
     padding-top: 1px !important;
+    /* biome-ignore lint/complexity/noImportantStyles: forced against React95 own styling */
     padding-right: 1px !important;
+    /* biome-ignore lint/complexity/noImportantStyles: forced against React95 own styling */
     padding-bottom: 1px !important;
+    /* biome-ignore lint/complexity/noImportantStyles: forced against React95 own styling */
     padding-left: 2px !important;
     transform: translateX(-10%);
 }

@@ -3,7 +3,6 @@ import { useStatusContext } from "@renderer/components/contexts/Status"
 import STATUS_CONFIG from "@renderer/config/status"
 import { useEffect, useMemo, useState } from "react"
 import { Frame, ProgressBar } from "react95"
-import Tooltip from "@/renderer/components/ui/Tooltip"
 
 type StatusTaskFieldProps = {
     className?: string
