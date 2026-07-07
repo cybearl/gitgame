@@ -3,7 +3,12 @@ import ContextMenu from "@renderer/components/ui/treeView/ContextMenu"
 import { type MouseEvent, useCallback, useMemo, useRef, useState } from "react"
 import { TreeView as React95TreeView, ScrollView } from "react95"
 import type { FileTreeNode } from "@/main/types/tree"
-import { collectLockedPaths, computeLockOwners, computeLockStates } from "@/renderer/lib/utils/lockStates"
+import {
+    collectLockablePaths,
+    collectLockedPaths,
+    computeLockOwners,
+    computeLockStates,
+} from "@/renderer/lib/utils/lockStates"
 import { buildTree, reportLockFailures, resolveNode } from "@/renderer/lib/utils/treeView"
 
 /**
@@ -14,6 +19,7 @@ type MenuState = {
     y: number
     node: FileTreeNode
     canLock: boolean
+    lockablePaths: string[]
     minePaths: string[]
     othersPaths: string[]
 }
@@ -62,6 +68,7 @@ export default function TreeView() {
                 y: event.clientY,
                 node,
                 canLock: (lockStates.get(node.path) ?? "unlockable") !== "locked",
+                lockablePaths: collectLockablePaths(node),
                 minePaths: collectLockedPaths(node, locksByPath, true),
                 othersPaths: collectLockedPaths(node, locksByPath, false),
             })
@@ -81,7 +88,7 @@ export default function TreeView() {
         if (!menu) return
 
         dismissMenu()
-        reportLockFailures(await lock([menu.node.path]))
+        reportLockFailures(await lock(menu.lockablePaths))
     }, [menu, lock, dismissMenu])
 
     /**
