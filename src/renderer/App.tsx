@@ -7,12 +7,10 @@ import StatusBar from "@renderer/components/ui/statusBar"
 import StatusBarField from "@renderer/components/ui/statusBar/StatusBarField"
 import StatusTaskField from "@renderer/components/ui/statusBar/StatusTaskField"
 import TitleBar from "@renderer/components/ui/TitleBar"
-import TreeView from "@renderer/components/ui/treeView"
+import Workspace from "@renderer/components/ui/workspace"
 import useMenuShortcuts from "@renderer/hooks/useMenuShortcuts"
 import { useCallback, useEffect, useMemo } from "react"
-import { createScrollbars } from "react95"
-import originalTheme from "react95/dist/themes/original"
-import { createGlobalStyle, ThemeProvider } from "styled-components"
+import AppRoot from "@/renderer/components/layouts/AppRoot"
 import MainLayout from "@/renderer/components/layouts/main"
 import APP_CONFIG from "@/renderer/config/app"
 import { buildTopLevelMenus, type MenuAction } from "@/renderer/config/menus"
@@ -22,7 +20,7 @@ import { buildTopLevelMenus, type MenuAction } from "@/renderer/config/menus"
  * actions to the application state.
  */
 function AppShell() {
-    const { currentProject, recentProjects, addLocalProject, openProject } = useProjectContext()
+    const { currentProject, recentProjects, addLocalProject, openProject, clearRecentProjects } = useProjectContext()
 
     /**
      * The main application window title (falling back to just the app name when no project is open).
@@ -42,7 +40,7 @@ function AppShell() {
      * @param action The action selected in the menu bar.
      */
     const handleMenuAction = useCallback(
-        (action: MenuAction) => {
+        async (action: MenuAction) => {
             switch (action.type) {
                 case "project:add-local":
                     addLocalProject()
@@ -50,6 +48,18 @@ function AppShell() {
                 case "project:open":
                     openProject(action.path)
                     break
+                case "project:clear-recent": {
+                    const confirmed = await window.api.dialog.confirm({
+                        title: "Clear recent projects",
+                        message: "Clear the entire recent projects list?",
+                        detail: "This only forgets the entries here, your project folders on disk are left untouched.",
+                        confirmLabel: "Clear",
+                        isDestructive: true,
+                    })
+
+                    if (confirmed) clearRecentProjects()
+                    break
+                }
                 case "window:close":
                     window.api.window.close()
                     break
@@ -61,7 +71,7 @@ function AppShell() {
                     break
             }
         },
-        [addLocalProject, openProject],
+        [addLocalProject, openProject, clearRecentProjects],
     )
 
     // Bind the menu accelerators (Ctrl+O, Ctrl+Q, ...) to their actions
@@ -78,21 +88,7 @@ function AppShell() {
 
             <MenuBar menus={menus} onAction={handleMenuAction} />
 
-            <div className="relative w-full flex-1 overflow-hidden">
-                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <img
-                        src="./assets/images/cthulhu.png"
-                        alt=""
-                        className="w-[8%] [image-rendering:pixelated] opacity-15"
-                    />
-                </div>
-
-                {currentProject && (
-                    <div className="relative h-full w-full">
-                        <TreeView />
-                    </div>
-                )}
-            </div>
+            <div className="relative w-full flex-1 overflow-hidden">{currentProject && <Workspace />}</div>
 
             <StatusBar>
                 <StatusBarField grow>{currentProject ? currentProject.path : "No project open"}</StatusBarField>
@@ -102,18 +98,9 @@ function AppShell() {
     )
 }
 
-/**
- * Applies react95's Win95 scrollbar styling globally.
- */
-const GlobalScrollbars = createGlobalStyle`
-    ${createScrollbars()}
-`
-
 export default function App() {
     return (
-        <ThemeProvider theme={originalTheme}>
-            <GlobalScrollbars />
-
+        <AppRoot>
             <StatusProvider>
                 <ProjectProvider>
                     <TreeProvider>
@@ -121,6 +108,6 @@ export default function App() {
                     </TreeProvider>
                 </ProjectProvider>
             </StatusProvider>
-        </ThemeProvider>
+        </AppRoot>
     )
 }

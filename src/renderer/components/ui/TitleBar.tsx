@@ -6,10 +6,12 @@ import { Button } from "react95"
 
 type TitleBarProps = {
     title: string
-    icon: string
+    icon?: string
+    mode?: "full" | "dialog"
+    onClose?: () => void
 }
 
-export default function TitleBar({ title, icon }: TitleBarProps) {
+export default function TitleBar({ title, icon, mode = "full", onClose }: TitleBarProps) {
     const states = useWindowStates()
 
     return (
@@ -29,7 +31,7 @@ export default function TitleBar({ title, icon }: TitleBarProps) {
             onDoubleClick={() => window.api.window.toggleMaximize()}
         >
             <div className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden font-bold max-w-max">
-                {!window.api.platform.isMacOS && (
+                {icon && !window.api.platform.isMacOS && (
                     <img src={icon} alt="" className="size-4 [image-rendering:pixelated]" />
                 )}
 
@@ -40,29 +42,34 @@ export default function TitleBar({ title, icon }: TitleBarProps) {
 
             {!window.api.platform.isMacOS && (
                 <div className="flex" style={{ WebkitAppRegion: "no-drag" } as CSSProperties}>
-                    <Button
-                        size="sm"
-                        square
-                        aria-label="Minimize"
-                        onClick={() => window.api.window.minimize()}
-                        className="w-6! h-5.5! min-w-0!"
-                    >
-                        <img src="./assets/icons/window/minimize.png" alt="minimize" className="w-4" />
-                    </Button>
-                    <Button
-                        size="sm"
-                        square
-                        aria-label="Maximize"
-                        onClick={() => window.api.window.toggleMaximize()}
-                        className="w-6! h-5.5! min-w-0!"
-                    >
-                        <img src="./assets/icons/window/maximize.png" alt="maximize" className="w-4" />
-                    </Button>
+                    {mode === "full" && (
+                        <>
+                            <Button
+                                size="sm"
+                                square
+                                aria-label="Minimize"
+                                onClick={() => window.api.window.minimize()}
+                                className="w-6! h-5.5! min-w-0!"
+                            >
+                                <img src="./assets/icons/window/minimize.png" alt="minimize" className="w-4" />
+                            </Button>
+                            <Button
+                                size="sm"
+                                square
+                                aria-label="Maximize"
+                                onClick={() => window.api.window.toggleMaximize()}
+                                className="w-6! h-5.5! min-w-0!"
+                            >
+                                <img src="./assets/icons/window/maximize.png" alt="maximize" className="w-4" />
+                            </Button>
+                        </>
+                    )}
+
                     <Button
                         size="sm"
                         square
                         aria-label="Close"
-                        onClick={() => window.api.window.close()}
+                        onClick={() => (onClose ? onClose() : window.api.window.close())}
                         className="w-6! h-5.5! min-w-0! ml-1"
                     >
                         <img src="./assets/icons/window/close.png" alt="close" className="w-4 " />

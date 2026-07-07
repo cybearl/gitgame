@@ -1,5 +1,6 @@
 import path from "node:path"
 import CONSTANTS from "@main/lib/constants"
+import { attachWindowStateBroadcaster } from "@main/lib/window"
 import { BrowserWindow, ipcMain } from "electron"
 import DIALOG_CONFIG from "@/main/config/dialogs"
 import type { ConfirmDialogOptions, DialogOptions } from "@/main/types/dialog"
@@ -61,6 +62,10 @@ export function openDialog(parent: BrowserWindow | null, options: DialogOptions)
         })
 
         pendingDialogs.set(window.id, { options, resolve })
+
+        // Broadcast focus and visibility changes so the dialog's title bar can
+        // reflect the active state consistently with the main window
+        attachWindowStateBroadcaster(window)
 
         window.once("ready-to-show", () => window.show())
 

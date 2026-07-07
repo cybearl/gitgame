@@ -62,7 +62,7 @@ export function renderLockIcon(
         : buildFolderTooltip(lockState, owners)
 
     return (
-        <Tooltip text={text} enterDelay={300}>
+        <Tooltip text={text}>
             <img
                 src={lockIcon}
                 alt="Locked"
@@ -124,6 +124,93 @@ export function buildTree(
             items: node.children ? buildTree(node.children, lockStates, lockOwners, locksByPath) : undefined,
         }
     })
+}
+
+/**
+ * The result of filtering the file tree to a search query.
+ */
+export type FilteredTree = {
+    tree: FileTreeNode[]
+    matchAncestorPaths: string[]
+}
+
+/**
+ * Filters the file tree to keep only nodes whose name matches the query and
+ * every ancestor of a match, so the tree structure around results remains
+ * navigable.
+ * @param nodes The root-level file tree nodes.
+ * @param query The search query, trimmed and lowercased before matching.
+ * @returns The filtered tree plus the paths of every folder that has a match somewhere in its subtree.
+ */
+export function filterTree(nodes: FileTreeNode[], query: string): FilteredTree {
+    const needle = query.trim().toLowerCase()
+    if (!needle) {
+        return {
+            tree: nodes,
+            matchAncestorPaths: [],
+        }
+    }
+
+    const matchAncestorPaths: string[] = []
+
+    /**
+     * Recursively filters a single node's subtree, returning `null` when the
+     * subtree has no match anywhere in it.
+     * @param node The node to visit.
+     * @returns The kept node with filtered children, or `null` to prune it.
+     */
+    const visit = (node: FileTreeNode): FileTreeNode | null => {
+        const selfMatches = node.name.toLowerCase().includes(needle)
+
+        if (node.type === "file") return selfMatches ? node : null
+
+        const filteredChildren: FileTreeNode[] = []
+
+        for (const child of node.children ?? []) {
+            const kept = visit(child)
+            if (kept) filteredChildren.push(kept)
+        }
+
+        if (filteredChildren.length === 0 && !selfMatches) return null
+        if (filteredChildren.length > 0) matchAncestorPaths.push(node.path)
+
+        return {
+            ...node,
+            children: filteredChildren.length > 0 ? filteredChildren : undefined,
+        }
+    }
+
+    const tree: FileTreeNode[] = []
+
+    for (const node of nodes) {
+        const kept = visit(node)
+        if (kept) tree.push(kept)
+    }
+
+    return {
+        tree,
+        matchAncestorPaths,
+    }
+}
+
+/**
+ * Locates a file tree node by its repository-relative path, walking the tree
+ * depth-first from the given roots.
+ * @param roots The root-level file tree nodes.
+ * @param path The repository-relative path to locate.
+ * @returns The matching node, or `undefined` if no node has that path.
+ */
+export function findNodeByPath(roots: FileTreeNode[], path: string): FileTreeNode | undefined {
+    for (const node of roots) {
+        if (node.path === path) return node
+
+        if (node.children) {
+            const found = findNodeByPath(node.children, path)
+            if (found) return found
+        }
+    }
+
+    return undefined
 }
 
 /**

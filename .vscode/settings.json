@@ -57,7 +57,8 @@
     // CSpell
     "cSpell.words": [
         "asar",
-        "asynciterable"
+        "asynciterable",
+        "scrollview"
     ],
     "[json]": {
         "editor.defaultFormatter": "biomejs.biome"

@@ -127,6 +127,33 @@ export function computeLockOwners(
 }
 
 /**
+ * Collects the paths of every lockable file within a node's subtree, matching
+ * the set of files a lock action expands the node to.
+ * @param node The node whose subtree to scan.
+ * @returns The lockable file paths.
+ */
+export function collectLockablePaths(node: FileTreeNode): string[] {
+    const paths: string[] = []
+
+    /**
+     * Appends the node's path when it is a lockable file, then recurses.
+     * @param current The node to visit.
+     */
+    const visit = (current: FileTreeNode) => {
+        if (current.type === "file") {
+            if (current.isLockable) paths.push(current.path)
+            return
+        }
+
+        for (const child of current.children ?? []) visit(child)
+    }
+
+    visit(node)
+
+    return paths
+}
+
+/**
  * Collects the paths of every locked file within a node's subtree, filtered by
  * whether the current user owns the lock.
  * @param node The node whose subtree to scan.

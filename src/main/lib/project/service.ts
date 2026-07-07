@@ -128,6 +128,19 @@ export async function removeRecentProject(dir: string): Promise<Project[]> {
 }
 
 /**
+ * Clears every entry from the recent projects list.
+ * @returns The updated recent projects list, which is always empty.
+ */
+export async function clearRecentProjects(): Promise<Project[]> {
+    const updated = await updateConfig(config => {
+        config.recentProjects = []
+        return undefined
+    })
+
+    return updated.recentProjects
+}
+
+/**
  * Returns the current application preferences.
  * @returns The preferences.
  */

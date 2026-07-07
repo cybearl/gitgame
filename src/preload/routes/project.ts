@@ -11,6 +11,7 @@ const projectApiRoutes: GitgameApi["project"] = {
     open: dir => ipcRenderer.invoke(CONSTANTS.ipc.projectOpen, dir),
     getRecent: () => ipcRenderer.invoke(CONSTANTS.ipc.projectGetRecent),
     removeRecent: dir => ipcRenderer.invoke(CONSTANTS.ipc.projectRemoveRecent, dir),
+    clearRecent: () => ipcRenderer.invoke(CONSTANTS.ipc.projectClearRecent),
     getPreferences: () => ipcRenderer.invoke(CONSTANTS.ipc.projectGetPreferences),
     setPreferences: preferences => ipcRenderer.invoke(CONSTANTS.ipc.projectSetPreferences, preferences),
 }

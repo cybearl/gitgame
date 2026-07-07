@@ -9,6 +9,7 @@ const DEFAULT_APP_CONFIG: AppConfig = {
     version: STORE_CONFIG.configVersion,
     preferences: {
         startupBehavior: "reopen-last",
+        filesPaneWidth: 320,
     },
     recentProjects: [],
     lfsLockCache: {},

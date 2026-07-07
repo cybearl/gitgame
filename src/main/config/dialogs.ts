@@ -3,7 +3,7 @@
  */
 const DIALOG_CONFIG = {
     sizes: {
-        confirm: { width: 420, height: 210 },
+        confirm: { width: 420, height: 230 },
         error: { width: 480, height: 300 },
     },
 }

@@ -19,6 +19,7 @@ export type Project = {
  */
 export type AppPreferences = {
     startupBehavior: StartupBehavior
+    filesPaneWidth: number
 }
 
 /**
