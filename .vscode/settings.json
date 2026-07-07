@@ -1,5 +1,5 @@
 {
-    // Web languages
+    // Languages
     "[typescript][typescriptreact][javascript][css][json][jsonc]": {
         "editor.codeActionsOnSave": {
             "source.action.useSortedAttributes.biome": "explicit",
@@ -60,7 +60,7 @@
         "asynciterable"
     ],
     "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "javascript.preferences.importModuleSpecifier": "shortest",
     "typescript.preferences.importModuleSpecifier": "non-relative"
