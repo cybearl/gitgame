@@ -1,0 +1,132 @@
+name: Release
+
+on:
+    workflow_dispatch:
+    push:
+        branches: [main]
+
+permissions:
+    contents: write
+    issues: write
+    pull-requests: write
+    id-token: write
+
+concurrency:
+    group: release-${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    prepare:
+        name: Prepare release
+        if: "!contains(github.event.head_commit.message, '[skip ci]')"
+        runs-on: ubuntu-latest
+        outputs:
+            new-release-published: ${{ steps.dry-run.outputs.new-release-published }}
+            new-release-version: ${{ steps.dry-run.outputs.new-release-version }}
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: yarn
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Compute next version (dry-run)
+              id: dry-run
+              uses: cycjimmy/semantic-release-action@v4
+              with:
+                  dry_run: true
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    build:
+        name: Build (${{ matrix.os }})
+        needs: prepare
+        if: needs.prepare.outputs.new-release-published == 'true'
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, windows-latest, macos-latest]
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: yarn
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Build renderer, preload and main bundles
+              run: yarn build
+
+            - name: Package installers
+              run: >
+                  yarn electron-builder
+                  --config.extraMetadata.version=${{ needs.prepare.outputs.new-release-version }}
+                  --publish never
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Upload installers
+              uses: actions/upload-artifact@v4
+              with:
+                  name: installers-${{ matrix.os }}
+                  path: |
+                      dist/*.exe
+                      dist/*.dmg
+                      dist/*.AppImage
+                      dist/*.deb
+                      dist/*.zip
+                      dist/*.blockmap
+                      dist/latest*.yml
+                  if-no-files-found: error
+                  retention-days: 7
+
+    release:
+        name: Publish GitHub Release
+        needs: [prepare, build]
+        if: needs.prepare.outputs.new-release-published == 'true'
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+                  persist-credentials: false
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: yarn
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile
+
+            - name: Download all installers
+              uses: actions/download-artifact@v4
+              with:
+                  path: release-artifacts
+                  pattern: installers-*
+                  merge-multiple: true
+
+            - name: Semantic Release
+              uses: cycjimmy/semantic-release-action@v4
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

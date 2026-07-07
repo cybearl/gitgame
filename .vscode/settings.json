@@ -56,7 +56,8 @@
     },
     // CSpell
     "cSpell.words": [
-        "asynciterable",
+        "asar",
+        "asynciterable"
     ],
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"

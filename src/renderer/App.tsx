@@ -26,7 +26,7 @@ function AppShell() {
      * The main application window title (falling back to just the app name when no project is open).
      */
     const windowTitle = useMemo(() => {
-        const title = `${APP_CONFIG.title} v${APP_CONFIG.version}`
+        const title = `${APP_CONFIG.title} v${window.api.app.version.startsWith("0.0.0") ? "DEV" : window.api.app.version}`
         return currentProject ? `${currentProject.name} - ${title}` : title
     }, [currentProject])
 

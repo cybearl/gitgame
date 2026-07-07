@@ -1,6 +1,6 @@
 {
     "name": "@cybearl/gitgame",
-    "version": "1.0.0",
+    "version": "0.0.0-semantically-released",
     "productName": "gitgame",
     "description": "A small tool with a web interface to simplify UE5-based game development with Git LFS.",
     "author": "Cybearl <contact@cybearl.com> (https://www.cybearl.com/)",
@@ -25,12 +25,17 @@
         "build": "electron-vite build",
         "preview": "electron-vite preview",
         "typecheck": "tsc --noEmit",
+        "lint": "biome check",
+        "lint:fix": "biome check --fix && biome format --write",
+        "dist": "electron-vite build && electron-builder",
+        "release": "npx semantic-release",
         "hooks:install": "node -e \"if(require('fs').existsSync('.git'))require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'inherit'})\"",
         "prepare": "npm run hooks:install"
     },
     "dependencies": {
         "@cybearl/cypack": "^1.11.10",
         "@react95/icons": "^2.5.0",
+        "electron-updater": "^6.3.9",
         "react95": "^4.0.0",
         "styled-components": "^6.4.3"
     },
@@ -42,6 +47,7 @@
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^5.0.0",
         "electron": "^42.5.0",
+        "electron-builder": "^25.1.8",
         "electron-vite": "^5.0.0",
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
