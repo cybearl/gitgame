@@ -3,7 +3,6 @@
 @import "./fonts.css";
 
 @layer base {
-
     /*
      * Inlined from `react95`'s `styleReset` so the renderer no longer needs a
      * styled-components `createGlobalStyle` wrapper just to inject these rules.
@@ -124,7 +123,7 @@
         padding: 0;
         font-family: var(--font-sans);
         line-height: 1.5;
-        background-color: #c0c0c0;
+        background-color: #c6c6c6;
     }
 
     ol,

@@ -62,7 +62,7 @@ export function renderLockIcon(
         : buildFolderTooltip(lockState, owners)
 
     return (
-        <Tooltip text={text} enterDelay={300}>
+        <Tooltip text={text}>
             <img
                 src={lockIcon}
                 alt="Locked"
@@ -124,6 +124,26 @@ export function buildTree(
             items: node.children ? buildTree(node.children, lockStates, lockOwners, locksByPath) : undefined,
         }
     })
+}
+
+/**
+ * Locates a file tree node by its repository-relative path, walking the tree
+ * depth-first from the given roots.
+ * @param roots The root-level file tree nodes.
+ * @param path The repository-relative path to locate.
+ * @returns The matching node, or `undefined` if no node has that path.
+ */
+export function findNodeByPath(roots: FileTreeNode[], path: string): FileTreeNode | undefined {
+    for (const node of roots) {
+        if (node.path === path) return node
+
+        if (node.children) {
+            const found = findNodeByPath(node.children, path)
+            if (found) return found
+        }
+    }
+
+    return undefined
 }
 
 /**

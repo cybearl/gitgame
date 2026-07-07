@@ -7,7 +7,7 @@ import StatusBar from "@renderer/components/ui/statusBar"
 import StatusBarField from "@renderer/components/ui/statusBar/StatusBarField"
 import StatusTaskField from "@renderer/components/ui/statusBar/StatusTaskField"
 import TitleBar from "@renderer/components/ui/TitleBar"
-import TreeView from "@renderer/components/ui/treeView"
+import Workspace from "@renderer/components/ui/workspace"
 import useMenuShortcuts from "@renderer/hooks/useMenuShortcuts"
 import { useCallback, useEffect, useMemo } from "react"
 import { createScrollbars } from "react95"
@@ -78,21 +78,7 @@ function AppShell() {
 
             <MenuBar menus={menus} onAction={handleMenuAction} />
 
-            <div className="relative w-full flex-1 overflow-hidden">
-                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                    <img
-                        src="./assets/images/cthulhu.png"
-                        alt=""
-                        className="w-[8%] [image-rendering:pixelated] opacity-15"
-                    />
-                </div>
-
-                {currentProject && (
-                    <div className="relative h-full w-full">
-                        <TreeView />
-                    </div>
-                )}
-            </div>
+            <div className="relative w-full flex-1 overflow-hidden">{currentProject && <Workspace />}</div>
 
             <StatusBar>
                 <StatusBarField grow>{currentProject ? currentProject.path : "No project open"}</StatusBarField>

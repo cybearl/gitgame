@@ -24,13 +24,17 @@ type MenuState = {
     othersPaths: string[]
 }
 
-export default function TreeView() {
+type TreeViewProps = {
+    selected: string | undefined
+    onSelect: (id: string) => void
+}
+
+export default function TreeView({ selected, onSelect }: TreeViewProps) {
     const { fileTree, locksByPath, lock, unlock } = useTreeContext()
 
     const containerRef = useRef<HTMLDivElement>(null)
 
     const [expanded, setExpanded] = useState<string[]>([])
-    const [selected, setSelected] = useState<string>()
     const [menu, setMenu] = useState<MenuState | null>(null)
 
     /**
@@ -117,6 +121,7 @@ export default function TreeView() {
             confirmLabel: "Force unlock",
             isDestructive: true,
         })
+
         if (!confirmed) return
 
         reportLockFailures(await unlock(othersPaths, true))
@@ -129,7 +134,7 @@ export default function TreeView() {
                     tree={tree}
                     expanded={expanded}
                     selected={selected}
-                    onNodeSelect={(_, id) => setSelected(id)}
+                    onNodeSelect={(_, id) => onSelect(id)}
                     onNodeToggle={(_, ids) => setExpanded(ids)}
                 />
             </div>
