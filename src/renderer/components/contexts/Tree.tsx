@@ -1,4 +1,5 @@
 import { useProjectContext } from "@renderer/components/contexts/Project"
+import { useStatusContext } from "@renderer/components/contexts/Status"
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react"
 import type { LfsLock, LfsLockResult } from "@/main/types/lfs"
 import type { FileTreeNode } from "@/main/types/tree"
@@ -31,29 +32,29 @@ type TreeProviderProps = {
 }
 
 export default function TreeProvider({ children }: TreeProviderProps) {
-    const { currentProject } = useProjectContext()
-    const projectPath = currentProject?.path ?? null
-
     const [fileTree, setFileTree] = useState<FileTreeNode[]>([])
     const [locksByPath, setLocksByPath] = useState<Map<string, LfsLock>>(new Map())
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<Error | null>(null)
 
+    const { currentProject } = useProjectContext()
+    const { runTask } = useStatusContext()
+
     /**
      * Reloads just the LFS locks for the current project.
      */
     const refreshLocks = useCallback(async () => {
-        if (!projectPath) {
+        if (!currentProject?.path) {
             setLocksByPath(new Map())
             return
         }
 
         try {
-            setLocksByPath(indexLocks(await window.api.lfs.listLocks(projectPath)))
+            setLocksByPath(indexLocks(await window.api.lfs.listLocks(currentProject?.path ?? null)))
         } catch (err) {
             setError(err instanceof Error ? err : new Error(String(err)))
         }
-    }, [projectPath])
+    }, [currentProject?.path])
 
     /**
      * Reloads the file tree and the LFS locks for the current project.
@@ -61,7 +62,7 @@ export default function TreeProvider({ children }: TreeProviderProps) {
     const refresh = useCallback(async () => {
         setError(null)
 
-        if (!projectPath) {
+        if (!currentProject?.path) {
             setFileTree([])
             setLocksByPath(new Map())
             return
@@ -71,7 +72,7 @@ export default function TreeProvider({ children }: TreeProviderProps) {
 
         // Sets the cached locks immediately if available
         try {
-            setLocksByPath(indexLocks(await window.api.lfs.getCachedLocks(projectPath)))
+            setLocksByPath(indexLocks(await window.api.lfs.getCachedLocks(currentProject?.path ?? null)))
         } catch {
             // A cache miss is expected on first-ever open and must not block refresh
         }
@@ -79,14 +80,14 @@ export default function TreeProvider({ children }: TreeProviderProps) {
         // The tree and the locks load in parallel so a slow git-lfs call does not
         // delay the tree render, and each surfaces as soon as it is ready
         const treePromise = window.api.tree
-            .getFileTree(projectPath)
+            .getFileTree(currentProject?.path ?? null)
             .then(setFileTree)
             .catch(err => setError(err instanceof Error ? err : new Error(String(err))))
 
         await Promise.all([treePromise, refreshLocks()])
 
         setIsLoading(false)
-    }, [projectPath, refreshLocks])
+    }, [refreshLocks, currentProject?.path])
 
     /**
      * Locks the given paths, then refreshes the lock state.
@@ -94,18 +95,22 @@ export default function TreeProvider({ children }: TreeProviderProps) {
      */
     const lock = useCallback(
         async (paths: string[]): Promise<LfsLockResult[]> => {
-            if (!projectPath) return []
+            if (!currentProject?.path) return []
+
+            const label = `Locking ${paths.length} ${paths.length === 1 ? "file" : "files"}...`
 
             try {
-                const results = await window.api.lfs.lockPaths(projectPath, paths)
-                await refreshLocks()
-                return results
+                return await runTask(label, async () => {
+                    const results = await window.api.lfs.lockPaths(currentProject?.path ?? null, paths)
+                    await refreshLocks()
+                    return results
+                })
             } catch (err) {
                 setError(err instanceof Error ? err : new Error(String(err)))
                 return []
             }
         },
-        [projectPath, refreshLocks],
+        [currentProject?.path, refreshLocks, runTask],
     )
 
     /**
@@ -115,18 +120,23 @@ export default function TreeProvider({ children }: TreeProviderProps) {
      */
     const unlock = useCallback(
         async (paths: string[], force?: boolean): Promise<LfsLockResult[]> => {
-            if (!projectPath) return []
+            if (!currentProject?.path) return []
+
+            const verb = force ? "Force-unlocking" : "Unlocking"
+            const label = `${verb} ${paths.length} ${paths.length === 1 ? "file" : "files"}...`
 
             try {
-                const results = await window.api.lfs.unlockPaths(projectPath, paths, force)
-                await refreshLocks()
-                return results
+                return await runTask(label, async () => {
+                    const results = await window.api.lfs.unlockPaths(currentProject?.path ?? null, paths, force)
+                    await refreshLocks()
+                    return results
+                })
             } catch (err) {
                 setError(err instanceof Error ? err : new Error(String(err)))
                 return []
             }
         },
-        [projectPath, refreshLocks],
+        [currentProject?.path, refreshLocks, runTask],
     )
 
     // Reload whenever the current project changes

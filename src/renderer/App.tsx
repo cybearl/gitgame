@@ -1,9 +1,11 @@
 import computerIcon from "@react95-icons/Computer3_16x16_4.png"
 import ProjectProvider, { useProjectContext } from "@renderer/components/contexts/Project"
+import StatusProvider from "@renderer/components/contexts/Status"
 import TreeProvider from "@renderer/components/contexts/Tree"
 import MenuBar from "@renderer/components/ui/menuBar"
 import StatusBar from "@renderer/components/ui/statusBar"
 import StatusBarField from "@renderer/components/ui/statusBar/StatusBarField"
+import StatusTaskField from "@renderer/components/ui/statusBar/StatusTaskField"
 import TitleBar from "@renderer/components/ui/TitleBar"
 import TreeView from "@renderer/components/ui/treeView"
 import useMenuShortcuts from "@renderer/hooks/useMenuShortcuts"
@@ -26,7 +28,7 @@ function AppShell() {
      * The main application window title (falling back to just the app name when no project is open).
      */
     const windowTitle = useMemo(() => {
-        const title = `${APP_CONFIG.title} v${window.api.app.version.startsWith("0.0.0") ? "DEV" : window.api.app.version}`
+        const title = `${APP_CONFIG.title} ${window.api.app.version.startsWith("0.0.0") ? "[DEV]" : `v${window.api.app.version}`}`
         return currentProject ? `${currentProject.name} - ${title}` : title
     }, [currentProject])
 
@@ -79,7 +81,7 @@ function AppShell() {
             <div className="relative w-full flex-1 overflow-hidden">
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                     <img
-                        src="/assets/images/cthulhu.png"
+                        src="./assets/images/cthulhu.png"
                         alt=""
                         className="w-[8%] [image-rendering:pixelated] opacity-15"
                     />
@@ -94,6 +96,7 @@ function AppShell() {
 
             <StatusBar>
                 <StatusBarField grow>{currentProject ? currentProject.path : "No project open"}</StatusBarField>
+                <StatusTaskField />
             </StatusBar>
         </MainLayout>
     )
@@ -111,11 +114,13 @@ export default function App() {
         <ThemeProvider theme={originalTheme}>
             <GlobalScrollbars />
 
-            <ProjectProvider>
-                <TreeProvider>
-                    <AppShell />
-                </TreeProvider>
-            </ProjectProvider>
+            <StatusProvider>
+                <ProjectProvider>
+                    <TreeProvider>
+                        <AppShell />
+                    </TreeProvider>
+                </ProjectProvider>
+            </StatusProvider>
         </ThemeProvider>
     )
 }
