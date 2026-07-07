@@ -14,6 +14,7 @@ export type ProjectContextType = {
     addLocalProject: () => Promise<void>
     openProject: (dir: string) => Promise<void>
     removeRecentProject: (dir: string) => Promise<void>
+    clearRecentProjects: () => Promise<void>
     closeProject: () => void
 }
 
@@ -94,6 +95,13 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
     }, [])
 
     /**
+     * Clears every entry from the recent projects list.
+     */
+    const clearRecentProjects = useCallback(async () => {
+        setRecentProjects(await window.api.project.clearRecent())
+    }, [])
+
+    /**
      * Closes the current project without affecting the recent projects list.
      */
     const closeProject = useCallback(() => setCurrentProject(null), [])
@@ -135,6 +143,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
                 addLocalProject,
                 openProject,
                 removeRecentProject,
+                clearRecentProjects,
                 closeProject,
             }}
         >

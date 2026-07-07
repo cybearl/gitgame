@@ -67,6 +67,7 @@ export type GitgameApi = {
         open: (dir: string) => Promise<OpenProjectResult>
         getRecent: () => Promise<Project[]>
         removeRecent: (dir: string) => Promise<Project[]>
+        clearRecent: () => Promise<Project[]>
         getPreferences: () => Promise<AppPreferences>
         setPreferences: (preferences: Partial<AppPreferences>) => Promise<AppPreferences>
     }

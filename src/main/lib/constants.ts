@@ -33,6 +33,7 @@ const CONSTANTS = {
         projectOpen: "project:open",
         projectGetRecent: "project:get-recent",
         projectRemoveRecent: "project:remove-recent",
+        projectClearRecent: "project:clear-recent",
         projectGetPreferences: "project:get-preferences",
         projectSetPreferences: "project:set-preferences",
         // Shell

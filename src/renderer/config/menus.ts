@@ -6,6 +6,7 @@ import type { Project } from "@/main/types/store"
 export type MenuAction =
     | { type: "project:add-local" }
     | { type: "project:open"; path: string }
+    | { type: "project:clear-recent" }
     | { type: "window:close" }
     | { type: "view:reload" }
     | { type: "shell:open-external"; url: string }
@@ -65,7 +66,7 @@ function buildRecentProjectsItems(recentProjects: Project[], currentProject: Pro
         ]
     }
 
-    return recentProjects.map(project => ({
+    const projectItems: TopLevelMenuEntry[] = recentProjects.map(project => ({
         type: "item",
         label: currentProject?.name === project.name ? `${project.name} (current)` : project.name,
         action: {
@@ -73,6 +74,16 @@ function buildRecentProjectsItems(recentProjects: Project[], currentProject: Pro
             path: project.path,
         },
     }))
+
+    return [
+        ...projectItems,
+        { type: "separator" },
+        {
+            type: "item",
+            label: "Clear Recent Projects",
+            action: { type: "project:clear-recent" },
+        },
+    ]
 }
 
 /**
