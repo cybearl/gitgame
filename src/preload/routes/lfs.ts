@@ -7,6 +7,7 @@ import { ipcRenderer } from "electron"
  */
 const lfsApiRoutes: GitgameApi["lfs"] = {
     listLocks: dir => ipcRenderer.invoke(CONSTANTS.ipc.lfsListLocks, dir),
+    getCachedLocks: dir => ipcRenderer.invoke(CONSTANTS.ipc.lfsGetCachedLocks, dir),
     getLockableFiles: dir => ipcRenderer.invoke(CONSTANTS.ipc.lfsGetLockableFiles, dir),
     lockPaths: (dir, paths) => ipcRenderer.invoke(CONSTANTS.ipc.lfsLockPaths, dir, paths),
     unlockPaths: (dir, paths, force) => ipcRenderer.invoke(CONSTANTS.ipc.lfsUnlockPaths, dir, paths, force),

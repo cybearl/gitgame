@@ -64,6 +64,8 @@ export function renderLockIcon(
             <img
                 src={lockIcon}
                 alt="Locked"
+                decoding="sync"
+                fetchPriority="high"
                 className={cn(
                     "size-4 [image-rendering:pixelated]",
                     fileLock && !fileLock.isMine && "opacity-60",

@@ -21,8 +21,8 @@ jobs:
         if: "!contains(github.event.head_commit.message, '[skip ci]')"
         runs-on: ubuntu-latest
         outputs:
-            new-release-published: ${{ steps.dry-run.outputs.new-release-published }}
-            new-release-version: ${{ steps.dry-run.outputs.new-release-version }}
+            new-release-published: ${{ steps.dry-run.outputs.new_release_published }}
+            new-release-version: ${{ steps.dry-run.outputs.new_release_version }}
 
         steps:
             - name: Checkout repository

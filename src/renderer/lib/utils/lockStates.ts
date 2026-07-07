@@ -11,6 +11,15 @@ import type { FileTreeNode } from "@/main/types/tree"
 export type NodeLockState = "unlockable" | "unlocked" | "locked" | "partial"
 
 /**
+ * Builds the path-keyed lock map consumed by the tree from a flat list of locks.
+ * @param locks The locks to index.
+ * @returns The locks keyed by repository-relative path.
+ */
+export function indexLocks(locks: LfsLock[]): Map<string, LfsLock> {
+    return new Map(locks.map(lock => [lock.path, lock]))
+}
+
+/**
  * The number of locked files held by a single owner within a node's subtree.
  */
 export type LockOwnerCount = {

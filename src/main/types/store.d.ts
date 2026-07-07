@@ -1,3 +1,5 @@
+import type { LfsLock } from "@/main/types/lfs"
+
 /**
  * What GitGame should do with the previously opened project when it launches.
  */
@@ -26,4 +28,5 @@ export type AppConfig = {
     version: number
     preferences: AppPreferences
     recentProjects: Project[]
+    lfsLockCache: Record<string, LfsLock[]>
 }
