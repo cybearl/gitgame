@@ -1,4 +1,5 @@
 @layer base {
+
     /*
      * Inlined from `react95`'s `styleReset` so the renderer no longer needs a
      * styled-components `createGlobalStyle` wrapper just to inject these rules.
@@ -198,6 +199,16 @@ details > summary::before {
  * Draws the classic Win95 sizer-grip pattern in the ScrollView corner between
  * the vertical and horizontal scrollbars.
  */
+/**
+ * Emphasizes the currently selected tree item without cascading into descendants
+ * of a selected folder. Uses `text-shadow` to simulate bold so the pixel-font
+ * glyph metrics stay identical to the regular weight, avoiding any reflow.
+ */
+.tree-scrollview li[aria-selected="true"] > button,
+.tree-scrollview li[aria-selected="true"] > details > summary {
+    text-shadow: 1px 0 currentColor;
+}
+
 .tree-scrollview > div::-webkit-scrollbar-corner {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cg fill='%23ffffff'%3E%3Crect x='10' y='4' width='2' height='2'/%3E%3Crect x='6' y='8' width='2' height='2'/%3E%3Crect x='10' y='8' width='2' height='2'/%3E%3Crect x='2' y='12' width='2' height='2'/%3E%3Crect x='6' y='12' width='2' height='2'/%3E%3Crect x='10' y='12' width='2' height='2'/%3E%3C/g%3E%3Cg fill='%23808080'%3E%3Crect x='12' y='6' width='2' height='2'/%3E%3Crect x='8' y='10' width='2' height='2'/%3E%3Crect x='12' y='10' width='2' height='2'/%3E%3Crect x='4' y='14' width='2' height='2'/%3E%3Crect x='8' y='14' width='2' height='2'/%3E%3Crect x='12' y='14' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
     background-position: bottom right;
