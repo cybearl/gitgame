@@ -10,13 +10,7 @@ import {
     computeLockOwners,
     computeLockStates,
 } from "@/renderer/lib/utils/lockStates"
-import {
-    buildTree,
-    collectMatchingFiles,
-    findNodeByPath,
-    reportLockFailures,
-    resolveNode,
-} from "@/renderer/lib/utils/treeView"
+import { buildTree, findNodeByPath, reportLockFailures, resolveNode } from "@/renderer/lib/utils/treeView"
 
 /**
  * The state of the open context menu, anchored to a right-clicked node.
@@ -34,10 +28,10 @@ type MenuState = {
 type TreeViewProps = {
     selected: string | undefined
     onSelect: (id: string) => void
-    query?: string
+    matches: FileTreeNode[] | null
 }
 
-export default function TreeView({ selected, onSelect, query }: TreeViewProps) {
+export default function TreeView({ selected, onSelect, matches }: TreeViewProps) {
     const containerRef = useRef<HTMLDivElement>(null)
 
     const [expanded, setExpanded] = useState<string[]>([])
@@ -45,7 +39,7 @@ export default function TreeView({ selected, onSelect, query }: TreeViewProps) {
 
     const { fileTree, locksByPath, lock, unlock } = useTreeContext()
 
-    const isSearching = Boolean(query?.trim())
+    const isSearching = matches !== null
 
     /**
      * The computed lock states for the file tree, always derived from the full
@@ -57,15 +51,6 @@ export default function TreeView({ selected, onSelect, query }: TreeViewProps) {
      * The locked-file counts by owner for every node in the full file tree.
      */
     const lockOwners = useMemo(() => computeLockOwners(fileTree, locksByPath), [fileTree, locksByPath])
-
-    /**
-     * The flat list of files matching the search query, or an empty list when
-     * the user is not searching.
-     */
-    const matches = useMemo(
-        () => (isSearching ? collectMatchingFiles(fileTree, query ?? "") : []),
-        [isSearching, fileTree, query],
-    )
 
     /**
      * The full file tree mapped to react95 tree leaves, only built when not
@@ -166,18 +151,8 @@ export default function TreeView({ selected, onSelect, query }: TreeViewProps) {
 
     return (
         <>
-            {isSearching ? (
-                <FlatResultsList
-                    matches={matches}
-                    selected={selected}
-                    onSelect={onSelect}
-                    onContextMenu={openMenuForNode}
-                    lockStates={lockStates}
-                    lockOwners={lockOwners}
-                    locksByPath={locksByPath}
-                />
-            ) : (
-                <ScrollView className="tree-scrollview h-full w-full [&>div]:relative [&>div]:z-10">
+            <ScrollView className="tree-scrollview h-full w-full [&>div]:relative [&>div]:z-10">
+                {matches === null ? (
                     <div ref={containerRef} onContextMenu={handleTreeContextMenu}>
                         <React95TreeView
                             tree={tree}
@@ -187,8 +162,18 @@ export default function TreeView({ selected, onSelect, query }: TreeViewProps) {
                             onNodeToggle={(_, ids) => setExpanded(ids)}
                         />
                     </div>
-                </ScrollView>
-            )}
+                ) : (
+                    <FlatResultsList
+                        matches={matches}
+                        selected={selected}
+                        onSelect={onSelect}
+                        onContextMenu={openMenuForNode}
+                        lockStates={lockStates}
+                        lockOwners={lockOwners}
+                        locksByPath={locksByPath}
+                    />
+                )}
+            </ScrollView>
 
             {menu && (
                 <TreeViewContextMenu

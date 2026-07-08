@@ -83,7 +83,7 @@ export default function FlatResultsRow({
         >
             <div className="flex w-full items-center gap-1.5">
                 <span className="flex size-4 shrink-0 items-center justify-center">{icon}</span>
-                <span className="shrink-0 truncate">{node.name}</span>
+                <span className="min-w-0 truncate">{node.name}</span>
             </div>
             {parentPath && <span className="truncate text-xs opacity-60">{parentPath}</span>}
         </button>

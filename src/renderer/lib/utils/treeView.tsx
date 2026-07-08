@@ -127,38 +127,6 @@ export function buildTree(
 }
 
 /**
- * Collects every file node whose name matches the search query, returning them
- * as a flat list so the search UI can render results without any surrounding
- * folder chrome.
- * @param nodes The root-level file tree nodes.
- * @param query The search query, trimmed and lowercased before matching.
- * @returns The matching file nodes in depth-first order.
- */
-export function collectMatchingFiles(nodes: FileTreeNode[], query: string): FileTreeNode[] {
-    const needle = query.trim().toLowerCase()
-    if (!needle) return []
-
-    const results: FileTreeNode[] = []
-
-    /**
-     * Recursively visits a node, pushing matching files onto the result list.
-     * @param node The node to visit.
-     */
-    const visit = (node: FileTreeNode) => {
-        if (node.type === "file") {
-            if (node.name.toLowerCase().includes(needle)) results.push(node)
-            return
-        }
-
-        for (const child of node.children ?? []) visit(child)
-    }
-
-    for (const node of nodes) visit(node)
-
-    return results
-}
-
-/**
  * Locates a file tree node by its repository-relative path, walking the tree
  * depth-first from the given roots.
  * @param roots The root-level file tree nodes.
