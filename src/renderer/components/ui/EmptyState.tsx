@@ -12,7 +12,7 @@ export default function EmptyState({ icon, title, description }: EmptyStateProps
                 alt=""
                 decoding="sync"
                 fetchPriority="high"
-                className="size-8 opacity-70 [image-rendering:pixelated]"
+                className="size-8 opacity-60 [image-rendering:pixelated]"
             />
             <div className="text-sm">{title}</div>
             <div className="text-xs opacity-60">{description}</div>

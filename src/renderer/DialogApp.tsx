@@ -51,7 +51,7 @@ export default function DialogApp() {
                     <div className="min-h-0 flex-1 overflow-auto">
                         <p className="text-sm whitespace-pre-wrap">{options?.message}</p>
 
-                        {options?.detail && <p className="mt-2 text-xs opacity-80">{options.detail}</p>}
+                        {options?.detail && <p className="mt-2 text-xs opacity-60">{options.detail}</p>}
                     </div>
 
                     <div className="mt-4 flex shrink-0 justify-end gap-2">

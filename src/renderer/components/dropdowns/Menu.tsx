@@ -41,7 +41,7 @@ export default function MenuDropdown({ items, onAction, onDismiss, className }: 
                     }}
                 >
                     <span>{entry.label}</span>
-                    {entry.accelerator && <span className="text-xs opacity-70">{entry.accelerator}</span>}
+                    {entry.accelerator && <span className="text-xs opacity-60">{entry.accelerator}</span>}
                 </MenuListItem>
             )
         },

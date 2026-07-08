@@ -159,7 +159,7 @@ export default function FilesPane({ selected, onSelect, className, style }: File
             </div>
 
             {isSearching && matches && (
-                <div className="shrink-0 px-2 py-0.5 text-xs opacity-70 select-none">
+                <div className="shrink-0 pl-1 pt-1.5 text-xs select-none">
                     {matches.length} {matches.length === 1 ? "match" : "matches"}
                 </div>
             )}

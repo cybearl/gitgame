@@ -58,14 +58,6 @@ export default function Workspace() {
 
     return (
         <div className="relative h-full w-full">
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <img
-                    src="./assets/images/cthulhu.png"
-                    alt=""
-                    className="w-[8%] opacity-15 [image-rendering:pixelated] select-none"
-                />
-            </div>
-
             <div className="relative flex h-full w-full">
                 <FilesPane
                     selected={selectedPath}

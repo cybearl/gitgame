@@ -54,7 +54,7 @@ export default function StatusTaskField({ className }: StatusTaskFieldProps) {
             className={cn("flex items-center gap-2 px-2 py-0.5 text-xs min-w-48 max-w-1/2 overflow-hidden", className)}
         >
             <div className="min-w-0 flex-1">
-                <span className={cn("block truncate select-none", tasks.length === 0 && "opacity-50")}>
+                <span className={cn("block truncate select-none", tasks.length === 0 && "opacity-60")}>
                     {currentTask.label}
                 </span>
             </div>
