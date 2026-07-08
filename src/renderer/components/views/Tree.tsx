@@ -1,9 +1,9 @@
 import { useTreeContext } from "@renderer/components/contexts/Tree"
-import ContextMenu from "@renderer/components/ui/treeView/ContextMenu"
-import FlatResults from "@renderer/components/ui/treeView/FlatResults"
 import { type MouseEvent, useCallback, useMemo, useRef, useState } from "react"
 import { TreeView as React95TreeView, ScrollView } from "react95"
 import type { FileTreeNode } from "@/main/types/tree"
+import FlatResultsList from "@/renderer/components/lists/FlatResults"
+import TreeViewContextMenu from "@/renderer/components/menus/TreeViewContext"
 import {
     collectLockablePaths,
     collectLockedPaths,
@@ -165,9 +165,9 @@ export default function TreeView({ selected, onSelect, query }: TreeViewProps) {
     }, [menu, unlock, dismissMenu])
 
     return (
-        <ScrollView className="tree-scrollview h-full w-full [&>div]:relative [&>div]:z-10">
+        <>
             {isSearching ? (
-                <FlatResults
+                <FlatResultsList
                     matches={matches}
                     selected={selected}
                     onSelect={onSelect}
@@ -177,19 +177,21 @@ export default function TreeView({ selected, onSelect, query }: TreeViewProps) {
                     locksByPath={locksByPath}
                 />
             ) : (
-                <div ref={containerRef} onContextMenu={handleTreeContextMenu}>
-                    <React95TreeView
-                        tree={tree}
-                        expanded={expanded}
-                        selected={selected}
-                        onNodeSelect={(_, id) => onSelect(id)}
-                        onNodeToggle={(_, ids) => setExpanded(ids)}
-                    />
-                </div>
+                <ScrollView className="tree-scrollview h-full w-full [&>div]:relative [&>div]:z-10">
+                    <div ref={containerRef} onContextMenu={handleTreeContextMenu}>
+                        <React95TreeView
+                            tree={tree}
+                            expanded={expanded}
+                            selected={selected}
+                            onNodeSelect={(_, id) => onSelect(id)}
+                            onNodeToggle={(_, ids) => setExpanded(ids)}
+                        />
+                    </div>
+                </ScrollView>
             )}
 
             {menu && (
-                <ContextMenu
+                <TreeViewContextMenu
                     x={menu.x}
                     y={menu.y}
                     canLock={menu.canLock}
@@ -201,6 +203,6 @@ export default function TreeView({ selected, onSelect, query }: TreeViewProps) {
                     onDismiss={dismissMenu}
                 />
             )}
-        </ScrollView>
+        </>
     )
 }

@@ -1,9 +1,9 @@
 import AppRoot from "@renderer/components/layouts/AppRoot"
 import MainLayout from "@renderer/components/layouts/main"
-import TitleBar from "@renderer/components/ui/TitleBar"
 import { useCallback, useEffect, useState } from "react"
 import { Button } from "react95"
 import type { DialogOptions } from "@/main/types/dialog"
+import TitleBar from "@/renderer/components/bars/Title"
 
 export default function DialogApp() {
     const [options, setOptions] = useState<DialogOptions | null>(null)

@@ -1,9 +1,9 @@
 import { cn } from "@cybearl/cypack/frontend"
-import TreeView from "@renderer/components/ui/treeView"
 import WORKSPACE_CONFIG from "@renderer/config/workspace"
 import useDebouncedValue from "@renderer/hooks/useDebouncedValue"
 import { type ChangeEvent, type CSSProperties, useCallback, useState } from "react"
 import { TextInput } from "react95"
+import TreeView from "@/renderer/components/views/Tree"
 
 type FilesPaneProps = {
     selected: string | undefined

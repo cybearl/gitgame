@@ -36,6 +36,7 @@
         "@cybearl/cypack": "^1.11.10",
         "@react95/icons": "^2.5.0",
         "electron-updater": "^6.3.9",
+        "react-window": "^2.2.7",
         "react95": "^4.0.0",
         "styled-components": "^6.4.3"
     },

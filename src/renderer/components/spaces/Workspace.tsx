@@ -1,8 +1,8 @@
 import { useTreeContext } from "@renderer/components/contexts/Tree"
-import DetailsPane from "@renderer/components/ui/workspace/DetailsPane"
-import FilesPane from "@renderer/components/ui/workspace/FilesPane"
 import useResizablePaneWidth from "@renderer/hooks/useResizablePaneWidth"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import DetailsPane from "@/renderer/components/panes/Details"
+import FilesPane from "@/renderer/components/panes/Files"
 import WORKSPACE_CONFIG from "@/renderer/config/workspace"
 import { findNodeByPath } from "@/renderer/lib/utils/treeView"
 

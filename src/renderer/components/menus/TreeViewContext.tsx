@@ -1,10 +1,7 @@
 import { type MouseEvent, useEffect } from "react"
 import { MenuList, MenuListItem, Separator } from "react95"
 
-/**
- * The props for the tree `ContextMenu` component.
- */
-type ContextMenuProps = {
+type TreeViewContextMenuProps = {
     x: number
     y: number
     canLock: boolean
@@ -16,7 +13,7 @@ type ContextMenuProps = {
     onDismiss: () => void
 }
 
-export default function ContextMenu({
+export default function TreeViewContextMenu({
     x,
     y,
     canLock,
@@ -26,7 +23,7 @@ export default function ContextMenu({
     onUnlock,
     onForceUnlock,
     onDismiss,
-}: ContextMenuProps) {
+}: TreeViewContextMenuProps) {
     // Dismiss the menu on any outside click or when the escape key is pressed
     useEffect(() => {
         /**

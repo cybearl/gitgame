@@ -3087,6 +3087,11 @@ react-refresh@^0.18.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.18.0.tgz#2dce97f4fe932a4d8142fa1630e475c1729c8062"
   integrity sha512-QgT5//D3jfjJb6Gsjxv0Slpj23ip+HtOpnNgnb2S5zU3CB26G/IDPGoy4RJB42wzFE46DRsstbW6tKHoKbhAxw==
 
+react-window@^2.2.7:
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.7.tgz#7f3d31695d4323701b7e80dfc9bbbe1d4a0c160f"
+  integrity sha512-SH5nvfUQwGHYyriDUAOt7wfPsfG9Qxd6OdzQxl5oQ4dsSsUicqQvjV7dR+NqZ4coY0fUn3w1jnC5PwzIUWEg5w==
+
 react95@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/react95/-/react95-4.0.0.tgz#9e953aa379573ceb528f95139451bbf7df6fabd7"

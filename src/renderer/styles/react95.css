@@ -1,5 +1,4 @@
 @layer base {
-
     /*
      * Inlined from `react95`'s `styleReset` so the renderer no longer needs a
      * styled-components `createGlobalStyle` wrapper just to inject these rules.

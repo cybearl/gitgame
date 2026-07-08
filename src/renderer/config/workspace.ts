@@ -22,6 +22,12 @@ const WORKSPACE_CONFIG = {
      * is propagated to the tree filter, in milliseconds.
      */
     searchDebounceMs: 150,
+
+    /**
+     * The fixed pixel height of every row in the virtualized flat search results
+     * list, sized to fit the two-line layout (filename + parent path).
+     */
+    searchResultRowHeight: 48,
 }
 
 export default WORKSPACE_CONFIG
