@@ -127,70 +127,35 @@ export function buildTree(
 }
 
 /**
- * The result of filtering the file tree to a search query.
- */
-export type FilteredTree = {
-    tree: FileTreeNode[]
-    matchAncestorPaths: string[]
-}
-
-/**
- * Filters the file tree to keep only nodes whose name matches the query and
- * every ancestor of a match, so the tree structure around results remains
- * navigable.
+ * Collects every file node whose name matches the search query, returning them
+ * as a flat list so the search UI can render results without any surrounding
+ * folder chrome.
  * @param nodes The root-level file tree nodes.
  * @param query The search query, trimmed and lowercased before matching.
- * @returns The filtered tree plus the paths of every folder that has a match somewhere in its subtree.
+ * @returns The matching file nodes in depth-first order.
  */
-export function filterTree(nodes: FileTreeNode[], query: string): FilteredTree {
+export function collectMatchingFiles(nodes: FileTreeNode[], query: string): FileTreeNode[] {
     const needle = query.trim().toLowerCase()
-    if (!needle) {
-        return {
-            tree: nodes,
-            matchAncestorPaths: [],
-        }
-    }
+    if (!needle) return []
 
-    const matchAncestorPaths: string[] = []
+    const results: FileTreeNode[] = []
 
     /**
-     * Recursively filters a single node's subtree, returning `null` when the
-     * subtree has no match anywhere in it.
+     * Recursively visits a node, pushing matching files onto the result list.
      * @param node The node to visit.
-     * @returns The kept node with filtered children, or `null` to prune it.
      */
-    const visit = (node: FileTreeNode): FileTreeNode | null => {
-        const selfMatches = node.name.toLowerCase().includes(needle)
-
-        if (node.type === "file") return selfMatches ? node : null
-
-        const filteredChildren: FileTreeNode[] = []
-
-        for (const child of node.children ?? []) {
-            const kept = visit(child)
-            if (kept) filteredChildren.push(kept)
+    const visit = (node: FileTreeNode) => {
+        if (node.type === "file") {
+            if (node.name.toLowerCase().includes(needle)) results.push(node)
+            return
         }
 
-        if (filteredChildren.length === 0 && !selfMatches) return null
-        if (filteredChildren.length > 0) matchAncestorPaths.push(node.path)
-
-        return {
-            ...node,
-            children: filteredChildren.length > 0 ? filteredChildren : undefined,
-        }
+        for (const child of node.children ?? []) visit(child)
     }
 
-    const tree: FileTreeNode[] = []
+    for (const node of nodes) visit(node)
 
-    for (const node of nodes) {
-        const kept = visit(node)
-        if (kept) tree.push(kept)
-    }
-
-    return {
-        tree,
-        matchAncestorPaths,
-    }
+    return results
 }
 
 /**

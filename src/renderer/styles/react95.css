@@ -205,7 +205,8 @@ details > summary::before {
  * glyph metrics stay identical to the regular weight, avoiding any reflow.
  */
 .tree-scrollview li[aria-selected="true"] > button,
-.tree-scrollview li[aria-selected="true"] > details > summary {
+.tree-scrollview li[aria-selected="true"] > details > summary,
+.tree-scrollview button[role="option"][aria-selected="true"] {
     text-shadow: 1px 0 currentColor;
 }
 
