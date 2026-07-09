@@ -14,6 +14,7 @@ const DEFAULT_APP_CONFIG: AppConfig = {
         isAdvancedSearchOpened: false,
         searchIncludePatterns: "",
         searchExcludePatterns: "",
+        isShowingMyLocksOnly: false,
     },
     recentProjects: [],
     lfsLockCache: {},

@@ -81,3 +81,16 @@ export async function getLog(dir: string, limit: number = GIT_CONFIG.defaultLogO
 
     return parseLog(result.stdout)
 }
+
+/**
+ * Reads the URL of the `origin` remote, if the repository has one configured.
+ * @param dir A path inside the repository.
+ * @returns The remote URL, or `null` when `origin` is not configured.
+ */
+export async function getRemoteUrl(dir: string): Promise<string | null> {
+    const result = await runGit(["remote", "get-url", "origin"], { cwd: dir })
+    if (result.exitCode !== 0) return null
+
+    const url = result.stdout.trim()
+    return url.length > 0 ? url : null
+}

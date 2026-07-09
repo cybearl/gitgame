@@ -14,6 +14,7 @@ const gitApiRoutes: GitgameApi["git"] = {
     getStatus: dir => ipcRenderer.invoke(CONSTANTS.ipc.gitGetStatus, dir),
     listBranches: dir => ipcRenderer.invoke(CONSTANTS.ipc.gitListBranches, dir),
     getLog: (dir, limit) => ipcRenderer.invoke(CONSTANTS.ipc.gitGetLog, dir, limit),
+    getRemoteUrl: dir => ipcRenderer.invoke(CONSTANTS.ipc.gitGetRemoteUrl, dir),
 }
 
 export default gitApiRoutes

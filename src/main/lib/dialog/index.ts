@@ -3,6 +3,7 @@ import CONSTANTS from "@main/lib/constants"
 import { attachWindowStateBroadcaster } from "@main/lib/window"
 import { BrowserWindow, ipcMain } from "electron"
 import DIALOG_CONFIG from "@/main/config/dialogs"
+import WINDOWS_CONFIG from "@/main/config/windows"
 import type { ConfirmDialogOptions, DialogOptions } from "@/main/types/dialog"
 
 /**
@@ -42,23 +43,11 @@ export function openDialog(parent: BrowserWindow | null, options: DialogOptions)
         const size = DIALOG_CONFIG.sizes[options.variant]
 
         const window = new BrowserWindow({
+            ...WINDOWS_CONFIG.dialog,
             parent: parent ?? undefined,
             modal: parent !== null,
-            frame: false,
-            resizable: false,
-            minimizable: false,
-            maximizable: false,
-            fullscreenable: false,
-            show: false,
-            center: true,
             width: size.width,
             height: size.height,
-            webPreferences: {
-                preload: path.join(__dirname, "..", "preload", "index.js"),
-                sandbox: false,
-                contextIsolation: true,
-                nodeIntegration: false,
-            },
         })
 
         pendingDialogs.set(window.id, { options, resolve })

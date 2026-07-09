@@ -1,165 +1,98 @@
 import { cn } from "@cybearl/cypack/frontend"
-import { useTreeContext } from "@renderer/components/contexts/Tree"
-import WORKSPACE_CONFIG from "@renderer/config/workspace"
-import useDebouncedValue from "@renderer/hooks/useDebouncedValue"
-import {
-    collectMatchingFiles,
-    parsePatternList,
-    persistSearchPreferences,
-    type SearchFilters,
-} from "@renderer/lib/utils/search"
-import { type ChangeEvent, type CSSProperties, useCallback, useEffect, useMemo, useState } from "react"
+import lockIcon from "@react95-icons/Lock_16x16_4.png"
+import { useTreeViewContext } from "@renderer/components/contexts/TreeView"
+import { type ChangeEvent, type CSSProperties, useCallback } from "react"
 import { Button, TextInput } from "react95"
 import TreeView from "@/renderer/components/views/Tree"
 
 type FilesPaneProps = {
-    selected: string | undefined
-    onSelect: (id: string) => void
     className?: string
     style?: CSSProperties
 }
 
-export default function FilesPane({ selected, onSelect, className, style }: FilesPaneProps) {
-    const [searchQuery, setSearchQuery] = useState("")
-    const [isRegexSearchQuery, setIsRegexSearchQuery] = useState(false)
-
-    const [isAdvancedSearchOpened, setIsAdvancedSearchOpened] = useState(false)
-
-    const [searchIncludePatterns, setSearchIncludePatterns] = useState("")
-    const [searchExcludePatterns, setSearchExcludePatterns] = useState("")
-
-    const { fileTree } = useTreeContext()
-
-    // Hydrate the persisted search preferences once on mount, so the search
-    // scope survives across sessions
-    useEffect(() => {
-        let cancelled = false
-
-        window.api.project
-            .getPreferences()
-            .then(preferences => {
-                if (cancelled) return
-
-                setIsRegexSearchQuery(preferences.searchIsRegex)
-                setIsAdvancedSearchOpened(preferences.isAdvancedSearchOpened)
-                setSearchIncludePatterns(preferences.searchIncludePatterns)
-                setSearchExcludePatterns(preferences.searchExcludePatterns)
-            })
-            .catch(error => {
-                console.error("Failed to load search preferences:", error)
-            })
-
-        return () => {
-            cancelled = true
-        }
-    }, [])
+export default function FilesPane({ className, style }: FilesPaneProps) {
+    const {
+        query,
+        isRegex,
+        isAdvancedOpen,
+        includeText,
+        excludeText,
+        isShowingMyLocksOnly,
+        matches,
+        isSearching,
+        setQuery,
+        setIsRegex,
+        setIsAdvancedOpen,
+        setIncludeText,
+        setExcludeText,
+        setIsShowingMyLocksOnly,
+        commitIncludeText,
+        commitExcludeText,
+    } = useTreeViewContext()
 
     /**
-     * The debounced filter inputs, so the expensive filter and re-render only
-     * run once the user pauses typing in any of them.
-     */
-    const debouncedQuery = useDebouncedValue(searchQuery, WORKSPACE_CONFIG.searchDebounceMs)
-    const debouncedInclude = useDebouncedValue(searchIncludePatterns, WORKSPACE_CONFIG.searchDebounceMs)
-    const debouncedExclude = useDebouncedValue(searchExcludePatterns, WORKSPACE_CONFIG.searchDebounceMs)
-
-    /**
-     * The compiled search filters, rebuilt whenever any debounced input or the
-     * regex toggle changes.
-     */
-    const filters = useMemo<SearchFilters>(
-        () => ({
-            query: debouncedQuery,
-            isRegex: isRegexSearchQuery,
-            include: parsePatternList(debouncedInclude),
-            exclude: parsePatternList(debouncedExclude),
-        }),
-        [debouncedQuery, isRegexSearchQuery, debouncedInclude, debouncedExclude],
-    )
-
-    const isSearching = filters.query.trim().length > 0
-
-    /**
-     * The flat list of files matching the current filters, or `null` when the
-     * user is not searching so the tree view keeps its full hierarchy.
-     */
-    const matches = useMemo(
-        () => (isSearching ? collectMatchingFiles(fileTree, filters) : null),
-        [isSearching, fileTree, filters],
-    )
-
-    /**
-     * Updates the searchQuery as the user types in the search input.
+     * Updates the query as the user types in the search input.
      * @param event The change event from the input.
      */
-    const handleQueryChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(event.target.value)
-    }, [])
+    const handleQueryChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            setQuery(event.target.value)
+        },
+        [setQuery],
+    )
 
     /**
      * Updates the include-globs input as the user types.
      * @param event The change event from the input.
      */
-    const handleIncludeChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        setSearchIncludePatterns(event.target.value)
-    }, [])
+    const handleIncludeChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            setIncludeText(event.target.value)
+        },
+        [setIncludeText],
+    )
 
     /**
      * Updates the exclude-globs input as the user types.
      * @param event The change event from the input.
      */
-    const handleExcludeChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        setSearchExcludePatterns(event.target.value)
-    }, [])
+    const handleExcludeChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
+            setExcludeText(event.target.value)
+        },
+        [setExcludeText],
+    )
 
     /**
-     * Persists the include-globs input on blur so cross-session state matches
-     * whatever the user last committed.
-     * @param event The blur event from the input.
-     */
-    const handleIncludeBlur = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        persistSearchPreferences({ searchIncludePatterns: event.target.value })
-    }, [])
-
-    /**
-     * Persists the exclude-globs input on blur so cross-session state matches
-     * whatever the user last committed.
-     * @param event The blur event from the input.
-     */
-    const handleExcludeBlur = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        persistSearchPreferences({ searchExcludePatterns: event.target.value })
-    }, [])
-
-    /**
-     * Toggles the regex interpretation of the searchQuery and persists it.
+     * Toggles the regex interpretation of the query.
      */
     const toggleRegex = useCallback(() => {
-        setIsRegexSearchQuery(previous => {
-            const next = !previous
-            persistSearchPreferences({ searchIsRegex: next })
-            return next
-        })
-    }, [])
+        setIsRegex(!isRegex)
+    }, [isRegex, setIsRegex])
 
     /**
-     * Toggles the visibility of the advanced include/exclude fields and persists
-     * the preference.
+     * Toggles the visibility of the advanced include/exclude fields.
      */
     const toggleAdvanced = useCallback(() => {
-        setIsAdvancedSearchOpened(previous => {
-            const next = !previous
-            persistSearchPreferences({ isAdvancedSearchOpened: next })
-            return next
-        })
-    }, [])
+        setIsAdvancedOpen(!isAdvancedOpen)
+    }, [isAdvancedOpen, setIsAdvancedOpen])
+
+    /**
+     * Toggles the "show only my locks" filter, pruning the tree to files the
+     * current user has locked (plus their ancestor folders).
+     */
+    const toggleShowingMyLocksOnly = useCallback(() => {
+        setIsShowingMyLocksOnly(!isShowingMyLocksOnly)
+    }, [isShowingMyLocksOnly, setIsShowingMyLocksOnly])
 
     return (
         <div className={cn("flex min-h-0 flex-col overflow-hidden", className)} style={style}>
             <div className="min-h-0 flex-1">
-                <TreeView selected={selected} onSelect={onSelect} matches={matches} />
+                <TreeView />
             </div>
 
             {isSearching && matches && (
-                <div className="shrink-0 pl-1 pt-1.5 text-xs select-none">
+                <div className="shrink-0 pt-1.5 pl-1 text-xs select-none">
                     {matches.length} {matches.length === 1 ? "match" : "matches"}
                 </div>
             )}
@@ -170,12 +103,12 @@ export default function FilesPane({ selected, onSelect, className, style }: File
                         fullWidth
                         placeholder="Search files..."
                         className="select-none"
-                        value={searchQuery}
+                        value={query}
                         onChange={handleQueryChange}
                     />
                     <Button
                         square
-                        active={isRegexSearchQuery}
+                        active={isRegex}
                         onClick={toggleRegex}
                         aria-label="Use regular expression"
                         title="Use regular expression"
@@ -184,33 +117,48 @@ export default function FilesPane({ selected, onSelect, className, style }: File
                     </Button>
                     <Button
                         square
-                        active={isAdvancedSearchOpened}
+                        active={isAdvancedOpen}
                         onClick={toggleAdvanced}
                         aria-label="Toggle files to include/exclude"
                         title="Toggle files to include/exclude"
                     >
                         ...
                     </Button>
+                    <Button
+                        square
+                        active={isShowingMyLocksOnly}
+                        onClick={toggleShowingMyLocksOnly}
+                        aria-label="Show only files I have locked"
+                        title="Show only files I have locked"
+                    >
+                        <img
+                            src={lockIcon}
+                            alt=""
+                            decoding="sync"
+                            fetchPriority="high"
+                            className="size-4 [image-rendering:pixelated]"
+                        />
+                    </Button>
                 </div>
 
-                {isAdvancedSearchOpened && (
+                {isAdvancedOpen && (
                     <>
                         <TextInput
                             fullWidth
                             placeholder="files to include (e.g. **/*.ts)"
                             className="select-none"
-                            value={searchIncludePatterns}
+                            value={includeText}
                             onChange={handleIncludeChange}
-                            onBlur={handleIncludeBlur}
+                            onBlur={commitIncludeText}
                         />
 
                         <TextInput
                             fullWidth
                             placeholder="files to exclude (e.g. **/node_modules/**)"
                             className="select-none"
-                            value={searchExcludePatterns}
+                            value={excludeText}
                             onChange={handleExcludeChange}
-                            onBlur={handleExcludeBlur}
+                            onBlur={commitExcludeText}
                         />
                     </>
                 )}

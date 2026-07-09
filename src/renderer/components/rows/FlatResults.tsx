@@ -1,32 +1,24 @@
 import { cn } from "@cybearl/cypack/frontend"
+import { useTreeContext } from "@renderer/components/contexts/Tree"
+import { useTreeViewContext } from "@renderer/components/contexts/TreeView"
 import { renderLockIcon, renderTypeIcon } from "@renderer/lib/utils/treeView"
-import { type MouseEvent, useMemo } from "react"
+import { useMemo } from "react"
 import type { RowComponentProps } from "react-window"
-import type { LfsLock } from "@/main/types/lfs"
 import type { FileTreeNode } from "@/main/types/tree"
-import type { LockOwnerCount, NodeLockState } from "@/renderer/lib/utils/lockStates"
 
+/**
+ * The shared per-row data forwarded to every virtualized row by react-window's
+ * `rowProps`, so each row renders from the same source-of-truth without new
+ * closures per render.
+ */
 export type FlatResultsRowData = {
     matches: FileTreeNode[]
-    selected: string | undefined
-    onSelect: (id: string) => void
-    onContextMenu: (event: MouseEvent<HTMLElement>, node: FileTreeNode) => void
-    lockStates: Map<string, NodeLockState>
-    lockOwners: Map<string, LockOwnerCount[]>
-    locksByPath: Map<string, LfsLock>
 }
 
-export default function FlatResultsRow({
-    index,
-    style,
-    matches,
-    selected,
-    onSelect,
-    onContextMenu,
-    lockStates,
-    lockOwners,
-    locksByPath,
-}: RowComponentProps<FlatResultsRowData>) {
+export default function FlatResultsRow({ index, style, matches }: RowComponentProps<FlatResultsRowData>) {
+    const { locksByPath } = useTreeContext()
+    const { selectedPath, lockStates, lockOwners, select, openMenu } = useTreeViewContext()
+
     /**
      * The file tree node for the current row.
      */
@@ -72,14 +64,14 @@ export default function FlatResultsRow({
         <button
             type="button"
             role="option"
-            aria-selected={selected === node.path}
+            aria-selected={selectedPath === node.path}
             style={style}
             className={cn(
                 "flex w-full flex-col gap-0.5 border-0 bg-transparent px-2 py-1 text-left",
                 "cursor-pointer font-inherit",
             )}
-            onClick={() => onSelect(node.path)}
-            onContextMenu={event => onContextMenu(event, node)}
+            onClick={() => select(node.path)}
+            onContextMenu={event => openMenu(event, node)}
         >
             <div className="flex w-full items-center gap-1.5">
                 <span className="flex size-4 shrink-0 items-center justify-center">{icon}</span>

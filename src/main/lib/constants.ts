@@ -20,6 +20,7 @@ const CONSTANTS = {
         gitGetStatus: "git:get-status",
         gitListBranches: "git:list-branches",
         gitGetLog: "git:get-log",
+        gitGetRemoteUrl: "git:get-remote-url",
         // LFS
         lfsListLocks: "lfs:list-locks",
         lfsGetCachedLocks: "lfs:get-cached-locks",

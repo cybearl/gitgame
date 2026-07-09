@@ -24,6 +24,7 @@ export type AppPreferences = {
     isAdvancedSearchOpened: boolean
     searchIncludePatterns: string
     searchExcludePatterns: string
+    isShowingMyLocksOnly: boolean
 }
 
 /**

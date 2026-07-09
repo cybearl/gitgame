@@ -127,6 +127,62 @@ export function buildTree(
 }
 
 /**
+ * Prunes the file tree to keep only file nodes that satisfy the predicate, plus
+ * every folder that has at least one kept descendant, so the caller renders a
+ * filtered subtree that still preserves the navigable folder hierarchy.
+ * @param nodes The root-level file tree nodes.
+ * @param keepFile The predicate applied to every file node.
+ * @returns The pruned tree.
+ */
+export function pruneTreeToPredicate(nodes: FileTreeNode[], keepFile: (node: FileTreeNode) => boolean): FileTreeNode[] {
+    /**
+     * Recursively visits a node, returning a pruned copy or `null` when the
+     * whole subtree has no kept descendants.
+     * @param node The node to visit.
+     * @returns The kept node with filtered children, or `null`.
+     */
+    const visit = (node: FileTreeNode): FileTreeNode | null => {
+        if (node.type === "file") return keepFile(node) ? node : null
+
+        const keptChildren: FileTreeNode[] = []
+        for (const child of node.children ?? []) {
+            const kept = visit(child)
+            if (kept) keptChildren.push(kept)
+        }
+
+        if (keptChildren.length === 0) return null
+
+        return { ...node, children: keptChildren }
+    }
+
+    const results: FileTreeNode[] = []
+
+    for (const node of nodes) {
+        const kept = visit(node)
+        if (kept) results.push(kept)
+    }
+
+    return results
+}
+
+/**
+ * Enumerates every ancestor path of a repository-relative path, from the
+ * shallowest to the direct parent.
+ * @param path The path to inspect.
+ * @returns The ancestor paths (empty for a root-level path).
+ */
+export function collectAncestorPaths(path: string): string[] {
+    const parts = path.split("/")
+    const ancestors: string[] = []
+
+    for (let i = 1; i < parts.length; i++) {
+        ancestors.push(parts.slice(0, i).join("/"))
+    }
+
+    return ancestors
+}
+
+/**
  * Locates a file tree node by its repository-relative path, walking the tree
  * depth-first from the given roots.
  * @param roots The root-level file tree nodes.

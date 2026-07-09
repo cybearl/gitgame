@@ -1,5 +1,5 @@
 import path from "node:path"
-import WINDOW_CONFIG from "@main/config/window"
+import WINDOWS_CONFIG from "@main/config/windows"
 import { registerAppHandlers } from "@main/lib/app/handlers"
 import { registerDialogHandlers } from "@main/lib/dialog"
 import { registerGitHandlers } from "@main/lib/git/handlers"
@@ -17,7 +17,7 @@ import { app, BrowserWindow, shell } from "electron"
  * @returns The created BrowserWindow instance.
  */
 function createMainWindow(): BrowserWindow {
-    const window = new BrowserWindow(WINDOW_CONFIG)
+    const window = new BrowserWindow(WINDOWS_CONFIG.main)
 
     // Show the window when it's ready
     window.on("ready-to-show", () => window.show())

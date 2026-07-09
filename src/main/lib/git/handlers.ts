@@ -1,5 +1,5 @@
 import CONSTANTS from "@main/lib/constants"
-import { getLog, getRepositoryRoot, getStatus, isRepository, listBranches } from "@main/lib/git/service"
+import { getLog, getRemoteUrl, getRepositoryRoot, getStatus, isRepository, listBranches } from "@main/lib/git/service"
 import { ipcMain } from "electron"
 
 /**
@@ -12,4 +12,5 @@ export function registerGitHandlers() {
     ipcMain.handle(CONSTANTS.ipc.gitGetStatus, (_event, dir: string) => getStatus(dir))
     ipcMain.handle(CONSTANTS.ipc.gitListBranches, (_event, dir: string) => listBranches(dir))
     ipcMain.handle(CONSTANTS.ipc.gitGetLog, (_event, dir: string, limit?: number) => getLog(dir, limit))
+    ipcMain.handle(CONSTANTS.ipc.gitGetRemoteUrl, (_event, dir: string) => getRemoteUrl(dir))
 }

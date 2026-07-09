@@ -1,87 +1,35 @@
 import { useTreeContext } from "@renderer/components/contexts/Tree"
-import { type MouseEvent, useCallback, useMemo, useRef, useState } from "react"
+import { useTreeViewContext } from "@renderer/components/contexts/TreeView"
+import { type MouseEvent, useCallback, useEffect, useMemo, useRef } from "react"
 import { TreeView as React95TreeView, ScrollView } from "react95"
-import type { FileTreeNode } from "@/main/types/tree"
 import FlatResultsList from "@/renderer/components/lists/FlatResults"
 import TreeViewContextMenu from "@/renderer/components/menus/TreeViewContext"
-import {
-    collectLockablePaths,
-    collectLockedPaths,
-    computeLockOwners,
-    computeLockStates,
-} from "@/renderer/lib/utils/lockStates"
-import { buildTree, findNodeByPath, reportLockFailures, resolveNode } from "@/renderer/lib/utils/treeView"
+import { buildTree, findNodeByPath, resolveNode } from "@/renderer/lib/utils/treeView"
 
-/**
- * The state of the open context menu, anchored to a right-clicked node.
- */
-type MenuState = {
-    x: number
-    y: number
-    node: FileTreeNode
-    canLock: boolean
-    lockablePaths: string[]
-    minePaths: string[]
-    othersPaths: string[]
-}
-
-type TreeViewProps = {
-    selected: string | undefined
-    onSelect: (id: string) => void
-    matches: FileTreeNode[] | null
-}
-
-export default function TreeView({ selected, onSelect, matches }: TreeViewProps) {
+export default function TreeView() {
     const containerRef = useRef<HTMLDivElement>(null)
 
-    const [expanded, setExpanded] = useState<string[]>([])
-    const [menu, setMenu] = useState<MenuState | null>(null)
-
-    const { fileTree, locksByPath, lock, unlock } = useTreeContext()
-
-    const isSearching = matches !== null
-
-    /**
-     * The computed lock states for the file tree, always derived from the full
-     * tree so folder aggregates stay accurate regardless of any active search.
-     */
-    const lockStates = useMemo(() => computeLockStates(fileTree, locksByPath), [fileTree, locksByPath])
-
-    /**
-     * The locked-file counts by owner for every node in the full file tree.
-     */
-    const lockOwners = useMemo(() => computeLockOwners(fileTree, locksByPath), [fileTree, locksByPath])
+    const { fileTree, locksByPath } = useTreeContext()
+    const {
+        expandedPaths,
+        selectedPath,
+        visibleTree,
+        matches,
+        menu,
+        lockStates,
+        lockOwners,
+        setExpandedPaths,
+        select,
+        openMenu,
+    } = useTreeViewContext()
 
     /**
-     * The full file tree mapped to react95 tree leaves, only built when not
+     * The visible file tree mapped to react95 tree leaves, only built when not
      * searching so the flat-results path skips the tree work entirely.
      */
     const tree = useMemo(
-        () => (isSearching ? [] : buildTree(fileTree, lockStates, lockOwners, locksByPath)),
-        [isSearching, fileTree, lockStates, lockOwners, locksByPath],
-    )
-
-    /**
-     * Opens the lock/unlock context menu for the given node, if it is lockable.
-     * @param event The mouse event.
-     * @param node The node the menu should target.
-     */
-    const openMenuForNode = useCallback(
-        (event: MouseEvent<HTMLElement>, node: FileTreeNode) => {
-            if (!node.isLockable) return
-
-            event.preventDefault()
-            setMenu({
-                x: event.clientX,
-                y: event.clientY,
-                node,
-                canLock: (lockStates.get(node.path) ?? "unlockable") !== "locked",
-                lockablePaths: collectLockablePaths(node),
-                minePaths: collectLockedPaths(node, locksByPath, true),
-                othersPaths: collectLockedPaths(node, locksByPath, false),
-            })
-        },
-        [lockStates, locksByPath],
+        () => (matches === null ? buildTree(visibleTree, lockStates, lockOwners, locksByPath) : []),
+        [matches, visibleTree, lockStates, lockOwners, locksByPath],
     )
 
     /**
@@ -93,61 +41,25 @@ export default function TreeView({ selected, onSelect, matches }: TreeViewProps)
         (event: MouseEvent<HTMLDivElement>) => {
             if (!containerRef.current) return
 
-            const visibleNode = resolveNode(event.target as HTMLElement, containerRef.current, fileTree)
+            const visibleNode = resolveNode(event.target as HTMLElement, containerRef.current, visibleTree)
             if (!visibleNode) return
 
             const node = findNodeByPath(fileTree, visibleNode.path) ?? visibleNode
-            openMenuForNode(event, node)
+            openMenu(event, node)
         },
-        [fileTree, openMenuForNode],
+        [fileTree, visibleTree, openMenu],
     )
 
-    /**
-     * Dismisses the context menu.
-     */
-    const dismissMenu = useCallback(() => setMenu(null), [])
+    // Bring the currently selected item into view when the tree view is active,
+    // so a reveal action (or programmatic selection) scrolls the row on screen
+    useEffect(() => {
+        if (matches !== null) return
+        if (!selectedPath) return
+        if (!containerRef.current) return
 
-    /**
-     * Locks every lockable file covered by the menu's node.
-     */
-    const handleLock = useCallback(async () => {
-        if (!menu) return
-
-        dismissMenu()
-        reportLockFailures(await lock(menu.lockablePaths))
-    }, [menu, lock, dismissMenu])
-
-    /**
-     * Unlocks the current user's own locks covered by the menu's node.
-     */
-    const handleUnlock = useCallback(async () => {
-        if (!menu) return
-
-        dismissMenu()
-        reportLockFailures(await unlock(menu.minePaths, false))
-    }, [menu, unlock, dismissMenu])
-
-    /**
-     * Force-unlocks other users' locks covered by the menu's node, after native confirmation.
-     */
-    const handleForceUnlock = useCallback(async () => {
-        if (!menu) return
-
-        const { othersPaths } = menu
-        dismissMenu()
-
-        const confirmed = await window.api.dialog.confirm({
-            title: "Force unlock",
-            message: `Force unlock ${othersPaths.length} file${othersPaths.length === 1 ? "" : "s"} locked by other users?`,
-            detail: "Forcing may discard work the lock owner has not pushed yet.",
-            confirmLabel: "Force unlock",
-            isDestructive: true,
-        })
-
-        if (!confirmed) return
-
-        reportLockFailures(await unlock(othersPaths, true))
-    }, [menu, unlock, dismissMenu])
+        const item = containerRef.current.querySelector<HTMLElement>('li[aria-selected="true"]')
+        item?.scrollIntoView({ block: "nearest", behavior: "auto" })
+    }, [matches, selectedPath])
 
     return (
         <>
@@ -156,38 +68,18 @@ export default function TreeView({ selected, onSelect, matches }: TreeViewProps)
                     <div ref={containerRef} onContextMenu={handleTreeContextMenu}>
                         <React95TreeView
                             tree={tree}
-                            expanded={expanded}
-                            selected={selected}
-                            onNodeSelect={(_, id) => onSelect(id)}
-                            onNodeToggle={(_, ids) => setExpanded(ids)}
+                            expanded={expandedPaths}
+                            selected={selectedPath}
+                            onNodeSelect={(_, id) => select(id)}
+                            onNodeToggle={(_, ids) => setExpandedPaths(ids)}
                         />
                     </div>
                 ) : (
-                    <FlatResultsList
-                        matches={matches}
-                        selected={selected}
-                        onSelect={onSelect}
-                        onContextMenu={openMenuForNode}
-                        lockStates={lockStates}
-                        lockOwners={lockOwners}
-                        locksByPath={locksByPath}
-                    />
+                    <FlatResultsList />
                 )}
             </ScrollView>
 
-            {menu && (
-                <TreeViewContextMenu
-                    x={menu.x}
-                    y={menu.y}
-                    canLock={menu.canLock}
-                    mineCount={menu.minePaths.length}
-                    othersCount={menu.othersPaths.length}
-                    onLock={handleLock}
-                    onUnlock={handleUnlock}
-                    onForceUnlock={handleForceUnlock}
-                    onDismiss={dismissMenu}
-                />
-            )}
+            {menu && <TreeViewContextMenu />}
         </>
     )
 }
