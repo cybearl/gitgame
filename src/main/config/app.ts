@@ -10,6 +10,11 @@ const DEFAULT_APP_CONFIG: AppConfig = {
     preferences: {
         startupBehavior: "reopen-last",
         filesPaneWidth: 320,
+        searchIsRegex: false,
+        isAdvancedSearchOpened: false,
+        searchIncludePatterns: "",
+        searchExcludePatterns: "",
+        isShowingMyLocksOnly: false,
     },
     recentProjects: [],
     lfsLockCache: {},

@@ -127,70 +127,59 @@ export function buildTree(
 }
 
 /**
- * The result of filtering the file tree to a search query.
- */
-export type FilteredTree = {
-    tree: FileTreeNode[]
-    matchAncestorPaths: string[]
-}
-
-/**
- * Filters the file tree to keep only nodes whose name matches the query and
- * every ancestor of a match, so the tree structure around results remains
- * navigable.
+ * Prunes the file tree to keep only file nodes that satisfy the predicate, plus
+ * every folder that has at least one kept descendant, so the caller renders a
+ * filtered subtree that still preserves the navigable folder hierarchy.
  * @param nodes The root-level file tree nodes.
- * @param query The search query, trimmed and lowercased before matching.
- * @returns The filtered tree plus the paths of every folder that has a match somewhere in its subtree.
+ * @param keepFile The predicate applied to every file node.
+ * @returns The pruned tree.
  */
-export function filterTree(nodes: FileTreeNode[], query: string): FilteredTree {
-    const needle = query.trim().toLowerCase()
-    if (!needle) {
-        return {
-            tree: nodes,
-            matchAncestorPaths: [],
-        }
-    }
-
-    const matchAncestorPaths: string[] = []
-
+export function pruneTreeToPredicate(nodes: FileTreeNode[], keepFile: (node: FileTreeNode) => boolean): FileTreeNode[] {
     /**
-     * Recursively filters a single node's subtree, returning `null` when the
-     * subtree has no match anywhere in it.
+     * Recursively visits a node, returning a pruned copy or `null` when the
+     * whole subtree has no kept descendants.
      * @param node The node to visit.
-     * @returns The kept node with filtered children, or `null` to prune it.
+     * @returns The kept node with filtered children, or `null`.
      */
     const visit = (node: FileTreeNode): FileTreeNode | null => {
-        const selfMatches = node.name.toLowerCase().includes(needle)
+        if (node.type === "file") return keepFile(node) ? node : null
 
-        if (node.type === "file") return selfMatches ? node : null
-
-        const filteredChildren: FileTreeNode[] = []
-
+        const keptChildren: FileTreeNode[] = []
         for (const child of node.children ?? []) {
             const kept = visit(child)
-            if (kept) filteredChildren.push(kept)
+            if (kept) keptChildren.push(kept)
         }
 
-        if (filteredChildren.length === 0 && !selfMatches) return null
-        if (filteredChildren.length > 0) matchAncestorPaths.push(node.path)
+        if (keptChildren.length === 0) return null
 
-        return {
-            ...node,
-            children: filteredChildren.length > 0 ? filteredChildren : undefined,
-        }
+        return { ...node, children: keptChildren }
     }
 
-    const tree: FileTreeNode[] = []
+    const results: FileTreeNode[] = []
 
     for (const node of nodes) {
         const kept = visit(node)
-        if (kept) tree.push(kept)
+        if (kept) results.push(kept)
     }
 
-    return {
-        tree,
-        matchAncestorPaths,
+    return results
+}
+
+/**
+ * Enumerates every ancestor path of a repository-relative path, from the
+ * shallowest to the direct parent.
+ * @param path The path to inspect.
+ * @returns The ancestor paths (empty for a root-level path).
+ */
+export function collectAncestorPaths(path: string): string[] {
+    const parts = path.split("/")
+    const ancestors: string[] = []
+
+    for (let i = 1; i < parts.length; i++) {
+        ancestors.push(parts.slice(0, i).join("/"))
     }
+
+    return ancestors
 }
 
 /**

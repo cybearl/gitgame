@@ -1,9 +1,9 @@
 import AppRoot from "@renderer/components/layouts/AppRoot"
 import MainLayout from "@renderer/components/layouts/main"
-import TitleBar from "@renderer/components/ui/TitleBar"
 import { useCallback, useEffect, useState } from "react"
 import { Button } from "react95"
 import type { DialogOptions } from "@/main/types/dialog"
+import TitleBar from "@/renderer/components/bars/Title"
 
 export default function DialogApp() {
     const [options, setOptions] = useState<DialogOptions | null>(null)
@@ -51,7 +51,7 @@ export default function DialogApp() {
                     <div className="min-h-0 flex-1 overflow-auto">
                         <p className="text-sm whitespace-pre-wrap">{options?.message}</p>
 
-                        {options?.detail && <p className="mt-2 text-xs opacity-80">{options.detail}</p>}
+                        {options?.detail && <p className="mt-2 text-xs opacity-60">{options.detail}</p>}
                     </div>
 
                     <div className="mt-4 flex shrink-0 justify-end gap-2">

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Button, Separator } from "react95"
-import MenuDropdown from "@/renderer/components/ui/menuBar/Dropdown"
+import MenuDropdown from "@/renderer/components/dropdowns/Menu"
 import type { MenuAction, TopLevelMenu } from "@/renderer/config/menus"
 
 type MenuBarProps = {

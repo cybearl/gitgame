@@ -9,6 +9,7 @@ import type { Project } from "@/main/types/store"
 export type ProjectContextType = {
     currentProject: Project | null
     recentProjects: Project[]
+    remoteUrl: string | null
     isLoading: boolean
     error: Error | null
     addLocalProject: () => Promise<void>
@@ -38,6 +39,7 @@ type ProjectProviderProps = {
 export default function ProjectProvider({ children }: ProjectProviderProps) {
     const [currentProject, setCurrentProject] = useState<Project | null>(null)
     const [recentProjects, setRecentProjects] = useState<Project[]>([])
+    const [remoteUrl, setRemoteUrl] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<Error | null>(null)
 
@@ -106,6 +108,33 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
      */
     const closeProject = useCallback(() => setCurrentProject(null), [])
 
+    // Fetches the current project's origin URL whenever the open project
+    // changes, so downstream consumers (e.g. the menu bar) can enable/disable
+    // remote-scoped actions accordingly
+    useEffect(() => {
+        if (!currentProject?.path) {
+            setRemoteUrl(null)
+            return
+        }
+
+        let cancelled = false
+
+        window.api.git
+            .getRemoteUrl(currentProject.path)
+            .then(url => {
+                if (cancelled) return
+                setRemoteUrl(url)
+            })
+            .catch(() => {
+                if (cancelled) return
+                setRemoteUrl(null)
+            })
+
+        return () => {
+            cancelled = true
+        }
+    }, [currentProject?.path])
+
     // On mount, load the recent projects and, when configured to do so, re-open
     // the most recently opened project.
     useEffect(() => {
@@ -138,6 +167,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
             value={{
                 currentProject,
                 recentProjects,
+                remoteUrl,
                 isLoading,
                 error,
                 addLocalProject,

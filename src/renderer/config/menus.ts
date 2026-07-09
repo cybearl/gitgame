@@ -91,9 +91,14 @@ function buildRecentProjectsItems(recentProjects: Project[], currentProject: Pro
  * and enabling the repository-scoped items only when a project is open.
  * @param recentProjects The recent projects, most recently opened first.
  * @param currentProject The currently opened project, if any.
+ * @param remoteBrowsableUrl The browsable HTTPS URL of the current project's remote, if any.
  * @returns The top-level menus.
  */
-export function buildTopLevelMenus(recentProjects: Project[], currentProject: Project | null): TopLevelMenu[] {
+export function buildTopLevelMenus(
+    recentProjects: Project[],
+    currentProject: Project | null,
+    remoteBrowsableUrl: string | null,
+): TopLevelMenu[] {
     return [
         {
             label: "File",
@@ -222,7 +227,8 @@ export function buildTopLevelMenus(recentProjects: Project[], currentProject: Pr
                 {
                     type: "item",
                     label: "View on Git Source",
-                    isDisabled: true,
+                    isDisabled: !remoteBrowsableUrl,
+                    action: remoteBrowsableUrl ? { type: "shell:open-external", url: remoteBrowsableUrl } : undefined,
                 },
                 { type: "separator" },
                 {

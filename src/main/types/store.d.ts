@@ -20,6 +20,11 @@ export type Project = {
 export type AppPreferences = {
     startupBehavior: StartupBehavior
     filesPaneWidth: number
+    searchIsRegex: boolean
+    isAdvancedSearchOpened: boolean
+    searchIncludePatterns: string
+    searchExcludePatterns: string
+    isShowingMyLocksOnly: boolean
 }
 
 /**

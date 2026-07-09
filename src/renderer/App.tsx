@@ -2,25 +2,30 @@ import computerIcon from "@react95-icons/Computer3_16x16_4.png"
 import ProjectProvider, { useProjectContext } from "@renderer/components/contexts/Project"
 import StatusProvider from "@renderer/components/contexts/Status"
 import TreeProvider from "@renderer/components/contexts/Tree"
-import MenuBar from "@renderer/components/ui/menuBar"
-import StatusBar from "@renderer/components/ui/statusBar"
-import StatusBarField from "@renderer/components/ui/statusBar/StatusBarField"
-import StatusTaskField from "@renderer/components/ui/statusBar/StatusTaskField"
-import TitleBar from "@renderer/components/ui/TitleBar"
-import Workspace from "@renderer/components/ui/workspace"
+import TreeViewProvider from "@renderer/components/contexts/TreeView"
 import useMenuShortcuts from "@renderer/hooks/useMenuShortcuts"
 import { useCallback, useEffect, useMemo } from "react"
+import MenuBar from "@/renderer/components/bars/Menu"
+import StatusBar from "@/renderer/components/bars/Status"
+import TitleBar from "@/renderer/components/bars/Title"
+import StatusBarField from "@/renderer/components/fields/StatusBar"
+import StatusTaskField from "@/renderer/components/fields/StatusTask"
 import AppRoot from "@/renderer/components/layouts/AppRoot"
 import MainLayout from "@/renderer/components/layouts/main"
+import Workspace from "@/renderer/components/spaces/Workspace"
 import APP_CONFIG from "@/renderer/config/app"
 import { buildTopLevelMenus, type MenuAction } from "@/renderer/config/menus"
+import { toBrowsableRemoteUrl } from "@/renderer/lib/utils/git"
 
-/**
- * The application shell, rendered inside the providers so it can dispatch menu
- * actions to the application state.
- */
 function AppShell() {
-    const { currentProject, recentProjects, addLocalProject, openProject, clearRecentProjects } = useProjectContext()
+    const { currentProject, recentProjects, remoteUrl, addLocalProject, openProject, clearRecentProjects } =
+        useProjectContext()
+
+    /**
+     * The browsable HTTPS URL of the current project's `origin` remote, or
+     * `null` when there is no remote or it cannot be normalized.
+     */
+    const remoteBrowsableUrl = useMemo(() => (remoteUrl ? toBrowsableRemoteUrl(remoteUrl) : null), [remoteUrl])
 
     /**
      * The main application window title (falling back to just the app name when no project is open).
@@ -33,7 +38,10 @@ function AppShell() {
     /**
      * The menus of the application, rebuilt when the recent projects change.
      */
-    const menus = useMemo(() => buildTopLevelMenus(recentProjects, currentProject), [recentProjects, currentProject])
+    const menus = useMemo(
+        () => buildTopLevelMenus(recentProjects, currentProject, remoteBrowsableUrl),
+        [recentProjects, currentProject, remoteBrowsableUrl],
+    )
 
     /**
      * Dispatches a menu action to the matching application state handler.
@@ -104,7 +112,9 @@ export default function App() {
             <StatusProvider>
                 <ProjectProvider>
                     <TreeProvider>
-                        <AppShell />
+                        <TreeViewProvider>
+                            <AppShell />
+                        </TreeViewProvider>
                     </TreeProvider>
                 </ProjectProvider>
             </StatusProvider>

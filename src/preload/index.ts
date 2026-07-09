@@ -51,6 +51,7 @@ export type GitgameApi = {
         getStatus: (dir: string) => Promise<GitStatus>
         listBranches: (dir: string) => Promise<GitBranch[]>
         getLog: (dir: string, limit?: number) => Promise<GitCommit[]>
+        getRemoteUrl: (dir: string) => Promise<string | null>
     }
     lfs: {
         listLocks: (dir: string) => Promise<LfsLock[]>

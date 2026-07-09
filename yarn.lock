@@ -1080,6 +1080,11 @@
   dependencies:
     undici-types "~7.18.0"
 
+"@types/picomatch@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@types/picomatch/-/picomatch-4.0.3.tgz#d92bbf24166478c5457c8bb9ba41a7f49d55e094"
+  integrity sha512-iG0T6+nYJ9FAPmx9SsUlnwcq1ZVRuCXcVEvWnntoPlrOpwtSTKNDC9uVAxTsC3PUvJ+99n4RpAcNgBbHX3JSnQ==
+
 "@types/plist@^3.0.1":
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/@types/plist/-/plist-3.0.5.tgz#9a0c49c0f9886c8c8696a7904dd703f6284036e0"
@@ -2958,6 +2963,11 @@ picomatch@^4.0.3, picomatch@^4.0.4:
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-4.0.4.tgz#fd6f5e00a143086e074dffe4c924b8fb293b0589"
   integrity sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==
 
+picomatch@^4.0.5:
+  version "4.0.5"
+  resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-4.0.5.tgz#51ea57a17d86f605f81039595fbc40ed06a55fab"
+  integrity sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==
+
 pino-abstract-transport@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/pino-abstract-transport/-/pino-abstract-transport-3.0.0.tgz#b21e5f33a297e8c4c915c62b3ce5dd4a87a52c23"
@@ -3086,6 +3096,11 @@ react-refresh@^0.18.0:
   version "0.18.0"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.18.0.tgz#2dce97f4fe932a4d8142fa1630e475c1729c8062"
   integrity sha512-QgT5//D3jfjJb6Gsjxv0Slpj23ip+HtOpnNgnb2S5zU3CB26G/IDPGoy4RJB42wzFE46DRsstbW6tKHoKbhAxw==
+
+react-window@^2.2.7:
+  version "2.2.7"
+  resolved "https://registry.yarnpkg.com/react-window/-/react-window-2.2.7.tgz#7f3d31695d4323701b7e80dfc9bbbe1d4a0c160f"
+  integrity sha512-SH5nvfUQwGHYyriDUAOt7wfPsfG9Qxd6OdzQxl5oQ4dsSsUicqQvjV7dR+NqZ4coY0fUn3w1jnC5PwzIUWEg5w==
 
 react95@^4.0.0:
   version "4.0.0"

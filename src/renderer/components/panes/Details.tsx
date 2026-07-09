@@ -3,21 +3,21 @@ import lockIcon from "@react95-icons/Lock_16x16_4.png"
 import refreshIcon from "@react95-icons/Refresh_16x16_4.png"
 import { useProjectContext } from "@renderer/components/contexts/Project"
 import { useTreeContext } from "@renderer/components/contexts/Tree"
+import { useTreeViewContext } from "@renderer/components/contexts/TreeView"
 import Tooltip from "@renderer/components/ui/Tooltip"
 import { useCallback, useMemo } from "react"
 import { Button, GroupBox, ScrollView, Separator, Toolbar } from "react95"
-import type { FileTreeNode } from "@/main/types/tree"
 import { collectLockablePaths, collectLockedPaths } from "@/renderer/lib/utils/lockStates"
 import { reportLockFailures } from "@/renderer/lib/utils/treeView"
 
 type DetailsPaneProps = {
-    selectedNode: FileTreeNode | undefined
     className?: string
 }
 
-export default function DetailsPane({ selectedNode, className }: DetailsPaneProps) {
+export default function DetailsPane({ className }: DetailsPaneProps) {
     const { currentProject } = useProjectContext()
     const { locksByPath, refresh, lock, unlock } = useTreeContext()
+    const { selectedNode } = useTreeViewContext()
 
     /**
      * The lockable file paths within the selected node's subtree, empty when
