@@ -1,7 +1,6 @@
 import type { ReactNode } from "react"
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
-import type { OpenProjectResult } from "@/main/types/project"
-import type { Project } from "@/main/types/store"
+import type { OpenProjectResult, Project } from "@/main/types/projects"
 
 /**
  * The type for the project context.
@@ -34,7 +33,7 @@ type ProjectProviderProps = {
 
 /**
  * Provides the current project and recent projects to the component tree, backed
- * by the `window.api.project` bridge.
+ * by the `window.api.projects` bridge.
  */
 export default function ProjectProvider({ children }: ProjectProviderProps) {
     const [currentProject, setCurrentProject] = useState<Project | null>(null)
@@ -47,7 +46,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
      * Refreshes the recent projects list from the store.
      */
     const refreshRecentProjects = useCallback(async () => {
-        setRecentProjects(await window.api.project.getRecent())
+        setRecentProjects(await window.api.projects.getRecent())
     }, [])
 
     /**
@@ -78,13 +77,13 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
     /**
      * Prompts the user to pick a local folder and opens it as the current project.
      */
-    const addLocalProject = useCallback(() => runOpen(() => window.api.project.addLocal()), [runOpen])
+    const addLocalProject = useCallback(() => runOpen(() => window.api.projects.addLocal()), [runOpen])
 
     /**
      * Opens an existing project by path (e.g. from the recent projects list).
      * @param dir The absolute repository path to open.
      */
-    const openProject = useCallback((dir: string) => runOpen(() => window.api.project.open(dir)), [runOpen])
+    const openProject = useCallback((dir: string) => runOpen(() => window.api.projects.open(dir)), [runOpen])
 
     /**
      * Removes a project from the recent projects list, closing it if it is the
@@ -92,7 +91,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
      * @param dir The absolute repository path to forget.
      */
     const removeRecentProject = useCallback(async (dir: string) => {
-        setRecentProjects(await window.api.project.removeRecent(dir))
+        setRecentProjects(await window.api.projects.removeRecent(dir))
         setCurrentProject(current => (current?.path === dir ? null : current))
     }, [])
 
@@ -100,7 +99,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
      * Clears every entry from the recent projects list.
      */
     const clearRecentProjects = useCallback(async () => {
-        setRecentProjects(await window.api.project.clearRecent())
+        setRecentProjects(await window.api.projects.clearRecent())
     }, [])
 
     /**
@@ -119,7 +118,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
 
         let cancelled = false
 
-        window.api.git
+        window.api.gitCommands
             .getRemoteUrl(currentProject.path)
             .then(url => {
                 if (cancelled) return
@@ -143,8 +142,8 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
 
             try {
                 const [projects, preferences] = await Promise.all([
-                    window.api.project.getRecent(),
-                    window.api.project.getPreferences(),
+                    window.api.projects.getRecent(),
+                    window.api.projects.getPreferences(),
                 ])
 
                 setRecentProjects(projects)

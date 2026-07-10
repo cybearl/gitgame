@@ -28,7 +28,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                     WebkitAppRegion: "drag",
                 } as CSSProperties
             }
-            onDoubleClick={() => window.api.window.toggleMaximize()}
+            onDoubleClick={() => window.api.windows.toggleMaximize()}
         >
             <div className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden font-bold max-w-max">
                 {icon && !window.api.platform.isMacOS && (
@@ -48,7 +48,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                                 size="sm"
                                 square
                                 aria-label="Minimize"
-                                onClick={() => window.api.window.minimize()}
+                                onClick={() => window.api.windows.minimize()}
                                 className="w-6! h-5.5! min-w-0!"
                             >
                                 <img src="./assets/icons/window/minimize.png" alt="minimize" className="w-4" />
@@ -57,7 +57,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                                 size="sm"
                                 square
                                 aria-label="Maximize"
-                                onClick={() => window.api.window.toggleMaximize()}
+                                onClick={() => window.api.windows.toggleMaximize()}
                                 className="w-6! h-5.5! min-w-0!"
                             >
                                 <img src="./assets/icons/window/maximize.png" alt="maximize" className="w-4" />
@@ -69,7 +69,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                         size="sm"
                         square
                         aria-label="Close"
-                        onClick={() => (onClose ? onClose() : window.api.window.close())}
+                        onClick={() => (onClose ? onClose() : window.api.windows.close())}
                         className="w-6! h-5.5! min-w-0! ml-1"
                     >
                         <img src="./assets/icons/window/close.png" alt="close" className="w-4 " />

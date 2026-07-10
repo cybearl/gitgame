@@ -1,14 +1,14 @@
 import path from "node:path"
 import WINDOWS_CONFIG from "@main/config/windows"
 import { registerAppHandlers } from "@main/lib/app/handlers"
-import { registerDialogHandlers } from "@main/lib/dialog"
-import { registerGitHandlers } from "@main/lib/git/handlers"
-import { registerLfsHandlers } from "@main/lib/lfs/handlers"
-import { registerProjectHandlers } from "@main/lib/project/handlers"
-import { registerShellHandlers } from "@main/lib/shell/handlers"
-import { registerTreeHandlers } from "@main/lib/tree/handlers"
+import { registerDialogsHandlers } from "@main/lib/dialogs"
+import { registerFileTreeHandlers } from "@main/lib/fileTree/handlers"
+import { registerGitCommandsHandlers } from "@main/lib/gitCommands/handlers"
+import { registerLfsCommandsHandlers } from "@main/lib/lfsCommands/handlers"
+import { registerProjectsHandlers } from "@main/lib/projects/handlers"
+import { registerShellsHandlers } from "@main/lib/shells/handlers"
 import { startAutoUpdater } from "@main/lib/updater"
-import { attachWindowStateBroadcaster, registerWindowControlHandlers } from "@main/lib/window"
+import { attachWindowStateBroadcaster, registerWindowsControlHandlers } from "@main/lib/windows"
 import { app, BrowserWindow, shell } from "electron"
 
 /**
@@ -44,13 +44,13 @@ function createMainWindow(): BrowserWindow {
 // Create the main application window when Electron is ready
 app.whenReady().then(() => {
     registerAppHandlers()
-    registerWindowControlHandlers()
-    registerDialogHandlers()
-    registerGitHandlers()
-    registerLfsHandlers()
-    registerTreeHandlers()
-    registerProjectHandlers()
-    registerShellHandlers()
+    registerWindowsControlHandlers()
+    registerDialogsHandlers()
+    registerGitCommandsHandlers()
+    registerLfsCommandsHandlers()
+    registerFileTreeHandlers()
+    registerProjectsHandlers()
+    registerShellsHandlers()
     createMainWindow()
     startAutoUpdater()
 

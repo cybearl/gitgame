@@ -59,7 +59,11 @@
         "asar",
         "asynciterable",
         "browsable",
-        "scrollview"
+        "fguid",
+        "gatherable",
+        "scrollview",
+        "SOFTOBJECTPATH",
+        "uasset"
     ],
     "[json]": {
         "editor.defaultFormatter": "biomejs.biome"

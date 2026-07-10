@@ -1,10 +1,10 @@
 import { cn } from "@cybearl/cypack/frontend"
-import { useTreeContext } from "@renderer/components/contexts/Tree"
+import { useFileTreeContext } from "@renderer/components/contexts/FileTree"
 import { useTreeViewContext } from "@renderer/components/contexts/TreeView"
 import { renderLockIcon, renderTypeIcon } from "@renderer/lib/utils/treeView"
 import { useMemo } from "react"
 import type { RowComponentProps } from "react-window"
-import type { FileTreeNode } from "@/main/types/tree"
+import type { FileTreeNode } from "@/main/types/fileTree"
 
 /**
  * The shared per-row data forwarded to every virtualized row by react-window's
@@ -16,7 +16,7 @@ export type FlatResultsRowData = {
 }
 
 export default function FlatResultsRow({ index, style, matches }: RowComponentProps<FlatResultsRowData>) {
-    const { locksByPath } = useTreeContext()
+    const { locksByPath } = useFileTreeContext()
     const { selectedPath, lockStates, lockOwners, select, openMenu } = useTreeViewContext()
 
     /**

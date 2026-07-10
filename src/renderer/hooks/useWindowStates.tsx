@@ -9,11 +9,11 @@ export default function useWindowStates() {
     useEffect(() => {
         let cancelled = false
 
-        window.api.window.getState().then(state => {
+        window.api.windows.getState().then(state => {
             if (!cancelled) setStates(state)
         })
 
-        const unsubscribe = window.api.window.onStateChange(setStates)
+        const unsubscribe = window.api.windows.onStateChange(setStates)
 
         return () => {
             cancelled = true

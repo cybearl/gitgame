@@ -1,8 +1,8 @@
 import { cn } from "@cybearl/cypack/frontend"
 import lockIcon from "@react95-icons/Lock_16x16_4.png"
 import refreshIcon from "@react95-icons/Refresh_16x16_4.png"
+import { useFileTreeContext } from "@renderer/components/contexts/FileTree"
 import { useProjectContext } from "@renderer/components/contexts/Project"
-import { useTreeContext } from "@renderer/components/contexts/Tree"
 import { useTreeViewContext } from "@renderer/components/contexts/TreeView"
 import Tooltip from "@renderer/components/ui/Tooltip"
 import { useCallback, useMemo } from "react"
@@ -16,7 +16,7 @@ type DetailsPaneProps = {
 
 export default function DetailsPane({ className }: DetailsPaneProps) {
     const { currentProject } = useProjectContext()
-    const { locksByPath, refresh, lock, unlock } = useTreeContext()
+    const { locksByPath, refresh, lock, unlock } = useFileTreeContext()
     const { selectedNode } = useTreeViewContext()
 
     /**
@@ -100,7 +100,7 @@ export default function DetailsPane({ className }: DetailsPaneProps) {
      * users, after native confirmation.
      */
     const handleForceUnlock = useCallback(async () => {
-        const confirmed = await window.api.dialog.confirm({
+        const confirmed = await window.api.dialogs.confirm({
             title: "Force unlock",
             message: `Force unlock ${othersPaths.length} file${othersPaths.length === 1 ? "" : "s"} locked by other users?`,
             detail: "Forcing may discard work the lock owner has not pushed yet.",

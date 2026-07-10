@@ -1,6 +1,6 @@
 import picomatch from "picomatch"
+import type { FileTreeNode } from "@/main/types/fileTree"
 import type { AppPreferences } from "@/main/types/store"
-import type { FileTreeNode } from "@/main/types/tree"
 
 /**
  * The user-facing search filters applied on top of the file tree.
@@ -108,7 +108,7 @@ export function collectMatchingFiles(nodes: FileTreeNode[], filters: SearchFilte
  * @param patch The preference fields to persist.
  */
 export function persistSearchPreferences(patch: Partial<AppPreferences>) {
-    window.api.project.setPreferences(patch).catch(error => {
+    window.api.projects.setPreferences(patch).catch(error => {
         console.error("Failed to persist search preferences:", error)
     })
 }

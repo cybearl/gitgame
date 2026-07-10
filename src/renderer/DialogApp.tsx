@@ -2,7 +2,7 @@ import AppRoot from "@renderer/components/layouts/AppRoot"
 import MainLayout from "@renderer/components/layouts/main"
 import { useCallback, useEffect, useState } from "react"
 import { Button } from "react95"
-import type { DialogOptions } from "@/main/types/dialog"
+import type { DialogOptions } from "@/main/types/dialogs"
 import TitleBar from "@/renderer/components/bars/Title"
 
 export default function DialogApp() {
@@ -12,19 +12,19 @@ export default function DialogApp() {
      * Responds to the dialog with a confirmation, closing the window.
      */
     const handleConfirm = useCallback(() => {
-        window.api.dialog.respond(true)
+        window.api.dialogs.respond(true)
     }, [])
 
     /**
      * Responds to the dialog with a cancellation, closing the window.
      */
     const handleCancel = useCallback(() => {
-        window.api.dialog.respond(false)
+        window.api.dialogs.respond(false)
     }, [])
 
     // Fetch the options for this dialog window once, on mount
     useEffect(() => {
-        window.api.dialog.getOptions().then(setOptions)
+        window.api.dialogs.getOptions().then(setOptions)
     }, [])
 
     // Confirm on Enter, cancel on Escape

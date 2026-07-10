@@ -1,4 +1,4 @@
-import type { Project } from "@/main/types/store"
+import type { Project } from "@/main/types/projects"
 
 /**
  * A dispatchable menu action.
