@@ -3,12 +3,13 @@ import { UAssetObjectVersionUE4 as UE4 } from "@main/lib/uassets/enums/objectVer
 import { UAssetObjectVersionUE5 as UE5 } from "@main/lib/uassets/enums/objectVersionUE5"
 import { UAssetPackageFileTag } from "@main/lib/uassets/enums/packageFileTag"
 import { UAssetPackageFlags } from "@main/lib/uassets/enums/packageFlags"
+import { readEngineVersion, readIoHashHex } from "@main/lib/uassets/parser/utils/structs"
 import type {
     UAssetCustomVersion,
     UAssetEngineVersion,
     UAssetGenerationInfo,
     UAssetPackageFileSummary,
-} from "@main/lib/uassets/parser/types"
+} from "@/main/types/uassets"
 
 /**
  * Highest `LegacyFileVersion` value this reader knows how to parse. UE writes negative numbers
@@ -16,6 +17,20 @@ import type {
  * @see /Engine/Source/Runtime/CoreUObject/Private/UObject/PackageFileSummary.cpp
  */
 const CURRENT_LEGACY_FILE_VERSION = -9
+
+/**
+ * Zeroed `UAssetEngineVersion`, used as a default when the summary predates engine-version tracking.
+ * @returns An all-zero engine version with empty branch string.
+ */
+function emptyEngineVersion(): UAssetEngineVersion {
+    return {
+        major: 0,
+        minor: 0,
+        patch: 0,
+        changelist: 0,
+        branch: "",
+    }
+}
 
 /**
  * Read the `FPackageFileSummary` at the reader's current position.
@@ -302,39 +317,4 @@ export function readUAssetPackageFileSummary(reader: UAssetBufferReader): UAsset
         payloadTocOffset,
         dataResourceOffset,
     }
-}
-
-/**
- * Read a 20-byte `FIoHash` and return it as an upper-case hex string.
- * @param reader Buffer reader positioned at the start of the hash.
- * @returns The 40-character upper-case hex hash.
- */
-function readIoHashHex(reader: UAssetBufferReader): string {
-    const bytes = reader.bytes(20)
-    let hex = ""
-    for (const byte of bytes) hex += byte.toString(16).padStart(2, "0")
-    return hex.toUpperCase()
-}
-
-/**
- * Read an `FEngineVersion` in the on-disk order (Major, Minor, Patch, Changelist, Branch).
- * @param reader Buffer reader positioned at the start of the version block.
- * @returns The decoded engine version.
- */
-function readEngineVersion(reader: UAssetBufferReader): UAssetEngineVersion {
-    return {
-        major: reader.uint16(),
-        minor: reader.uint16(),
-        patch: reader.uint16(),
-        changelist: reader.uint32(),
-        branch: reader.fstring(),
-    }
-}
-
-/**
- * Zeroed `UAssetEngineVersion`, used as a default when the summary predates engine-version tracking.
- * @returns An all-zero engine version with empty branch string.
- */
-function emptyEngineVersion(): UAssetEngineVersion {
-    return { major: 0, minor: 0, patch: 0, changelist: 0, branch: "" }
 }
