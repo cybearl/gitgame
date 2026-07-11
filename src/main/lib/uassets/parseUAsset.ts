@@ -5,12 +5,9 @@ import { readUAssetPackageFileSummary } from "@main/lib/uassets/parser/packageFi
 import type { UAssetPackage } from "@/main/types/uassets"
 
 /**
- * Parse a raw `.uasset` file buffer into its decoded Layer 1 parts: package summary, name
- * table, import map, and export map.
- *
- * Note: This is the top-level entry point for reading a `.uasset`, per-export tagged property
- * streams are not decoded here since their location inside an export depends on the export's
- * class; Layer 2 shapers handle that.
+ * Parse a raw `.uasset` file buffer into its decoded Layer 1 parts, the package summary, name
+ * table, import map, and export map, per-export tagged property streams are not decoded here
+ * since their location inside an export depends on the export's class (a Layer 2 concern).
  * @param source Raw `.uasset` bytes as an `ArrayBuffer` or a view over one.
  * @returns The fully decoded package.
  * @throws When the file is not a valid `.uasset`, uses a summary format outside the reader's

@@ -50,6 +50,33 @@ const CONSTANTS = {
         logRecordSeparator: "\x1e",
         logFormat: ["%H", "%h", "%s", "%an", "%ae", "%aI"], // Joined with field separator and ends with record separator
     },
+    uasset: {
+        // Highest "LegacyFileVersion" the summary reader handles, anything below (i.e. more
+        // negative) uses a summary layout we haven't verified against UE source
+        currentLegacyFileVersion: -9,
+        // Prefix that marks user-created (game content) asset packages, imports whose outer
+        // chain terminates outside this prefix are engine/plugin classes
+        gamePackagePrefix: "/Game/",
+        // Bit values of "EPropertyTagFlags", the uint8 bitmask on every property tag header
+        propertyTagFlag: {
+            hasArrayIndex: 0x01,
+            hasPropertyGuid: 0x02,
+            hasPropertyExtensions: 0x04,
+            hasBinaryOrNativeSerialize: 0x08,
+            boolTrue: 0x10,
+            skippedSerialize: 0x20,
+        },
+        // Bit values of "EPropertyTagExtension", the uint8 bitmask written when "hasPropertyExtensions" is set
+        propertyTagExtension: {
+            overridableInformation: 0x02,
+            hasExternalsObjects: 0x04,
+        },
+        // Blueprint-specific magic strings the shaper matches on
+        blueprint: {
+            componentSuffix: "_GEN_VARIABLE",
+            compiledClassSuffix: "_C",
+        },
+    },
 } as const
 
 export default CONSTANTS

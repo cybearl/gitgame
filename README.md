@@ -42,7 +42,7 @@ git will silently enable sparse-checkout on the **gitgame** repo (because that's
 ```bash
 $ git sparse-checkout disable
 ```
-Files are never lost — they're still in `HEAD`/index, just filtered from the working tree.
+Files are never lost, they're still in `HEAD`/index, just filtered from the working tree.
 
 If the working tree stays empty after `set` on the UE clone (blob fetch silently failing on the
 private repo), force a re-materialize:
@@ -63,6 +63,6 @@ $ git -C .ue5/UnrealEngine pull
 ```
 
 Files that map to `enums.ts`:
-- `Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h` — `EUnrealEngineObjectUE4Version`, `EUnrealEngineObjectUE5Version`
-- `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h` — `PackageFlags`, `EObjectFlags`
-- `Engine/Source/Runtime/CoreUObject/Public/UObject/PackageFileSummary.h` — header layout the parser reads
+- `Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h`: `EUnrealEngineObjectUE4Version`, `EUnrealEngineObjectUE5Version`
+- `Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectMacros.h`: `PackageFlags`, `EObjectFlags`
+- `Engine/Source/Runtime/CoreUObject/Public/UObject/PackageFileSummary.h`: header layout the parser reads

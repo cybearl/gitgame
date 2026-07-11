@@ -1,10 +1,10 @@
-import { describe, test } from "vitest"
 import { UAssetBufferReader } from "@main/lib/uassets/bufferReader"
 import { readUAssetPropertyTags } from "@main/lib/uassets/parser/propertyTag"
+import { describe, test } from "vitest"
 import type { UAssetPackageFileSummary } from "@/main/types/uassets"
 
 /**
- * Bare-minimum `UAssetPackageFileSummary` shape used by `readUAssetPropertyTags`. The reader
+ * Bare-minimum `UAssetPackageFileSummary` shape used by `readUAssetPropertyTags`, the reader
  * only touches `packageFlags` (unversioned check) and `fileVersionUE5` (format gate), so we
  * cast a partial object rather than filling every field.
  */
@@ -21,21 +21,19 @@ const NAMES = ["None", "MyIntProp", "IntProperty", "MyBoolProp", "BoolProperty"]
 
 describe("readUAssetPropertyTags: synthetic streams", () => {
     test("reads one IntProperty tag and stops at the None terminator", ({ expect }) => {
-        // Wire format the buffer represents:
-        //   name  = FName(index=1, number=0)                       "MyIntProp"
-        //   type  = 1 node: FName(index=2, number=0), innerCount=0 "IntProperty"
-        //   size  = 4
-        //   flags = 0
-        //   value = int32 42
-        //   None terminator: FName(index=0, number=0)               "None"
         const buffer = Buffer.from([
-            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // name FName
-            0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // type node FName
-            0x00, 0x00, 0x00, 0x00, // type node innerCount = 0
-            0x04, 0x00, 0x00, 0x00, // size = 4
-            0x00, // flags = 0
-            0x2a, 0x00, 0x00, 0x00, // value payload (int32 42)
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // None terminator
+            // "name": FName(index=1 -> "MyIntProp", number=0)
+            0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // "typeName": 1 node, FName(index=2 -> "IntProperty", number=0), innerCount=0
+            0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // "size": int32(4)
+            0x04, 0x00, 0x00, 0x00,
+            // "flags": uint8(0), no optional fields
+            0x00,
+            // "value": int32(42)
+            0x2a, 0x00, 0x00, 0x00,
+            // Stream terminator: FName(index=0 -> "None", number=0)
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         ])
         const reader = new UAssetBufferReader(buffer)
 
@@ -53,14 +51,17 @@ describe("readUAssetPropertyTags: synthetic streams", () => {
     })
 
     test("BoolTrue flag surfaces via boolValue with a zero-size payload", ({ expect }) => {
-        // BoolProperty tags carry their value in the flag bits, size = 0
         const buffer = Buffer.from([
-            0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // name "MyBoolProp"
-            0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // type "BoolProperty"
-            0x00, 0x00, 0x00, 0x00, // innerCount = 0
-            0x00, 0x00, 0x00, 0x00, // size = 0
-            0x10, // flags = BoolTrue (0x10)
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // None terminator
+            // "name": FName(index=3 -> "MyBoolProp", number=0)
+            0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // "typeName": 1 node, FName(index=4 -> "BoolProperty", number=0), innerCount=0
+            0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            // "size": int32(0), value lives in the flag bits
+            0x00, 0x00, 0x00, 0x00,
+            // "flags": uint8(0x10 = BoolTrue)
+            0x10,
+            // Stream terminator: FName(index=0 -> "None", number=0)
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         ])
         const reader = new UAssetBufferReader(buffer)
 
@@ -74,6 +75,7 @@ describe("readUAssetPropertyTags: synthetic streams", () => {
     })
 
     test("empty stream (immediate None terminator) returns no tags", ({ expect }) => {
+        // Stream terminator only: FName(index=0 -> "None", number=0)
         const buffer = Buffer.from([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00])
         const reader = new UAssetBufferReader(buffer)
 

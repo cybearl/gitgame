@@ -1,7 +1,7 @@
 import type { UAssetEnumEntry } from "@/main/types/uassets"
 
 /**
- * UE5 package format version, read from `PackageFileSummary.FileVersionUE5`. Entries drop the `VER_UE5_` prefix to match the current scoped `enum class`.
+ * UE5 package format version, read from `PackageFileSummary.FileVersionUE5`, entries drop the `VER_UE5_` prefix to match the current scoped `enum class`.
  * @see /Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h
  */
 export const UAssetObjectVersionUE5 = {

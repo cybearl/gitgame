@@ -67,45 +67,41 @@ export interface UAssetGenerationInfo {
 }
 
 /**
- * Decoded `FPackageFileSummary`.
- *
- * Notes:
- * - Fields not useful to Layer 1 extraction are still advanced past (so the reader lands
- * at the correct offset) but may be exposed as-is here for downstream inspection.
- * - Offsets serialized as `int64` are surfaced as `bigint`, the rest are
- * `int32`. Sections that don't exist in the file typically use `count = 0`
- * and `offset = -1`.
+ * Decoded `FPackageFileSummary`, fields not useful to Layer 1 extraction are still advanced past
+ * (so the reader lands at the correct offset) but exposed as-is here for downstream inspection,
+ * offsets serialized as `int64` are surfaced as `bigint`, the rest are `int32`, sections that
+ * don't exist in the file typically use `count = 0` and `offset = -1`.
  * @see /Engine/Source/Runtime/CoreUObject/Public/UObject/PackageFileSummary.h
  */
 export interface UAssetPackageFileSummary {
     /**
-     * Magic number identifying the file as a UE package. Matches `PACKAGE_FILE_TAG` after
+     * Magic number identifying the file as a UE package, matches `PACKAGE_FILE_TAG` after
      * any endian swap has been applied by the reader.
      */
     tag: number
 
     /**
-     * Summary format revision. Always negative for modern packages, `-9` at the time of writing.
+     * Summary format revision, always negative for modern packages, `-9` at the time of writing.
      */
     legacyFileVersion: number
 
     /**
-     * Vestigial UE3 engine version field. Kept in the wire format for backward compat, unused today.
+     * Vestigial UE3 engine version field, kept in the wire format for backward compat, unused today.
      */
     legacyUE3Version: number
 
     /**
-     * UE4 object format version the package was saved with. Compare against `UAssetObjectVersionUE4`.
+     * UE4 object format version the package was saved with, compare against `UAssetObjectVersionUE4`.
      */
     fileVersionUE4: number
 
     /**
-     * UE5 object format version (0 for packages saved before UE5). Compare against `UAssetObjectVersionUE5`.
+     * UE5 object format version (0 for packages saved before UE5), compare against `UAssetObjectVersionUE5`.
      */
     fileVersionUE5: number
 
     /**
-     * Custom licensee-specific format version. Typically 0 for stock Epic builds.
+     * Custom licensee-specific format version, typically 0 for stock Epic builds.
      */
     fileVersionLicenseeUE: number
 
@@ -130,7 +126,7 @@ export interface UAssetPackageFileSummary {
     packageName: string
 
     /**
-     * `EPackageFlags` bitmask. Test against entries in `UAssetPackageFlags`.
+     * `EPackageFlags` bitmask, test against entries in `UAssetPackageFlags`.
      */
     packageFlags: number
 
@@ -270,7 +266,7 @@ export interface UAssetPackageFileSummary {
     compatibleWithEngineVersion: UAssetEngineVersion
 
     /**
-     * Legacy package-level compression flags. Should be `0` for source (editor-side) `.uasset` files.
+     * Legacy package-level compression flags, should be `0` for source (editor-side) `.uasset` files.
      */
     compressionFlags: number
 
@@ -285,7 +281,7 @@ export interface UAssetPackageFileSummary {
     assetRegistryDataOffset: number
 
     /**
-     * Byte offset where bulk data (mip levels, sound waves, geometry buffers) begins. `int64`.
+     * Byte offset where bulk data (mip levels, sound waves, geometry buffers) begins, `int64`.
      */
     bulkDataStartOffset: bigint
 
@@ -316,7 +312,7 @@ export interface UAssetPackageFileSummary {
     namesReferencedFromExportDataCount: number
 
     /**
-     * Byte offset to the payload table of contents (present when `PAYLOAD_TOC` or newer), `-1` when absent. `int64`.
+     * Byte offset to the payload table of contents (present when `PAYLOAD_TOC` or newer), `-1` when absent, `int64`.
      */
     payloadTocOffset: bigint
 
@@ -327,8 +323,8 @@ export interface UAssetPackageFileSummary {
 }
 
 /**
- * Decoded `FObjectImport`, one entry in the import map. Represents an external object this
- * package references. FName fields are pre-resolved to their display strings using the name
+ * Decoded `FObjectImport`, one entry in the import map, represents an external object this
+ * package references, FName fields are pre-resolved to their display strings using the name
  * table, `FPackageIndex` fields (outerIndex) are kept as raw signed integers: `0` means null,
  * positive `N` points at export `N - 1`, negative `-N` points at import `N - 1`.
  * @see /Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectResource.h `FObjectImport`
@@ -355,7 +351,7 @@ export interface UAssetImport {
     objectName: string
 
     /**
-     * Containing package path of this import (post-`VER_UE4_NON_OUTER_PACKAGE_IMPORT`). Empty
+     * Containing package path of this import (post-`VER_UE4_NON_OUTER_PACKAGE_IMPORT`), empty
      * string on older packages that inferred the package from the outer chain instead.
      */
     packageName: string
@@ -368,8 +364,8 @@ export interface UAssetImport {
 }
 
 /**
- * Decoded `FObjectExport`, one entry in the export map. Represents an object defined inside
- * this package. FName fields are pre-resolved to strings; `FPackageIndex` fields are raw
+ * Decoded `FObjectExport`, one entry in the export map, represents an object defined inside
+ * this package, FName fields are pre-resolved to strings, `FPackageIndex` fields are raw
  * signed integers with the same convention as `UAssetImport.outerIndex`.
  * @see /Engine/Source/Runtime/CoreUObject/Public/UObject/ObjectResource.h `FObjectExport`
  */
@@ -405,7 +401,8 @@ export interface UAssetExport {
     objectFlags: number
 
     /**
-     * Serialized byte size of this export's property data. `int64` on modern packages, `int32` pre-`VER_UE4_64BIT_EXPORTMAP_SERIALSIZES`.
+     * Serialized byte size of this export's property data, `int64` on modern packages,
+     * `int32` pre-`VER_UE4_64BIT_EXPORTMAP_SERIALSIZES`.
      */
     serialSize: bigint
 
@@ -455,7 +452,8 @@ export interface UAssetExport {
     bGeneratePublicHash: boolean
 
     /**
-     * Starting index into the preload dependency array (post-`VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS`).
+     * Starting index into the preload dependency array
+     * (post-`VER_UE4_PRELOAD_DEPENDENCIES_IN_COOKED_EXPORTS`).
      */
     firstExportDependency: number
 
@@ -480,7 +478,8 @@ export interface UAssetExport {
     createBeforeCreateDependencies: number
 
     /**
-     * Start of the script serialization block (post-`SCRIPT_SERIALIZATION_OFFSET`, absent when using unversioned property serialization).
+     * Start of the script serialization block (post-`SCRIPT_SERIALIZATION_OFFSET`,
+     * absent when using unversioned property serialization).
      */
     scriptSerializationStartOffset: bigint
 
@@ -491,7 +490,7 @@ export interface UAssetExport {
 }
 
 /**
- * Header data for one tagged property inside an export's property stream. The value payload
+ * Header data for one tagged property inside an export's property stream, the value payload
  * itself is not decoded here, use `valueOffset` + `size` to locate the raw bytes when a
  * downstream module needs them (a type-specific extractor, a diff tool, etc.).
  * @see /Engine/Source/Runtime/CoreUObject/Private/UObject/PropertyTag.cpp `operator<<(FStructuredArchive::FSlot, FPropertyTag&)`
@@ -503,31 +502,31 @@ export interface UAssetPropertyTag {
     name: string
 
     /**
-     * Rendered property type. Simple types read as the class name (`"IntProperty"`,
+     * Rendered property type, simple types read as the class name (`"IntProperty"`,
      * `"NameProperty"`), containers include their inner type (`"StructProperty(Vector)"`,
      * `"ArrayProperty(StructProperty(Vector))"`, `"MapProperty(NameProperty,ObjectProperty)"`).
      */
     typeName: string
 
     /**
-     * Serialized byte size of the value payload that follows the header. `0` for skipped tags
+     * Serialized byte size of the value payload that follows the header, `0` for skipped tags
      * and `BoolProperty` tags whose value is baked into the flag bits.
      */
     size: number
 
     /**
-     * Position within a static array. `0` for scalar (non-array) properties.
+     * Position within a static array, `0` for scalar (non-array) properties.
      */
     arrayIndex: number
 
     /**
-     * True when the tag represents a `BoolProperty` set to `true`. False encodes both `false`
+     * True when the tag represents a `BoolProperty` set to `true`, false encodes both `false`
      * booleans and non-boolean tags.
      */
     boolValue: boolean
 
     /**
-     * True when the tag was marked as skipped during save; the value payload is empty.
+     * True when the tag was marked as skipped during save, the value payload is empty.
      */
     skipped: boolean
 
@@ -539,7 +538,7 @@ export interface UAssetPropertyTag {
 
     /**
      * Optional per-property GUID (used by properties that migrate their name across engine
-     * versions). Empty string when not present.
+     * versions), empty string when not present.
      */
     propertyGuid: string
 
@@ -551,8 +550,7 @@ export interface UAssetPropertyTag {
 
 /**
  * Full Layer 1 decode of a `.uasset` file: header summary, resolved name table, import map,
- * and export map. Tagged property streams are not decoded here since their location inside
- * each export depends on the export's class (Layer 2 concern).
+ * and export map.
  */
 export interface UAssetPackage {
     /**
@@ -574,4 +572,87 @@ export interface UAssetPackage {
      * Objects defined inside this package (`FObjectExport` entries) with FNames pre-resolved.
      */
     exports: UAssetExport[]
+}
+
+/**
+ * The "main" asset of a package: the top-level export a `.uasset` was created to hold
+ * (a Blueprint, a Material, a Texture2D, etc.).
+ */
+export interface UAssetMainAsset {
+    /**
+     * Zero-based index of the main export in `pkg.exports`.
+     */
+    index: number
+
+    /**
+     * The main export entry itself.
+     */
+    export: UAssetExport
+
+    /**
+     * Resolved class name, e.g. `"Blueprint"`, `"Material"`, `"Texture2D"`, `"AnimSequence"`.
+     */
+    className: string
+
+    /**
+     * UE package path of the class, e.g. `"/Script/Engine"` or `"/Script/CoreUObject"`.
+     */
+    classPackage: string
+}
+
+/**
+ * One Blueprint SCS (Simple Construction Script) component template, extracted from an export
+ * whose name ends in `_GEN_VARIABLE`.
+ */
+export interface UAssetBlueprintComponent {
+    /**
+     * Variable name assigned in the editor, e.g. `"MeshComponent"` or `"Arrow"`.
+     */
+    name: string
+
+    /**
+     * Component class type, e.g. `"StaticMeshComponent"` or `"ArrowComponent"`.
+     */
+    className: string
+}
+
+/**
+ * Shaper output for a `UBlueprint` asset, the Layer 2 view a commit-message generator or diff
+ * tool consumes for Blueprint packages.
+ */
+export interface UAssetBlueprintShape {
+    /**
+     * Discriminator tag, always `"blueprint"` for this shape.
+     */
+    kind: "blueprint"
+
+    /**
+     * Blueprint asset name, e.g. `"BP_Enemy"`.
+     */
+    name: string
+
+    /**
+     * Class the Blueprint inherits from, e.g. `"Actor"` or `"Character"`, empty when unresolved.
+     */
+    parentClass: string
+
+    /**
+     * SCS component templates declared on the Blueprint.
+     */
+    components: UAssetBlueprintComponent[]
+
+    /**
+     * Names of user-defined function graphs (exports whose class resolves to `"Function"`).
+     */
+    functions: string[]
+
+    /**
+     * `/Game/`-rooted asset paths referenced by this Blueprint's import table.
+     */
+    referencedAssets: string[]
+
+    /**
+     * Compact one-line summary suitable for feeding into an AI prompt.
+     */
+    renderedSummary: string
 }

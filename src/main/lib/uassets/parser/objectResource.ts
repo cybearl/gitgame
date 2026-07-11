@@ -8,7 +8,7 @@ import type { UAssetExport, UAssetImport, UAssetPackageFileSummary } from "@/mai
 /**
  * Read a single `FObjectImport` from the reader's current position.
  * @param reader Buffer reader positioned at the start of the entry.
- * @param summary Package summary; supplies the file versions used to gate optional fields.
+ * @param summary Package summary, supplies the file versions used to gate optional fields.
  * @param names Name table used to resolve embedded FName references.
  * @returns The decoded import entry.
  */
@@ -39,13 +39,11 @@ function readImport(reader: UAssetBufferReader, summary: UAssetPackageFileSummar
 }
 
 /**
- * Read every entry in the import map into an array of resolved imports.
- *
- * Notes:
- * - FName fields inside each import are pre-resolved against `names`, the returned strings are
- * ready to feed into commit-message context without further lookup.
- * - `FPackageIndex` fields (only `outerIndex` on imports) stay as raw signed integers.
- * @param reader Buffer reader; will be seeked to `summary.importOffset`.
+ * Read every entry in the import map into an array of resolved imports, FName fields inside
+ * each import are pre-resolved against `names` so the returned strings are ready to feed
+ * into commit-message context without further lookup, `FPackageIndex` fields (only
+ * `outerIndex` on imports) stay as raw signed integers.
+ * @param reader Buffer reader, will be seeked to `summary.importOffset`.
  * @param summary Package summary providing `importOffset`, `importCount`, and gating versions.
  * @param names Fully resolved name table from `readUAssetNameTable`.
  * @returns Array of length `summary.importCount`.
@@ -69,7 +67,7 @@ export function readUAssetImportMap(
 /**
  * Read a single `FObjectExport` from the reader's current position.
  * @param reader Buffer reader positioned at the start of the entry.
- * @param summary Package summary; supplies file versions and the unversioned-properties flag.
+ * @param summary Package summary, supplies file versions and the unversioned-properties flag.
  * @param names Name table used to resolve embedded FName references.
  * @returns The decoded export entry.
  */
@@ -86,7 +84,7 @@ function readExport(reader: UAssetBufferReader, summary: UAssetPackageFileSummar
     const objectName = readFName(reader, names)
     const objectFlags = reader.uint32()
 
-    // SerialSize/SerialOffset widened from int32 to int64 in VER_UE4_64BIT_EXPORTMAP_SERIALSIZES (511)
+    // "SerialSize" / "SerialOffset" widened from int32 to int64 in "VER_UE4_64BIT_EXPORTMAP_SERIALSIZES" (511)
     let serialSize: bigint
     let serialOffset: bigint
     if (summary.fileVersionUE4 >= UE4.VER_UE4_64BIT_EXPORTMAP_SERIALSIZES.value) {
@@ -141,8 +139,8 @@ function readExport(reader: UAssetBufferReader, summary: UAssetPackageFileSummar
         createBeforeCreateDependencies = reader.int32()
     }
 
-    // ScriptSerializationStartOffset/EndOffset only present when the package uses versioned
-    // property serialization and is at least SCRIPT_SERIALIZATION_OFFSET (1010)
+    // "ScriptSerializationStartOffset" / "EndOffset" only present when the package uses versioned
+    // property serialization and is at least "SCRIPT_SERIALIZATION_OFFSET" (1010)
     const usesUnversionedProps = (summary.packageFlags & UAssetPackageFlags.PKG_UnversionedProperties.value) !== 0
     let scriptSerializationStartOffset = 0n
     let scriptSerializationEndOffset = 0n
@@ -179,12 +177,11 @@ function readExport(reader: UAssetBufferReader, summary: UAssetPackageFileSummar
 }
 
 /**
- * Read every entry in the export map into an array of resolved exports.
- *
- * Note: `objectName` is pre-resolved, all `FPackageIndex` fields (`classIndex`, `superIndex`,
- * `templateIndex`, `outerIndex`) stay as raw signed integers using UE's convention: `0` is
- * null, positive `N` points at export `N - 1`, negative `-N` points at import `N - 1`.
- * @param reader Buffer reader; will be seeked to `summary.exportOffset`.
+ * Read every entry in the export map into an array of resolved exports, `objectName` is
+ * pre-resolved, all `FPackageIndex` fields (`classIndex`, `superIndex`, `templateIndex`,
+ * `outerIndex`) stay as raw signed integers using UE's convention, `0` is null, positive `N`
+ * points at export `N - 1`, negative `-N` points at import `N - 1`.
+ * @param reader Buffer reader, will be seeked to `summary.exportOffset`.
  * @param summary Package summary providing `exportOffset`, `exportCount`, and gating versions.
  * @param names Fully resolved name table from `readUAssetNameTable`.
  * @returns Array of length `summary.exportCount`.

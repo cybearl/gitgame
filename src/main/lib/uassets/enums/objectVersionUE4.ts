@@ -1,7 +1,7 @@
 import type { UAssetEnumEntry } from "@/main/types/uassets"
 
 /**
- * UE4 package format version, read from `PackageFileSummary.FileVersionUE4`. Frozen at 522 since UE5.
+ * UE4 package format version, read from `PackageFileSummary.FileVersionUE4`, frozen at 522 since UE5.
  * @see /Engine/Source/Runtime/Core/Public/UObject/ObjectVersion.h
  */
 export const UAssetObjectVersionUE4 = {

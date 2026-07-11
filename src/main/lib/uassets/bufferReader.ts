@@ -7,8 +7,8 @@ export class UAssetBufferReader {
     private isLittleEndian: boolean
 
     /**
-     * @param source Raw buffer or a view over one; the view's `byteOffset`/`byteLength` are respected.
-     * @param isLittleEndian Endianness for subsequent multi-byte reads. Defaults to `true`.
+     * @param source Raw buffer or a view over one, the view's `byteOffset`/`byteLength` are respected.
+     * @param isLittleEndian Endianness for subsequent multi-byte reads, defaults to `true`.
      */
     constructor(source: ArrayBuffer | ArrayBufferView, isLittleEndian = true) {
         if (source instanceof ArrayBuffer) {
@@ -185,8 +185,8 @@ export class UAssetBufferReader {
     }
 
     /**
-     * Read a UE `FString`: int32 length prefix, ANSI when positive or UTF-16LE when negative.
-     * The stored length includes the null terminator; the returned string does not.
+     * Read a UE `FString`, an int32 length prefix followed by string bytes, ANSI when positive
+     * or UTF-16LE when negative, the stored length includes the null terminator which is stripped.
      * @returns The decoded string, or the empty string when the length prefix is zero.
      */
     fstring(): string {

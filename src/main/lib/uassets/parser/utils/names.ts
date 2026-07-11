@@ -1,11 +1,10 @@
 import type { UAssetBufferReader } from "@main/lib/uassets/bufferReader"
 
 /**
- * Read a single `FNameEntrySerialized` from the reader's current position.
- *
- * Note: The wire format is an `FString` (length prefix + string bytes + null terminator) followed
- * by two `uint16` hashes for post-`VER_UE4_NAME_HASHES_SERIALIZED` files. UE writes both
- * hashes out of habit but ignores them on load, so we skip past them without decoding.
+ * Read a single `FNameEntrySerialized` from the reader's current position, the wire format
+ * is an `FString` (length prefix + string bytes + null terminator) followed by two `uint16`
+ * hashes for post-`VER_UE4_NAME_HASHES_SERIALIZED` files, UE writes both hashes out of habit
+ * but ignores them on load so we skip past them without decoding.
  * @param reader Buffer reader positioned at the start of the entry.
  * @param hasHashes True when the entry ends with `NonCasePreservingHash` + `CasePreservingHash`.
  * @returns The decoded name string.
@@ -25,7 +24,7 @@ export function readNameEntry(reader: UAssetBufferReader, hasHashes: boolean): s
 
 /**
  * Read an on-disk `FName` reference (int32 name index + int32 numeric suffix) and resolve it
- * against the given name table. UE stores the suffix as `ExternalNumber + 1`, so `0` means
+ * against the given name table, UE stores the suffix as `ExternalNumber + 1` so `0` means
  * "no suffix", `1` means `_0`, `2` means `_1`, and so on.
  * @param reader Buffer reader positioned at the start of the FName pair.
  * @param names Name table produced by `readUAssetNameTable`.

@@ -1,22 +1,17 @@
+import CONSTANTS from "@main/lib/constants"
 import type { UAssetBufferReader } from "@main/lib/uassets/bufferReader"
 import { UAssetObjectVersionUE4 as UE4 } from "@main/lib/uassets/enums/objectVersionUE4"
 import { UAssetObjectVersionUE5 as UE5 } from "@main/lib/uassets/enums/objectVersionUE5"
 import { UAssetPackageFileTag } from "@main/lib/uassets/enums/packageFileTag"
 import { UAssetPackageFlags } from "@main/lib/uassets/enums/packageFlags"
 import { readEngineVersion, readIoHashHex } from "@main/lib/uassets/parser/utils/structs"
+import dedent from "dedent"
 import type {
     UAssetCustomVersion,
     UAssetEngineVersion,
     UAssetGenerationInfo,
     UAssetPackageFileSummary,
 } from "@/main/types/uassets"
-
-/**
- * Highest `LegacyFileVersion` value this reader knows how to parse. UE writes negative numbers
- * to indicate summary format revisions, anything below `-9` uses a layout we can't safely read.
- * @see /Engine/Source/Runtime/CoreUObject/Private/UObject/PackageFileSummary.cpp
- */
-const CURRENT_LEGACY_FILE_VERSION = -9
 
 /**
  * Zeroed `UAssetEngineVersion`, used as a default when the summary predates engine-version tracking.
@@ -54,9 +49,10 @@ export function readUAssetPackageFileSummary(reader: UAssetBufferReader): UAsset
         throw new Error(`Unsupported .uasset: legacy UE3-era file (LegacyFileVersion=${legacyFileVersion}).`)
     }
 
-    if (legacyFileVersion < CURRENT_LEGACY_FILE_VERSION) {
+    if (legacyFileVersion < CONSTANTS.uasset.currentLegacyFileVersion) {
         throw new Error(
-            `Unsupported .uasset: LegacyFileVersion=${legacyFileVersion} is newer than this reader supports (max ${CURRENT_LEGACY_FILE_VERSION}).`,
+            dedent`Unsupported .uasset: LegacyFileVersion=${legacyFileVersion} is newer than this
+            reader supports (max ${CONSTANTS.uasset.currentLegacyFileVersion}).`,
         )
     }
 
@@ -225,7 +221,7 @@ export function readUAssetPackageFileSummary(reader: UAssetBufferReader): UAsset
     }
 
     // Legacy texture allocation info was removed in LegacyFileVersion -7
-    // Our supported range never hits the read path since CURRENT_LEGACY_FILE_VERSION is -9
+    // Our supported range never hits the read path since CONSTANTS.uasset.currentLegacyFileVersion is -9
 
     const assetRegistryDataOffset = reader.int32()
     const bulkDataStartOffset = reader.int64()

@@ -37,6 +37,7 @@
     "dependencies": {
         "@cybearl/cypack": "^1.11.10",
         "@react95/icons": "^2.5.0",
+        "dedent": "^1.7.2",
         "electron-updater": "^6.3.9",
         "picomatch": "^4.0.5",
         "react-window": "^2.2.7",

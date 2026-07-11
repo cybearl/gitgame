@@ -4,11 +4,10 @@ import { readNameEntry } from "@main/lib/uassets/parser/utils/names"
 import type { UAssetPackageFileSummary } from "@/main/types/uassets"
 
 /**
- * Read the entire name table into an array of strings, indexed by FName index.
- *
- * Note: Imports, exports, property tags, and every other in-package identifier reference names by
- * their zero-based index into this table, so it must be loaded before any of them.
- * @param reader Buffer reader; will be seeked to `summary.nameOffset`.
+ * Read the entire name table into an array of strings, indexed by FName index, imports,
+ * exports, property tags and every other in-package identifier reference names by their
+ * zero-based index into this table so it must be loaded before any of them.
+ * @param reader Buffer reader, will be seeked to `summary.nameOffset`.
  * @param summary Package summary providing `nameOffset`, `nameCount`, and the UE4 version
  * used to gate the trailing hash bytes.
  * @returns Array of length `summary.nameCount` where index `i` is the `i`-th FName string.
