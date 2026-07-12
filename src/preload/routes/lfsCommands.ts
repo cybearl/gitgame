@@ -8,6 +8,7 @@ const lfsCommandsApiRoutes: GitgameApi["lfsCommands"] = {
     getLockableFiles: dir => ipcRenderer.invoke(CONSTANTS.ipc.lfsCommandsGetLockableFiles, dir),
     lockPaths: (dir, paths) => ipcRenderer.invoke(CONSTANTS.ipc.lfsCommandsLockPaths, dir, paths),
     unlockPaths: (dir, paths, force) => ipcRenderer.invoke(CONSTANTS.ipc.lfsCommandsUnlockPaths, dir, paths, force),
+    migrateLocks: dir => ipcRenderer.invoke(CONSTANTS.ipc.lfsCommandsMigrateLocks, dir),
 }
 
 export default lfsCommandsApiRoutes

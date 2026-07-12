@@ -10,7 +10,7 @@ import { contextBridge } from "electron"
 import type { ConfirmDialogOptions, DialogOptions } from "@/main/types/dialogs"
 import type { FileTreeNode } from "@/main/types/fileTree"
 import type { GitBranch, GitCommit, GitStatus } from "@/main/types/gitCommands"
-import type { LfsLock, LfsLockResult } from "@/main/types/lfsCommands"
+import type { LfsLock, LfsLockMigration, LfsLockResult } from "@/main/types/lfsCommands"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
 import type { AppPreferences } from "@/main/types/store"
 
@@ -61,6 +61,7 @@ export type GitgameApi = {
         getLockableFiles: (dir: string) => Promise<string[]>
         lockPaths: (dir: string, paths: string[]) => Promise<LfsLockResult[]>
         unlockPaths: (dir: string, paths: string[], force?: boolean) => Promise<LfsLockResult[]>
+        migrateLocks: (dir: string) => Promise<LfsLockMigration[]>
     }
     projects: {
         addLocal: () => Promise<OpenProjectResult>

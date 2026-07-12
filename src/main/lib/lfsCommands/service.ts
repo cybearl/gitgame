@@ -1,7 +1,8 @@
 import { runGit } from "@main/lib/gitCommands/exec"
+import { getStatus } from "@main/lib/gitCommands/service"
 import { parseLockablePaths, parseLocks } from "@main/lib/lfsCommands/parse"
 import GIT_CONFIG from "@/main/config/git"
-import type { LfsLock, LfsLockResult } from "@/main/types/lfsCommands"
+import type { LfsLock, LfsLockMigration, LfsLockResult } from "@/main/types/lfsCommands"
 
 /**
  * Reads the configured Git user name, used to tell apart locks owned by the
@@ -151,4 +152,117 @@ export async function unlockPaths(dir: string, paths: string[], force = false): 
             return runLockCommand(dir, args, file)
         }),
     )
+}
+
+/**
+ * Migrates the LFS lock of a single staged rename from the old path to the new
+ * one: locks the new path first so a failure preserves the existing lock, then
+ * unlocks the old path only if the new lock succeeded.
+ * @param dir A path inside the repository.
+ * @param from The old repository-relative path (source of the rename).
+ * @param to The new repository-relative path (target of the rename).
+ * @param oldLock The active lock on `from`, or `undefined` if none.
+ * @param lockable Whether the new path carries the `lockable` attribute.
+ * @returns The migration outcome for this rename.
+ */
+async function migrateOneLock(
+    dir: string,
+    from: string,
+    to: string,
+    oldLock: LfsLock | undefined,
+    lockable: boolean,
+): Promise<LfsLockMigration> {
+    if (!oldLock) {
+        return {
+            from,
+            to,
+            status: "skipped-not-locked",
+        }
+    }
+
+    if (!oldLock.isMine) {
+        return {
+            from,
+            to,
+            status: "skipped-not-mine",
+        }
+    }
+
+    if (!lockable) {
+        return {
+            from,
+            to,
+            status: "skipped-not-lockable",
+        }
+    }
+
+    const lockResult = await runGit(["lfs", "lock", to], { cwd: dir })
+    if (lockResult.exitCode !== 0) {
+        return {
+            from,
+            to,
+            status: "failed-lock",
+            error: lockResult.stderr.trim() || undefined,
+        }
+    }
+
+    const unlockResult = await runGit(["lfs", "unlock", from], { cwd: dir })
+    if (unlockResult.exitCode !== 0) {
+        return {
+            from,
+            to,
+            status: "failed-unlock",
+            error: unlockResult.stderr.trim() || undefined,
+        }
+    }
+
+    return {
+        from,
+        to,
+        status: "migrated",
+    }
+}
+
+/**
+ * Carries LFS locks across staged renames so a locked file keeps its lock
+ * under its new name. Only locks owned by the current user are migrated, locks
+ * held by teammates are reported back untouched.
+ * @param dir A path inside the repository.
+ * @returns One entry per detected staged rename, describing the migration outcome.
+ * @throws If reading the status or the locks fails.
+ */
+export async function migrateLocks(dir: string): Promise<LfsLockMigration[]> {
+    const status = await getStatus(dir)
+
+    // Filter for renamed files
+    const renames = status.changes.filter(
+        (change): change is typeof change & { renamedFrom: string } => typeof change.renamedFrom === "string",
+    )
+
+    if (renames.length === 0) return []
+
+    const locks = await listLocks(dir)
+    const locksByPath = new Map(locks.map(lock => [lock.path, lock]))
+
+    const lockable = new Set(
+        await filterLockable(
+            dir,
+            renames.map(change => change.path),
+        ),
+    )
+
+    const results: LfsLockMigration[] = []
+    for (const change of renames) {
+        results.push(
+            await migrateOneLock(
+                dir,
+                change.renamedFrom,
+                change.path,
+                locksByPath.get(change.renamedFrom),
+                lockable.has(change.path),
+            ),
+        )
+    }
+
+    return results
 }

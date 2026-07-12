@@ -57,7 +57,9 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
     }, [currentProject?.path])
 
     /**
-     * Reloads the file tree and the LFS locks for the current project.
+     * Reloads the file tree and the LFS locks for the current project,
+     * migrating any locks held on staged renames to their new path so a locked
+     * file keeps its lock after being renamed.
      */
     const refresh = useCallback(async () => {
         setError(null)
@@ -85,6 +87,17 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
             .catch(err => setError(err instanceof Error ? err : new Error(String(err))))
 
         await Promise.all([treePromise, refreshLocks()])
+
+        // Carries locks across staged renames, then re-reads the locks if any
+        // migration actually moved a lock so the tree overlays the new paths
+        try {
+            const migrations = await window.api.lfsCommands.migrateLocks(currentProject.path)
+            if (migrations.some(m => m.status === "migrated" || m.status === "failed-unlock")) {
+                await refreshLocks()
+            }
+        } catch (err) {
+            setError(err instanceof Error ? err : new Error(String(err)))
+        }
 
         setIsLoading(false)
     }, [refreshLocks, currentProject?.path])

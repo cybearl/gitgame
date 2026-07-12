@@ -27,6 +27,7 @@ const CONSTANTS = {
         lfsCommandsGetLockableFiles: "lfs-commands:get-lockable-files",
         lfsCommandsLockPaths: "lfs-commands:lock-paths",
         lfsCommandsUnlockPaths: "lfs-commands:unlock-paths",
+        lfsCommandsMigrateLocks: "lfs-commands:migrate-locks",
         // File tree
         fileTreeGet: "file-tree:get",
         // Projects
