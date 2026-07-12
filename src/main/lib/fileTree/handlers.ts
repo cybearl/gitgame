@@ -1,11 +1,10 @@
 import CONSTANTS from "@main/lib/constants"
 import { getFileTree } from "@main/lib/fileTree/service"
-import { ipcMain } from "electron"
+import { safeHandle } from "@main/lib/ipc"
 
 /**
- * Registers the IPC handler that exposes the repository file tree to the
- * renderer process.
+ * Registers the IPC handler for the repository file tree.
  */
 export function registerFileTreeHandlers() {
-    ipcMain.handle(CONSTANTS.ipc.fileTreeGet, (_event, dir: string) => getFileTree(dir))
+    safeHandle(CONSTANTS.ipc.fileTreeGet, (_event, dir: string) => getFileTree(dir))
 }

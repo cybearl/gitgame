@@ -1,25 +1,11 @@
-import { access } from "node:fs/promises"
 import path from "node:path"
 import STORE_CONFIG from "@main/config/store"
 import { getRepositoryRoot, isRepository } from "@main/lib/gitCommands/service"
 import { getConfig, updateConfig } from "@main/lib/store"
+import { pathExists } from "@main/lib/utils/fs"
 import { app, type BrowserWindow, dialog } from "electron"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
 import type { AppPreferences } from "@/main/types/store"
-
-/**
- * Checks whether a path currently exists on disk.
- * @param target The absolute path to check.
- * @returns True if the path exists, `false` otherwise.
- */
-async function pathExists(target: string): Promise<boolean> {
-    try {
-        await access(target)
-        return true
-    } catch {
-        return false
-    }
-}
 
 /**
  * Records a repository as the most recently opened project, moving it to the

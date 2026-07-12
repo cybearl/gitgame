@@ -77,6 +77,31 @@ function AppShell() {
                 case "shell:open-external":
                     window.api.shells.openExternal(action.url)
                     break
+                case "devtools:test-confirm":
+                    window.api.dialogs.confirm({
+                        title: "Test confirm",
+                        message: "This is a test confirm dialog.",
+                        detail: "Use it to preview the Win95 confirm styling from the Dev Tools menu.",
+                        confirmLabel: "Sure",
+                        cancelLabel: "Nope",
+                    })
+                    break
+                case "devtools:test-error":
+                    window.api.dialogs.error("Test error", "This is a test error message.")
+                    break
+                case "devtools:test-error-with-detail":
+                    window.api.dialogs.error(
+                        "Test error with detail",
+                        "5 files could not be updated.",
+                        [
+                            "Content/Characters/Hero/BP_Hero.uasset: locked by john",
+                            "Content/Characters/Hero/SK_Hero.uasset: locked by jane",
+                            "Content/Maps/MainMenu.umap: locked by bob",
+                            "Content/UI/HUD/WBP_HUD.uasset: locked by alice",
+                            "Content/VFX/P_Explosion.uasset",
+                        ].join("\n"),
+                    )
+                    break
             }
         },
         [addLocalProject, openProject, clearRecentProjects],

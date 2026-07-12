@@ -40,7 +40,7 @@ export type GitgameApi = {
     }
     dialogs: {
         confirm: (options: ConfirmDialogOptions) => Promise<boolean>
-        error: (title: string, content: string) => void
+        error: (title: string, message: string, detail?: string) => void
         getOptions: () => Promise<DialogOptions | null>
         respond: (result: boolean) => void
     }
@@ -59,8 +59,17 @@ export type GitgameApi = {
         listLocks: (dir: string) => Promise<LfsLock[]>
         getCachedLocks: (dir: string) => Promise<LfsLock[]>
         getLockableFiles: (dir: string) => Promise<string[]>
-        lockPaths: (dir: string, paths: string[]) => Promise<LfsLockResult[]>
-        unlockPaths: (dir: string, paths: string[], force?: boolean) => Promise<LfsLockResult[]>
+        lockPaths: (
+            dir: string,
+            paths: string[],
+            onProgress?: (done: number, total: number) => void,
+        ) => Promise<LfsLockResult[]>
+        unlockPaths: (
+            dir: string,
+            paths: string[],
+            force?: boolean,
+            onProgress?: (done: number, total: number) => void,
+        ) => Promise<LfsLockResult[]>
         migrateLocks: (dir: string) => Promise<LfsLockMigration[]>
     }
     projects: {

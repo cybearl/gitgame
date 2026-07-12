@@ -3,6 +3,7 @@ import { useStatusContext } from "@renderer/components/contexts/Status"
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useState } from "react"
 import type { FileTreeNode } from "@/main/types/fileTree"
 import type { LfsLock, LfsLockResult } from "@/main/types/lfsCommands"
+import { reportError } from "@/renderer/lib/utils/errors"
 import { indexLocks } from "@/renderer/lib/utils/lockStates"
 
 /**
@@ -12,7 +13,6 @@ export type FileTreeContextType = {
     fileTree: FileTreeNode[]
     locksByPath: Map<string, LfsLock>
     isLoading: boolean
-    error: Error | null
     refresh: () => Promise<void>
     lock: (paths: string[]) => Promise<LfsLockResult[]>
     unlock: (paths: string[], force?: boolean) => Promise<LfsLockResult[]>
@@ -35,7 +35,6 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
     const [fileTree, setFileTree] = useState<FileTreeNode[]>([])
     const [locksByPath, setLocksByPath] = useState<Map<string, LfsLock>>(new Map())
     const [isLoading, setIsLoading] = useState(false)
-    const [error, setError] = useState<Error | null>(null)
 
     const { currentProject } = useProjectContext()
     const { runTask } = useStatusContext()
@@ -52,7 +51,7 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
         try {
             setLocksByPath(indexLocks(await window.api.lfsCommands.listLocks(currentProject.path)))
         } catch (err) {
-            setError(err instanceof Error ? err : new Error(String(err)))
+            reportError("Failed to load LFS locks", err)
         }
     }, [currentProject?.path])
 
@@ -62,8 +61,6 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
      * file keeps its lock after being renamed.
      */
     const refresh = useCallback(async () => {
-        setError(null)
-
         if (!currentProject?.path) {
             setFileTree([])
             setLocksByPath(new Map())
@@ -84,7 +81,7 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
         const treePromise = window.api.fileTree
             .get(currentProject.path)
             .then(setFileTree)
-            .catch(err => setError(err instanceof Error ? err : new Error(String(err))))
+            .catch(err => reportError("Failed to load file tree", err))
 
         await Promise.all([treePromise, refreshLocks()])
 
@@ -96,7 +93,7 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
                 await refreshLocks()
             }
         } catch (err) {
-            setError(err instanceof Error ? err : new Error(String(err)))
+            reportError("Failed to migrate LFS locks", err)
         }
 
         setIsLoading(false)
@@ -110,16 +107,27 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
         async (paths: string[]): Promise<LfsLockResult[]> => {
             if (!currentProject?.path) return []
 
-            const label = `Locking ${paths.length} ${paths.length === 1 ? "file" : "files"}...`
-
             try {
-                return await runTask(label, async () => {
-                    const results = await window.api.lfsCommands.lockPaths(currentProject?.path ?? null, paths)
+                return await runTask("Locking...", async handle => {
+                    const results = await window.api.lfsCommands.lockPaths(
+                        currentProject?.path ?? null,
+                        paths,
+                        (done, total) => {
+                            if (total <= 1) {
+                                handle.setLabel(`Locking ${total} ${total === 1 ? "file" : "files"}...`)
+                                return
+                            }
+
+                            handle.setLabel(`Locking ${done}/${total} files...`)
+                            handle.setProgress((done / total) * 100)
+                        },
+                    )
+
                     await refreshLocks()
                     return results
                 })
             } catch (err) {
-                setError(err instanceof Error ? err : new Error(String(err)))
+                reportError("Failed to lock files", err)
                 return []
             }
         },
@@ -136,16 +144,28 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
             if (!currentProject?.path) return []
 
             const verb = force ? "Force-unlocking" : "Unlocking"
-            const label = `${verb} ${paths.length} ${paths.length === 1 ? "file" : "files"}...`
 
             try {
-                return await runTask(label, async () => {
-                    const results = await window.api.lfsCommands.unlockPaths(currentProject?.path ?? null, paths, force)
+                return await runTask(`${verb}...`, async handle => {
+                    const results = await window.api.lfsCommands.unlockPaths(
+                        currentProject?.path ?? null,
+                        paths,
+                        force,
+                        (done, total) => {
+                            if (total <= 1) {
+                                handle.setLabel(`${verb} ${total} ${total === 1 ? "file" : "files"}...`)
+                                return
+                            }
+
+                            handle.setLabel(`${verb} ${done}/${total} files...`)
+                            handle.setProgress((done / total) * 100)
+                        },
+                    )
                     await refreshLocks()
                     return results
                 })
             } catch (err) {
-                setError(err instanceof Error ? err : new Error(String(err)))
+                reportError(force ? "Failed to force-unlock files" : "Failed to unlock files", err)
                 return []
             }
         },
@@ -163,7 +183,6 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
                 fileTree,
                 locksByPath,
                 isLoading,
-                error,
                 refresh,
                 lock,
                 unlock,

@@ -10,6 +10,9 @@ export type MenuAction =
     | { type: "window:close" }
     | { type: "view:reload" }
     | { type: "shell:open-external"; url: string }
+    | { type: "devtools:test-confirm" }
+    | { type: "devtools:test-error" }
+    | { type: "devtools:test-error-with-detail" }
 
 /**
  * External resources opened from the `Help` menu.
@@ -99,6 +102,27 @@ export function buildTopLevelMenus(
     currentProject: Project | null,
     remoteBrowsableUrl: string | null,
 ): TopLevelMenu[] {
+    const devToolsMenu: TopLevelMenu = {
+        label: "Dev Tools",
+        items: [
+            {
+                type: "item",
+                label: "Test Confirm Dialog",
+                action: { type: "devtools:test-confirm" },
+            },
+            {
+                type: "item",
+                label: "Test Error Dialog",
+                action: { type: "devtools:test-error" },
+            },
+            {
+                type: "item",
+                label: "Test Error Dialog with Detail",
+                action: { type: "devtools:test-error-with-detail" },
+            },
+        ],
+    }
+
     return [
         {
             label: "File",
@@ -342,6 +366,7 @@ export function buildTopLevelMenus(
                 },
             ],
         },
+        ...(import.meta.env.DEV ? [devToolsMenu] : []),
         {
             label: "Help",
             items: [

@@ -10,6 +10,7 @@ const WEB_PREFERENCES: WebPreferences = {
     sandbox: false,
     contextIsolation: true,
     nodeIntegration: false,
+    autoplayPolicy: "no-user-gesture-required",
 }
 
 /**

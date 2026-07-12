@@ -126,30 +126,66 @@ async function runLockCommand(dir: string, args: string[], file: string): Promis
 }
 
 /**
- * Locks every lockable file covered by the given paths, in parallel.
+ * Locks every lockable file covered by the given paths, in parallel, reporting
+ * per-file completion through the optional `onProgress` callback so a caller
+ * can render a live progress bar.
  * @param dir A path inside the repository.
  * @param paths The repository-relative paths to lock (files or folders).
+ * @param onProgress Called once with `(0, total)` after expansion, then again
+ * as each per-file command settles, until `done === total`.
  * @returns The per-file results.
  */
-export async function lockPaths(dir: string, paths: string[]): Promise<LfsLockResult[]> {
+export async function lockPaths(
+    dir: string,
+    paths: string[],
+    onProgress?: (done: number, total: number) => void,
+): Promise<LfsLockResult[]> {
     const files = await expandToLockableFiles(dir, paths)
-    return Promise.all(files.map(file => runLockCommand(dir, ["lfs", "lock", file], file)))
+    const total = files.length
+
+    onProgress?.(0, total)
+
+    let done = 0
+    return Promise.all(
+        files.map(async file => {
+            const result = await runLockCommand(dir, ["lfs", "lock", file], file)
+            done += 1
+            onProgress?.(done, total)
+            return result
+        }),
+    )
 }
 
 /**
- * Unlocks every lockable file covered by the given paths, in parallel.
+ * Unlocks every lockable file covered by the given paths, in parallel, reporting
+ * per-file completion through the optional `onProgress` callback so a caller
+ * can render a live progress bar.
  * @param dir A path inside the repository.
  * @param paths The repository-relative paths to unlock (files or folders).
  * @param force Whether to force-unlock files locked by other users.
+ * @param onProgress Called once with `(0, total)` after expansion, then again
+ * as each per-file command settles, until `done === total`.
  * @returns The per-file results.
  */
-export async function unlockPaths(dir: string, paths: string[], force = false): Promise<LfsLockResult[]> {
+export async function unlockPaths(
+    dir: string,
+    paths: string[],
+    force = false,
+    onProgress?: (done: number, total: number) => void,
+): Promise<LfsLockResult[]> {
     const files = await expandToLockableFiles(dir, paths)
+    const total = files.length
 
+    onProgress?.(0, total)
+
+    let done = 0
     return Promise.all(
-        files.map(file => {
+        files.map(async file => {
             const args = force ? ["lfs", "unlock", "--force", file] : ["lfs", "unlock", file]
-            return runLockCommand(dir, args, file)
+            const result = await runLockCommand(dir, args, file)
+            done += 1
+            onProgress?.(done, total)
+            return result
         }),
     )
 }

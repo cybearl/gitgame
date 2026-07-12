@@ -19,6 +19,18 @@ export type LfsLockResult = {
 }
 
 /**
+ * The payload streamed over the LFS lock progress channel, letting the renderer
+ * track a live `done/total` count while a lock or unlock batch is in flight.
+ * The `requestId` scopes each event to the originating invocation so multiple
+ * concurrent batches do not cross-contaminate.
+ */
+export type LfsLockProgress = {
+    requestId: string
+    done: number
+    total: number
+}
+
+/**
  * The outcome of a lock migration for a single staged rename, describing how
  * the old path's lock was carried over to the new path.
  */

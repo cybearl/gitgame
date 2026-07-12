@@ -80,8 +80,8 @@ export function registerDialogsHandlers() {
         openDialog(BrowserWindow.fromWebContents(event.sender), { ...options, variant: "confirm" }),
     )
 
-    ipcMain.on(CONSTANTS.ipc.dialogsError, (event, title: string, content: string) => {
-        openDialog(BrowserWindow.fromWebContents(event.sender), { variant: "error", title, message: content })
+    ipcMain.on(CONSTANTS.ipc.dialogsError, (event, title: string, message: string, detail?: string) => {
+        openDialog(BrowserWindow.fromWebContents(event.sender), { variant: "error", title, message, detail })
     })
 
     ipcMain.handle(CONSTANTS.ipc.dialogsGetOptions, event => {
