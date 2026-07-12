@@ -61,7 +61,7 @@ function walkOuterToPackage(pkg: UAssetPackage, startOuterIndex: number): string
  */
 function findGeneratedClassExport(pkg: UAssetPackage, main: UAssetMainAsset): UAssetExport | null {
     const expectedName = `${main.export.objectName}${CONSTANTS.uasset.blueprint.compiledClassSuffix}`
-    return pkg.exports.find((entry) => entry.objectName === expectedName) ?? null
+    return pkg.exports.find(entry => entry.objectName === expectedName) ?? null
 }
 
 /**

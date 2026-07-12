@@ -38,7 +38,7 @@ describe.skipIf(!existsSync(FIXTURE_PATH))("parseUAsset: BP_Paticle_Wind_Setting
 
     test("import map exposes at least one /Script/CoreUObject import", ({ expect }) => {
         expect(pkg.imports).toHaveLength(pkg.summary.importCount)
-        const coreImport = pkg.imports.find((i) => i.classPackage === "/Script/CoreUObject")
+        const coreImport = pkg.imports.find(i => i.classPackage === "/Script/CoreUObject")
         expect(coreImport).toBeDefined()
     })
 

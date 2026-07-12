@@ -26,8 +26,8 @@ describe.skipIf(!existsSync(FIXTURE_PATH))("shapeBlueprint: BP_Paticle_Wind_Sett
     })
 
     test("components include Arrow (ArrowComponent) and Billboard (BillboardComponent)", ({ expect }) => {
-        const arrow = shape.components.find((c) => c.name === "Arrow")
-        const billboard = shape.components.find((c) => c.name === "Billboard")
+        const arrow = shape.components.find(c => c.name === "Arrow")
+        const billboard = shape.components.find(c => c.name === "Billboard")
         expect(arrow?.className).toBe("ArrowComponent")
         expect(billboard?.className).toBe("BillboardComponent")
     })
