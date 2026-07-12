@@ -4,8 +4,8 @@ import folderIcon from "@react95-icons/Folder_16x16_4.png"
 import lockIcon from "@react95-icons/Lock_16x16_4.png"
 import Tooltip from "@renderer/components/ui/Tooltip"
 import type { TreeLeaf } from "react95"
-import type { LfsLock, LfsLockResult } from "@/main/types/lfs"
-import type { FileTreeNode } from "@/main/types/tree"
+import type { FileTreeNode } from "@/main/types/fileTree"
+import type { LfsLock, LfsLockResult } from "@/main/types/lfsCommands"
 import type { LockOwnerCount, NodeLockState } from "@/renderer/lib/utils/lockStates"
 
 /**
@@ -16,9 +16,10 @@ export function reportLockFailures(results: LfsLockResult[]) {
     const failed = results.filter(result => !result.ok)
     if (failed.length === 0) return
 
+    const message = `${failed.length} file${failed.length === 1 ? "" : "s"} could not be updated.`
     const detail = failed.map(result => (result.error ? `${result.path}: ${result.error}` : result.path)).join("\n")
 
-    window.api.dialog.error("Some files could not be updated", detail)
+    window.api.dialogs.error("Some files could not be updated", message, detail)
 }
 
 /**

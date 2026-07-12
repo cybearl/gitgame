@@ -1,5 +1,5 @@
-import type { LfsLock } from "@/main/types/lfs"
-import type { FileTreeNode } from "@/main/types/tree"
+import type { FileTreeNode } from "@/main/types/fileTree"
+import type { LfsLock } from "@/main/types/lfsCommands"
 
 /**
  * The lock state of a tree node:

@@ -144,3 +144,6 @@ vite.config.ts.timestamp-*
 
 # AI
 .claude
+
+# UE5 source code
+.ue5

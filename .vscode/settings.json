@@ -57,9 +57,21 @@
     // CSpell
     "cSpell.words": [
         "asar",
+        "ASSETDATA",
         "asynciterable",
         "browsable",
-        "scrollview"
+        "CHUNKID",
+        "CHUNKIDS",
+        "EXPORTMAP",
+        "fguid",
+        "gatherable",
+        "scrollview",
+        "SERIALSIZES",
+        "SOFTOBJECTPATH",
+        "TEMPLATEINDEX",
+        "uasset",
+        "uassets",
+        "UPACKAGE"
     ],
     "[json]": {
         "editor.defaultFormatter": "biomejs.biome"

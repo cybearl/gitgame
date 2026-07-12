@@ -8,47 +8,76 @@ const CONSTANTS = {
     ipc: {
         // App
         appGetVersion: "app:get-version",
-        // Window
-        windowGetState: "window:get-state",
-        windowStateChanged: "window:state-changed",
-        windowMinimize: "window:minimize",
-        windowMaximizeToggle: "window:maximize-toggle",
-        windowClose: "window:close",
-        // Git
-        gitIsRepository: "git:is-repository",
-        gitGetRepositoryRoot: "git:get-repository-root",
-        gitGetStatus: "git:get-status",
-        gitListBranches: "git:list-branches",
-        gitGetLog: "git:get-log",
-        gitGetRemoteUrl: "git:get-remote-url",
-        // LFS
-        lfsListLocks: "lfs:list-locks",
-        lfsGetCachedLocks: "lfs:get-cached-locks",
-        lfsGetLockableFiles: "lfs:get-lockable-files",
-        lfsLockPaths: "lfs:lock-paths",
-        lfsUnlockPaths: "lfs:unlock-paths",
-        // Tree
-        treeGetFileTree: "tree:get-file-tree",
-        // Project
-        projectAddLocal: "project:add-local",
-        projectOpen: "project:open",
-        projectGetRecent: "project:get-recent",
-        projectRemoveRecent: "project:remove-recent",
-        projectClearRecent: "project:clear-recent",
-        projectGetPreferences: "project:get-preferences",
-        projectSetPreferences: "project:set-preferences",
-        // Shell
-        shellOpenExternal: "shell:open-external",
-        // Dialog
-        dialogConfirm: "dialog:confirm",
-        dialogError: "dialog:error",
-        dialogGetOptions: "dialog:get-options",
-        dialogRespond: "dialog:respond",
+        // Windows
+        windowsGetState: "windows:get-state",
+        windowsStateChanged: "windows:state-changed",
+        windowsMinimize: "windows:minimize",
+        windowsMaximizeToggle: "windows:maximize-toggle",
+        windowsClose: "windows:close",
+        // Git commands
+        gitCommandsIsRepository: "git-commands:is-repository",
+        gitCommandsGetRepositoryRoot: "git-commands:get-repository-root",
+        gitCommandsGetStatus: "git-commands:get-status",
+        gitCommandsListBranches: "git-commands:list-branches",
+        gitCommandsGetLog: "git-commands:get-log",
+        gitCommandsGetRemoteUrl: "git-commands:get-remote-url",
+        // LFS commands
+        lfsCommandsListLocks: "lfs-commands:list-locks",
+        lfsCommandsGetCachedLocks: "lfs-commands:get-cached-locks",
+        lfsCommandsGetLockableFiles: "lfs-commands:get-lockable-files",
+        lfsCommandsLockPaths: "lfs-commands:lock-paths",
+        lfsCommandsUnlockPaths: "lfs-commands:unlock-paths",
+        lfsCommandsLockProgress: "lfs-commands:lock-progress",
+        lfsCommandsMigrateLocks: "lfs-commands:migrate-locks",
+        // File tree
+        fileTreeGet: "file-tree:get",
+        // Projects
+        projectsAddLocal: "projects:add-local",
+        projectsOpen: "projects:open",
+        projectsGetRecent: "projects:get-recent",
+        projectsRemoveRecent: "projects:remove-recent",
+        projectsClearRecent: "projects:clear-recent",
+        projectsGetPreferences: "projects:get-preferences",
+        projectsSetPreferences: "projects:set-preferences",
+        // Shells
+        shellsOpenExternal: "shells:open-external",
+        // Dialogs
+        dialogsConfirm: "dialogs:confirm",
+        dialogsError: "dialogs:error",
+        dialogsGetOptions: "dialogs:get-options",
+        dialogsRespond: "dialogs:respond",
     },
     git: {
         logFieldSeparator: "\x1f",
         logRecordSeparator: "\x1e",
         logFormat: ["%H", "%h", "%s", "%an", "%ae", "%aI"], // Joined with field separator and ends with record separator
+    },
+    uasset: {
+        // Highest "LegacyFileVersion" the summary reader handles, anything below (i.e. more
+        // negative) uses a summary layout we haven't verified against UE source
+        currentLegacyFileVersion: -9,
+        // Prefix that marks user-created (game content) asset packages, imports whose outer
+        // chain terminates outside this prefix are engine/plugin classes
+        gamePackagePrefix: "/Game/",
+        // Bit values of "EPropertyTagFlags", the uint8 bitmask on every property tag header
+        propertyTagFlag: {
+            hasArrayIndex: 0x01,
+            hasPropertyGuid: 0x02,
+            hasPropertyExtensions: 0x04,
+            hasBinaryOrNativeSerialize: 0x08,
+            boolTrue: 0x10,
+            skippedSerialize: 0x20,
+        },
+        // Bit values of "EPropertyTagExtension", the uint8 bitmask written when "hasPropertyExtensions" is set
+        propertyTagExtension: {
+            overridableInformation: 0x02,
+            hasExternalsObjects: 0x04,
+        },
+        // Blueprint-specific magic strings the shaper matches on
+        blueprint: {
+            componentSuffix: "_GEN_VARIABLE",
+            compiledClassSuffix: "_C",
+        },
     },
 } as const
 

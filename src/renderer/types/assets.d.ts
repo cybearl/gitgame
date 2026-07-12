@@ -15,6 +15,14 @@ declare module "*.woff2" {
 }
 
 /**
+ * Ambient declaration for static MP3 asset imports resolved by Vite at build time.
+ */
+declare module "*.mp3" {
+    const src: string
+    export default src
+}
+
+/**
  * Ambient declaration for direct PNG imports through the `@react95-icons/*` alias (for React95).
  */
 declare module "@react95-icons/*" {

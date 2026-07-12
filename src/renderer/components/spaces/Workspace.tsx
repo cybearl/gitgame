@@ -11,7 +11,7 @@ export default function Workspace() {
      * @param finalWidth The width to persist, in pixels.
      */
     const persistWidth = useCallback((finalWidth: number) => {
-        window.api.project.setPreferences({ filesPaneWidth: finalWidth })
+        window.api.projects.setPreferences({ filesPaneWidth: finalWidth })
     }, [])
 
     const { width, setWidth, handleDragStart } = useResizablePaneWidth({
@@ -25,7 +25,7 @@ export default function Workspace() {
     useEffect(() => {
         let cancelled = false
 
-        window.api.project.getPreferences().then(preferences => {
+        window.api.projects.getPreferences().then(preferences => {
             if (cancelled) return
             setWidth(preferences.filesPaneWidth)
         })

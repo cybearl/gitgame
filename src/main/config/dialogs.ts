@@ -1,11 +1,11 @@
 /**
  * The main configuration for dialogs.
  */
-const DIALOG_CONFIG = {
+const DIALOGS_CONFIG = {
     sizes: {
         confirm: { width: 420, height: 230 },
         error: { width: 480, height: 300 },
     },
 }
 
-export default DIALOG_CONFIG
+export default DIALOGS_CONFIG

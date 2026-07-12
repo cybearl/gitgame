@@ -3,7 +3,7 @@ import lockIcon from "@react95-icons/Lock_16x16_4.png"
 import { useTreeViewContext } from "@renderer/components/contexts/TreeView"
 import { type ChangeEvent, type CSSProperties, useCallback } from "react"
 import { Button, TextInput } from "react95"
-import TreeView from "@/renderer/components/views/Tree"
+import TreeView from "@/renderer/components/views/TreeView"
 
 type FilesPaneProps = {
     className?: string

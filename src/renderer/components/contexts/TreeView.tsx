@@ -1,5 +1,5 @@
+import { useFileTreeContext } from "@renderer/components/contexts/FileTree"
 import { useProjectContext } from "@renderer/components/contexts/Project"
-import { useTreeContext } from "@renderer/components/contexts/Tree"
 import WORKSPACE_CONFIG from "@renderer/config/workspace"
 import useDebouncedValue from "@renderer/hooks/useDebouncedValue"
 import {
@@ -32,7 +32,7 @@ import {
     useMemo,
     useState,
 } from "react"
-import type { FileTreeNode } from "@/main/types/tree"
+import type { FileTreeNode } from "@/main/types/fileTree"
 
 /**
  * The state of an open context menu, anchored to a right-clicked node and
@@ -111,7 +111,7 @@ type TreeViewProviderProps = {
 
 export default function TreeViewProvider({ children }: TreeViewProviderProps) {
     const { currentProject } = useProjectContext()
-    const { fileTree, locksByPath, lock, unlock } = useTreeContext()
+    const { fileTree, locksByPath, lock, unlock } = useFileTreeContext()
 
     const [expandedPaths, setExpandedPaths] = useState<string[]>([])
     const [selectedPath, setSelectedPath] = useState<string | undefined>(undefined)
@@ -137,7 +137,7 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
     useEffect(() => {
         let cancelled = false
 
-        window.api.project
+        window.api.projects
             .getPreferences()
             .then(preferences => {
                 if (cancelled) return
@@ -361,7 +361,7 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
 
         dismissMenu()
 
-        const confirmed = await window.api.dialog.confirm({
+        const confirmed = await window.api.dialogs.confirm({
             title: "Force unlock",
             message: `Force unlock ${menu.othersPaths.length} file${menu.othersPaths.length === 1 ? "" : "s"} locked by other users?`,
             detail: "Forcing may discard work the lock owner has not pushed yet.",
