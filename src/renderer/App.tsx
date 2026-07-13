@@ -2,7 +2,7 @@ import computerIcon from "@react95-icons/Computer3_16x16_4.png"
 import FileTreeProvider from "@renderer/components/contexts/FileTree"
 import ProjectProvider, { useProjectContext } from "@renderer/components/contexts/Project"
 import StatusProvider from "@renderer/components/contexts/Status"
-import TreeViewProvider from "@renderer/components/contexts/TreeView"
+import TreeViewProvider, { useTreeViewContext } from "@renderer/components/contexts/TreeView"
 import useMenuShortcuts from "@renderer/hooks/useMenuShortcuts"
 import { useCallback, useEffect, useMemo } from "react"
 import MenuBar from "@/renderer/components/bars/Menu"
@@ -21,6 +21,8 @@ function AppShell() {
     const { currentProject, recentProjects, remoteUrl, addLocalProject, openProject, clearRecentProjects } =
         useProjectContext()
 
+    const treeView = useTreeViewContext()
+
     /**
      * The browsable HTTPS URL of the current project's `origin` remote, or
      * `null` when there is no remote or it cannot be normalized.
@@ -36,11 +38,24 @@ function AppShell() {
     }, [currentProject])
 
     /**
-     * The menus of the application, rebuilt when the recent projects change.
+     * The menus of the application, rebuilt when the recent projects or any
+     * checkable toggle state changes so the check indicators stay in sync.
      */
     const menus = useMemo(
-        () => buildTopLevelMenus(recentProjects, currentProject, remoteBrowsableUrl),
-        [recentProjects, currentProject, remoteBrowsableUrl],
+        () =>
+            buildTopLevelMenus(recentProjects, currentProject, remoteBrowsableUrl, {
+                isRegex: treeView.isRegex,
+                isAdvancedOpen: treeView.isAdvancedOpen,
+                isShowingMyLocksOnly: treeView.isShowingMyLocksOnly,
+            }),
+        [
+            recentProjects,
+            currentProject,
+            remoteBrowsableUrl,
+            treeView.isRegex,
+            treeView.isAdvancedOpen,
+            treeView.isShowingMyLocksOnly,
+        ],
     )
 
     /**
@@ -77,6 +92,15 @@ function AppShell() {
                 case "shell:open-external":
                     window.api.shells.openExternal(action.url)
                     break
+                case "search:toggle-regex":
+                    treeView.setIsRegex(!treeView.isRegex)
+                    break
+                case "search:toggle-advanced":
+                    treeView.setIsAdvancedOpen(!treeView.isAdvancedOpen)
+                    break
+                case "lfs:toggle-show-my-locks":
+                    treeView.setIsShowingMyLocksOnly(!treeView.isShowingMyLocksOnly)
+                    break
                 case "devtools:test-confirm":
                     window.api.dialogs.confirm({
                         title: "Test confirm",
@@ -104,7 +128,7 @@ function AppShell() {
                     break
             }
         },
-        [addLocalProject, openProject, clearRecentProjects],
+        [addLocalProject, openProject, clearRecentProjects, treeView],
     )
 
     // Bind the menu accelerators (Ctrl+O, Ctrl+Q, ...) to their actions

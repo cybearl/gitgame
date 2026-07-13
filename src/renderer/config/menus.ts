@@ -10,6 +10,9 @@ export type MenuAction =
     | { type: "window:close" }
     | { type: "view:reload" }
     | { type: "shell:open-external"; url: string }
+    | { type: "search:toggle-regex" }
+    | { type: "search:toggle-advanced" }
+    | { type: "lfs:toggle-show-my-locks" }
     | { type: "devtools:test-confirm" }
     | { type: "devtools:test-error" }
     | { type: "devtools:test-error-with-detail" }
@@ -34,6 +37,7 @@ export type TopLevelMenuEntry =
           label: string
           accelerator?: string
           isDisabled?: boolean
+          isChecked?: boolean
           action?: MenuAction
       }
     | { type: "separator" }
@@ -90,17 +94,30 @@ function buildRecentProjectsItems(recentProjects: Project[], currentProject: Pro
 }
 
 /**
+ * The current on/off state of the search and lock toggles shown as checkable
+ * menu items, so the dropdown can render the check indicator in sync with the
+ * live tree-view state.
+ */
+export type MenuToggleState = {
+    isRegex: boolean
+    isAdvancedOpen: boolean
+    isShowingMyLocksOnly: boolean
+}
+
+/**
  * Builds the top-level application menus, injecting the dynamic recent projects
  * and enabling the repository-scoped items only when a project is open.
  * @param recentProjects The recent projects, most recently opened first.
  * @param currentProject The currently opened project, if any.
  * @param remoteBrowsableUrl The browsable HTTPS URL of the current project's remote, if any.
+ * @param toggles The on/off state of the search and lock toggle items.
  * @returns The top-level menus.
  */
 export function buildTopLevelMenus(
     recentProjects: Project[],
     currentProject: Project | null,
     remoteBrowsableUrl: string | null,
+    toggles: MenuToggleState,
 ): TopLevelMenu[] {
     const devToolsMenu: TopLevelMenu = {
         label: "Dev Tools",
@@ -201,6 +218,19 @@ export function buildTopLevelMenus(
                     label: "Go to Summary",
                     accelerator: "Ctrl+G",
                     isDisabled: true,
+                },
+                { type: "separator" },
+                {
+                    type: "item",
+                    label: "Use Regular Expression",
+                    isChecked: toggles.isRegex,
+                    action: { type: "search:toggle-regex" },
+                },
+                {
+                    type: "item",
+                    label: "Show Include/Exclude Filters",
+                    isChecked: toggles.isAdvancedOpen,
+                    action: { type: "search:toggle-advanced" },
                 },
                 { type: "separator" },
                 {
@@ -345,8 +375,9 @@ export function buildTopLevelMenus(
                 },
                 {
                     type: "item",
-                    label: "View Locks...",
-                    isDisabled: true,
+                    label: "Show My Locks Only",
+                    isChecked: toggles.isShowingMyLocksOnly,
+                    action: { type: "lfs:toggle-show-my-locks" },
                 },
                 { type: "separator" },
                 {
