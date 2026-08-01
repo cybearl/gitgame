@@ -1,4 +1,5 @@
 import appApiRoutes from "@preload/routes/app"
+import audioApiRoutes from "@preload/routes/audio"
 import dialogsApiRoutes from "@preload/routes/dialogs"
 import fileTreeApiRoutes from "@preload/routes/fileTree"
 import gitCommandsApiRoutes from "@preload/routes/gitCommands"
@@ -38,9 +39,14 @@ export type GitgameApi = {
     app: {
         version: string
     }
+    audio: {
+        playError: () => void
+    }
     dialogs: {
         confirm: (options: ConfirmDialogOptions) => Promise<boolean>
-        error: (title: string, message: string, detail?: string) => void
+        message: (title: string, message: string) => void
+        error: (title: string, message: string) => void
+        errorWithDetails: (title: string, message: string, details: string) => void
         getOptions: () => Promise<DialogOptions | null>
         respond: (result: boolean) => void
     }
@@ -104,6 +110,7 @@ const api: GitgameApi = {
         isMacOS: process.platform === "darwin",
     },
     app: appApiRoutes,
+    audio: audioApiRoutes,
     dialogs: dialogsApiRoutes,
     fileTree: fileTreeApiRoutes,
     gitCommands: gitCommandsApiRoutes,

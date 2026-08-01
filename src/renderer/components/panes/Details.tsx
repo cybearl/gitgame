@@ -103,7 +103,7 @@ export default function DetailsPane({ className }: DetailsPaneProps) {
         const confirmed = await window.api.dialogs.confirm({
             title: "Force unlock",
             message: `Force unlock ${othersPaths.length} file${othersPaths.length === 1 ? "" : "s"} locked by other users?`,
-            detail: "Forcing may discard work the lock owner has not pushed yet.",
+            details: "Forcing may discard work the lock owner has not pushed yet.",
             confirmLabel: "Force unlock",
             isDestructive: true,
         })

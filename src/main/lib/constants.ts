@@ -43,7 +43,9 @@ const CONSTANTS = {
         shellsOpenExternal: "shells:open-external",
         // Dialogs
         dialogsConfirm: "dialogs:confirm",
+        dialogsMessage: "dialogs:message",
         dialogsError: "dialogs:error",
+        dialogsErrorWithDetails: "dialogs:error-with-details",
         dialogsGetOptions: "dialogs:get-options",
         dialogsRespond: "dialogs:respond",
     },
