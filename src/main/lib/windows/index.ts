@@ -3,6 +3,31 @@ import type { WindowState } from "@preload/index"
 import { BrowserWindow, ipcMain } from "electron"
 
 /**
+ * The main application window, tracked so app-global features (such as the
+ * updater) can parent their own windows to it.
+ */
+let mainWindow: BrowserWindow | null = null
+
+/**
+ * Registers the main application window and forgets it once it is closed.
+ * @param window The main `BrowserWindow` instance.
+ */
+export function setMainWindow(window: BrowserWindow) {
+    mainWindow = window
+    window.on("closed", () => {
+        if (mainWindow === window) mainWindow = null
+    })
+}
+
+/**
+ * Reads the main application window.
+ * @returns The main window, or `null` when it is closed.
+ */
+export function getMainWindow(): BrowserWindow | null {
+    return mainWindow && !mainWindow.isDestroyed() ? mainWindow : null
+}
+
+/**
  * Reads the current state of a `BrowserWindow`.
  * @param window The `BrowserWindow` instance to read the state from.
  * @returns A snapshot of the current state of the window.

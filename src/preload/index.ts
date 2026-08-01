@@ -6,6 +6,7 @@ import gitCommandsApiRoutes from "@preload/routes/gitCommands"
 import lfsCommandsApiRoutes from "@preload/routes/lfsCommands"
 import projectsApiRoutes from "@preload/routes/projects"
 import shellsApiRoutes from "@preload/routes/shells"
+import updaterApiRoutes from "@preload/routes/updater"
 import uprojectApiRoutes from "@preload/routes/uproject"
 import windowsApiRoutes from "@preload/routes/windows"
 import { contextBridge } from "electron"
@@ -15,6 +16,7 @@ import type { GitBranch, GitCommit, GitStatus } from "@/main/types/gitCommands"
 import type { LfsLock, LfsLockMigration, LfsLockResult } from "@/main/types/lfsCommands"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
 import type { AppPreferences } from "@/main/types/store"
+import type { UpdaterSimulation, UpdaterState } from "@/main/types/updater"
 import type { UProject } from "@/main/types/uproject"
 
 /**
@@ -94,6 +96,15 @@ export type GitgameApi = {
         showFolder: (dir: string) => Promise<void>
         openTerminal: (dir: string) => Promise<void>
     }
+    updater: {
+        getState: () => Promise<UpdaterState>
+        onStateChange: (callback: (state: UpdaterState) => void) => () => void
+        check: (isManualCheck: boolean) => Promise<void>
+        download: () => Promise<void>
+        install: () => void
+        openDialog: () => void
+        simulate: (scenario: UpdaterSimulation) => void
+    }
     uproject: {
         open: (dir: string) => Promise<UProject>
     }
@@ -124,6 +135,7 @@ const api: GitgameApi = {
     lfsCommands: lfsCommandsApiRoutes,
     projects: projectsApiRoutes,
     shells: shellsApiRoutes,
+    updater: updaterApiRoutes,
     uproject: uprojectApiRoutes,
     windows: windowsApiRoutes,
 } as const

@@ -4,12 +4,14 @@ import ProjectProvider, { useProjectContext } from "@renderer/components/context
 import StatusProvider from "@renderer/components/contexts/Status"
 import TreeViewProvider, { useTreeViewContext } from "@renderer/components/contexts/TreeView"
 import useMenuShortcuts from "@renderer/hooks/useMenuShortcuts"
+import useUpdaterStatusTask from "@renderer/hooks/useUpdaterStatusTask"
 import { useCallback, useEffect, useMemo } from "react"
 import MenuBar from "@/renderer/components/bars/Menu"
 import StatusBar from "@/renderer/components/bars/Status"
 import TitleBar from "@/renderer/components/bars/Title"
 import StatusBarField from "@/renderer/components/fields/StatusBar"
 import StatusTaskField from "@/renderer/components/fields/StatusTask"
+import StatusUpdateField from "@/renderer/components/fields/StatusUpdate"
 import AppRoot from "@/renderer/components/layouts/AppRoot"
 import MainLayout from "@/renderer/components/layouts/main"
 import Workspace from "@/renderer/components/spaces/Workspace"
@@ -134,6 +136,9 @@ function AppShell() {
     // Bind the menu accelerators (Ctrl+O, Ctrl+Q, ...) to their actions
     useMenuShortcuts(menus, handleMenuAction)
 
+    // Surface a running update download in the status bar
+    useUpdaterStatusTask()
+
     // Keep the OS window/taskbar caption in sync with the visible title bar
     useEffect(() => {
         document.title = windowTitle
@@ -149,6 +154,7 @@ function AppShell() {
 
             <StatusBar>
                 <StatusBarField grow>{currentProject ? currentProject.path : "No project open"}</StatusBarField>
+                <StatusUpdateField />
                 <StatusTaskField />
             </StatusBar>
         </MainLayout>

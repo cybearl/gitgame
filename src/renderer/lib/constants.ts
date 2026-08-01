@@ -3,6 +3,11 @@
  */
 const CONSTANTS = {
     /**
+     * The unit suffixes used when formatting a byte count.
+     */
+    BYTE_UNITS: ["B", "KB", "MB", "GB"],
+
+    /**
      * Short human-readable messages for each `OpenProjectFailureReason`, shown as the
      * message line of the error-with-details dialog when opening a project fails.
      */

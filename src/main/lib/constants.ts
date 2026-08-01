@@ -52,6 +52,18 @@ const CONSTANTS = {
         dialogsErrorWithDetails: "dialogs:error-with-details",
         dialogsGetOptions: "dialogs:get-options",
         dialogsRespond: "dialogs:respond",
+        // Updater
+        updaterGetState: "updater:get-state",
+        updaterStateChanged: "updater:state-changed",
+        updaterCheck: "updater:check",
+        updaterDownload: "updater:download",
+        updaterInstall: "updater:install",
+        updaterOpenDialog: "updater:open-dialog",
+        updaterSimulate: "updater:simulate",
+    },
+    updater: {
+        devCheckMessage:
+            'Update checks are disabled in development builds, use the "Dev Tools" menu to preview the update dialog.',
     },
     uproject: {
         missingDirectoryMessage: "The project folder no longer exists on disk.",

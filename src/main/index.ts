@@ -7,9 +7,10 @@ import { registerGitCommandsHandlers } from "@main/lib/gitCommands/handlers"
 import { registerLfsCommandsHandlers } from "@main/lib/lfsCommands/handlers"
 import { registerProjectsHandlers } from "@main/lib/projects/handlers"
 import { registerShellsHandlers } from "@main/lib/shells/handlers"
-import { startAutoUpdater } from "@main/lib/updater"
+import { startUpdater } from "@main/lib/updater"
+import { registerUpdaterHandlers } from "@main/lib/updater/handlers"
 import { registerUProjectHandlers } from "@main/lib/uproject/handlers"
-import { attachWindowStateBroadcaster, registerWindowsControlHandlers } from "@main/lib/windows"
+import { attachWindowStateBroadcaster, registerWindowsControlHandlers, setMainWindow } from "@main/lib/windows"
 import { app, BrowserWindow, shell } from "electron"
 
 /**
@@ -25,6 +26,9 @@ function createMainWindow(): BrowserWindow {
 
     // Broadcast focus/visibility/maximize/fullscreen state changes to the renderer
     attachWindowStateBroadcaster(window)
+
+    // Track it as the main window, so app-global features can parent to it
+    setMainWindow(window)
 
     // Open external links in the user's default browser
     window.webContents.setWindowOpenHandler(({ url }) => {
@@ -53,8 +57,9 @@ app.whenReady().then(() => {
     registerProjectsHandlers()
     registerUProjectHandlers()
     registerShellsHandlers()
+    registerUpdaterHandlers()
     createMainWindow()
-    startAutoUpdater()
+    startUpdater()
 
     // Re-create a window in the app when the dock icon is clicked (macOS)
     app.on("activate", () => {
