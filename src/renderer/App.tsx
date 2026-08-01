@@ -16,6 +16,7 @@ import StatusUpdateField from "@/renderer/components/fields/StatusUpdate"
 import AppRoot from "@/renderer/components/layouts/AppRoot"
 import MainLayout from "@/renderer/components/layouts/main"
 import Workspace from "@/renderer/components/spaces/Workspace"
+import Welcome from "@/renderer/components/views/Welcome"
 import APP_CONFIG from "@/renderer/config/app"
 import { buildTopLevelMenus } from "@/renderer/config/menus"
 import { toBrowsableRemoteUrl } from "@/renderer/lib/utils/git"
@@ -70,7 +71,7 @@ function AppShell() {
 
             <MenuBar menus={menus} onAction={handleMenuAction} />
 
-            <div className="relative w-full flex-1 overflow-hidden">{currentProject && <Workspace />}</div>
+            <div className="relative w-full flex-1 overflow-hidden">{currentProject ? <Workspace /> : <Welcome />}</div>
 
             <StatusBar>
                 <StatusBarField grow>{currentProject ? currentProject.path : "No project open"}</StatusBarField>
