@@ -50,8 +50,8 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
 
         try {
             setLocksByPath(indexLocks(await window.api.lfsCommands.listLocks(currentProject.path)))
-        } catch (err) {
-            reportError("Failed to load LFS locks", err)
+        } catch (error) {
+            reportError("Failed to load LFS locks", error)
         }
     }, [currentProject?.path])
 
@@ -81,7 +81,7 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
         const treePromise = window.api.fileTree
             .get(currentProject.path)
             .then(setFileTree)
-            .catch(err => reportError("Failed to load file tree", err))
+            .catch(error => reportError("Failed to load file tree", error))
 
         await Promise.all([treePromise, refreshLocks()])
 
@@ -92,8 +92,8 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
             if (migrations.some(m => m.status === "migrated" || m.status === "failed-unlock")) {
                 await refreshLocks()
             }
-        } catch (err) {
-            reportError("Failed to migrate LFS locks", err)
+        } catch (error) {
+            reportError("Failed to migrate LFS locks", error)
         }
 
         setIsLoading(false)
@@ -126,8 +126,8 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
                     await refreshLocks()
                     return results
                 })
-            } catch (err) {
-                reportError("Failed to lock files", err)
+            } catch (error) {
+                reportError("Failed to lock files", error)
                 return []
             }
         },
@@ -164,8 +164,8 @@ export default function FileTreeProvider({ children }: FileTreeProviderProps) {
                     await refreshLocks()
                     return results
                 })
-            } catch (err) {
-                reportError(force ? "Failed to force-unlock files" : "Failed to unlock files", err)
+            } catch (error) {
+                reportError(force ? "Failed to force-unlock files" : "Failed to unlock files", error)
                 return []
             }
         },

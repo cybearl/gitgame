@@ -1,10 +1,13 @@
 import appApiRoutes from "@preload/routes/app"
+import audioApiRoutes from "@preload/routes/audio"
 import dialogsApiRoutes from "@preload/routes/dialogs"
 import fileTreeApiRoutes from "@preload/routes/fileTree"
 import gitCommandsApiRoutes from "@preload/routes/gitCommands"
 import lfsCommandsApiRoutes from "@preload/routes/lfsCommands"
 import projectsApiRoutes from "@preload/routes/projects"
 import shellsApiRoutes from "@preload/routes/shells"
+import updaterApiRoutes from "@preload/routes/updater"
+import uprojectApiRoutes from "@preload/routes/uproject"
 import windowsApiRoutes from "@preload/routes/windows"
 import { contextBridge } from "electron"
 import type { ConfirmDialogOptions, DialogOptions } from "@/main/types/dialogs"
@@ -13,6 +16,8 @@ import type { GitBranch, GitCommit, GitStatus } from "@/main/types/gitCommands"
 import type { LfsLock, LfsLockMigration, LfsLockResult } from "@/main/types/lfsCommands"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
 import type { AppPreferences } from "@/main/types/store"
+import type { UpdaterSimulation, UpdaterState } from "@/main/types/updater"
+import type { UProject } from "@/main/types/uproject"
 
 /**
  * A snapshot of the current state of the application window.
@@ -38,9 +43,14 @@ export type GitgameApi = {
     app: {
         version: string
     }
+    audio: {
+        playError: () => void
+    }
     dialogs: {
         confirm: (options: ConfirmDialogOptions) => Promise<boolean>
-        error: (title: string, message: string, detail?: string) => void
+        message: (title: string, message: string) => void
+        error: (title: string, message: string) => void
+        errorWithDetails: (title: string, message: string, details: string) => void
         getOptions: () => Promise<DialogOptions | null>
         respond: (result: boolean) => void
     }
@@ -83,6 +93,20 @@ export type GitgameApi = {
     }
     shells: {
         openExternal: (url: string) => void
+        showFolder: (dir: string) => Promise<void>
+        openTerminal: (dir: string) => Promise<void>
+    }
+    updater: {
+        getState: () => Promise<UpdaterState>
+        onStateChange: (callback: (state: UpdaterState) => void) => () => void
+        check: (isManualCheck: boolean) => Promise<void>
+        download: () => Promise<void>
+        install: () => void
+        openDialog: () => void
+        simulate: (scenario: UpdaterSimulation) => void
+    }
+    uproject: {
+        open: (dir: string) => Promise<UProject>
     }
     windows: {
         getState: () => Promise<WindowState>
@@ -104,12 +128,15 @@ const api: GitgameApi = {
         isMacOS: process.platform === "darwin",
     },
     app: appApiRoutes,
+    audio: audioApiRoutes,
     dialogs: dialogsApiRoutes,
     fileTree: fileTreeApiRoutes,
     gitCommands: gitCommandsApiRoutes,
     lfsCommands: lfsCommandsApiRoutes,
     projects: projectsApiRoutes,
     shells: shellsApiRoutes,
+    updater: updaterApiRoutes,
+    uproject: uprojectApiRoutes,
     windows: windowsApiRoutes,
 } as const
 

@@ -2,22 +2,26 @@ import path from "node:path"
 import STORE_CONFIG from "@main/config/store"
 import { getRepositoryRoot, isRepository } from "@main/lib/gitCommands/service"
 import { getConfig, updateConfig } from "@main/lib/store"
+import { readUProject } from "@main/lib/uproject/service"
 import { pathExists } from "@main/lib/utils/fs"
 import { app, type BrowserWindow, dialog } from "electron"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
 import type { AppPreferences } from "@/main/types/store"
+import type { UProject } from "@/main/types/uproject"
 
 /**
  * Records a repository as the most recently opened project, moving it to the
  * front of the recent projects list (deduplicated by path and capped).
  * @param root The absolute repository root path.
+ * @param uproject Metadata read from the repository's `.uproject` file.
  * @returns The stored recent project entry.
  */
-async function rememberProject(root: string): Promise<Project> {
+async function rememberProject(root: string, uproject: UProject): Promise<Project> {
     const entry: Project = {
         path: root,
         name: path.basename(root),
         lastOpenedAt: new Date().toISOString(),
+        uproject,
     }
 
     await updateConfig(config => {
@@ -60,7 +64,17 @@ export async function openProject(dir: string): Promise<OpenProjectResult> {
     }
 
     const root = await getRepositoryRoot(dir)
-    const project = await rememberProject(root)
+
+    const uproject = await readUProject(root)
+    if (!uproject) {
+        return {
+            ok: false,
+            reason: "not-a-ue-project",
+            message: `"${root}" is not an Unreal Engine project (no .uproject file at the repo root).`,
+        }
+    }
+
+    const project = await rememberProject(root, uproject)
 
     return {
         ok: true,

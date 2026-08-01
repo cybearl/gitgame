@@ -1,3 +1,4 @@
+import { convertErrorToMessage } from "@main/lib/utils/errors"
 import { type IpcMainInvokeEvent, ipcMain } from "electron"
 import type { IpcResult } from "@/main/types/ipc"
 
@@ -17,8 +18,8 @@ export function safeHandle<Args extends unknown[], T>(
                 ok: true,
                 value: await fn(event, ...(args as Args)),
             }
-        } catch (err) {
-            const message = err instanceof Error ? err.message : String(err)
+        } catch (error) {
+            const message = convertErrorToMessage(error)
             console.error(`[ipc] ${channel} failed:`, message)
 
             return {

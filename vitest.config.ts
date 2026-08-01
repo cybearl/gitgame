@@ -8,6 +8,7 @@ const vitestConfig = defineConfig({
     plugins: [tsconfigPaths()],
     test: {
         include: ["./tests/unit/**/*.test.ts"],
+        passWithNoTests: true,
     },
 })
 

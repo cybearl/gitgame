@@ -1,4 +1,6 @@
 import type { Project } from "@/main/types/projects"
+import type { UpdaterSimulation } from "@/main/types/updater"
+import CONSTANTS from "@/renderer/lib/constants"
 
 /**
  * A dispatchable menu action.
@@ -6,21 +8,22 @@ import type { Project } from "@/main/types/projects"
 export type MenuAction =
     | { type: "project:add-local" }
     | { type: "project:open"; path: string }
+    | { type: "project:close" }
     | { type: "project:clear-recent" }
+    | { type: "uproject:open" }
     | { type: "window:close" }
     | { type: "view:reload" }
     | { type: "shell:open-external"; url: string }
+    | { type: "shell:show-folder"; path: string }
+    | { type: "shell:open-terminal"; path: string }
+    | { type: "search:toggle-regex" }
+    | { type: "search:toggle-advanced" }
+    | { type: "lfs:toggle-show-my-locks" }
+    | { type: "updater:check" }
     | { type: "devtools:test-confirm" }
     | { type: "devtools:test-error" }
-    | { type: "devtools:test-error-with-detail" }
-
-/**
- * External resources opened from the `Help` menu.
- */
-const EXTERNAL_LINKS = {
-    documentation: "https://github.com/cybearl/gitgame/blob/main/README.md",
-    reportIssue: "https://github.com/cybearl/gitgame/issues",
-} as const
+    | { type: "devtools:test-error-with-details" }
+    | { type: "devtools:simulate-update"; scenario: UpdaterSimulation }
 
 /**
  * A single entry inside a menu dropdown:
@@ -34,6 +37,7 @@ export type TopLevelMenuEntry =
           label: string
           accelerator?: string
           isDisabled?: boolean
+          isChecked?: boolean
           action?: MenuAction
       }
     | { type: "separator" }
@@ -90,17 +94,30 @@ function buildRecentProjectsItems(recentProjects: Project[], currentProject: Pro
 }
 
 /**
+ * The current on/off state of the search and lock toggles shown as checkable
+ * menu items, so the dropdown can render the check indicator in sync with the
+ * live tree-view state.
+ */
+export type MenuToggleState = {
+    isRegex: boolean
+    isAdvancedOpen: boolean
+    isShowingMyLocksOnly: boolean
+}
+
+/**
  * Builds the top-level application menus, injecting the dynamic recent projects
  * and enabling the repository-scoped items only when a project is open.
  * @param recentProjects The recent projects, most recently opened first.
  * @param currentProject The currently opened project, if any.
  * @param remoteBrowsableUrl The browsable HTTPS URL of the current project's remote, if any.
+ * @param toggles The on/off state of the search and lock toggle items.
  * @returns The top-level menus.
  */
 export function buildTopLevelMenus(
     recentProjects: Project[],
     currentProject: Project | null,
     remoteBrowsableUrl: string | null,
+    toggles: MenuToggleState,
 ): TopLevelMenu[] {
     const devToolsMenu: TopLevelMenu = {
         label: "Dev Tools",
@@ -117,8 +134,29 @@ export function buildTopLevelMenus(
             },
             {
                 type: "item",
-                label: "Test Error Dialog with Detail",
-                action: { type: "devtools:test-error-with-detail" },
+                label: "Test Error Dialog with Details",
+                action: { type: "devtools:test-error-with-details" },
+            },
+            { type: "separator" },
+            {
+                type: "item",
+                label: "Test Update Dialog (Download)",
+                action: { type: "devtools:simulate-update", scenario: "download" },
+            },
+            {
+                type: "item",
+                label: "Test Update Dialog (Link Only)",
+                action: { type: "devtools:simulate-update", scenario: "link-only" },
+            },
+            {
+                type: "item",
+                label: "Test Update Dialog (Up To Date)",
+                action: { type: "devtools:simulate-update", scenario: "up-to-date" },
+            },
+            {
+                type: "item",
+                label: "Test Update Dialog (Error)",
+                action: { type: "devtools:simulate-update", scenario: "error" },
             },
         ],
     }
@@ -149,6 +187,14 @@ export function buildTopLevelMenus(
                     type: "submenu",
                     label: "Recent Projects",
                     items: buildRecentProjectsItems(recentProjects, currentProject),
+                },
+                { type: "separator" },
+                {
+                    type: "item",
+                    label: "Close Project",
+                    accelerator: "Ctrl+W",
+                    isDisabled: !currentProject,
+                    action: { type: "project:close" },
                 },
                 { type: "separator" },
                 {
@@ -205,6 +251,19 @@ export function buildTopLevelMenus(
                 { type: "separator" },
                 {
                     type: "item",
+                    label: "Use Regular Expression",
+                    isChecked: toggles.isRegex,
+                    action: { type: "search:toggle-regex" },
+                },
+                {
+                    type: "item",
+                    label: "Show Include/Exclude Filters",
+                    isChecked: toggles.isAdvancedOpen,
+                    action: { type: "search:toggle-advanced" },
+                },
+                { type: "separator" },
+                {
+                    type: "item",
                     label: "Reload",
                     accelerator: "Ctrl+R",
                     action: { type: "view:reload" },
@@ -235,18 +294,23 @@ export function buildTopLevelMenus(
                 { type: "separator" },
                 {
                     type: "item",
-                    label: "Show in Explorer",
-                    isDisabled: true,
+                    label:
+                        CONSTANTS.FILE_MANAGER_LABELS[window.api.platform.value] ??
+                        CONSTANTS.DEFAULT_FILE_MANAGER_LABEL,
+                    isDisabled: !currentProject,
+                    action: currentProject ? { type: "shell:show-folder", path: currentProject.path } : undefined,
                 },
                 {
                     type: "item",
                     label: "Open in Unreal Editor",
-                    isDisabled: true,
+                    isDisabled: !currentProject,
+                    action: { type: "uproject:open" },
                 },
                 {
                     type: "item",
                     label: "Open in Terminal",
-                    isDisabled: true,
+                    isDisabled: !currentProject,
+                    action: currentProject ? { type: "shell:open-terminal", path: currentProject.path } : undefined,
                 },
                 {
                     type: "item",
@@ -345,8 +409,9 @@ export function buildTopLevelMenus(
                 },
                 {
                     type: "item",
-                    label: "View Locks...",
-                    isDisabled: true,
+                    label: "Show My Locks Only",
+                    isChecked: toggles.isShowingMyLocksOnly,
+                    action: { type: "lfs:toggle-show-my-locks" },
                 },
                 { type: "separator" },
                 {
@@ -374,7 +439,7 @@ export function buildTopLevelMenus(
                     type: "item",
                     label: "Documentation",
                     accelerator: "F1",
-                    action: { type: "shell:open-external", url: EXTERNAL_LINKS.documentation },
+                    action: { type: "shell:open-external", url: CONSTANTS.EXTERNAL_LINKS.documentation },
                 },
                 {
                     type: "item",
@@ -386,9 +451,14 @@ export function buildTopLevelMenus(
                 {
                     type: "item",
                     label: "Report an Issue...",
-                    action: { type: "shell:open-external", url: EXTERNAL_LINKS.reportIssue },
+                    action: { type: "shell:open-external", url: CONSTANTS.EXTERNAL_LINKS.reportIssue },
                 },
                 { type: "separator" },
+                {
+                    type: "item",
+                    label: "Check for Updates...",
+                    action: { type: "updater:check" },
+                },
                 {
                     type: "item",
                     label: "About GitGame",

@@ -17,9 +17,9 @@ export function reportLockFailures(results: LfsLockResult[]) {
     if (failed.length === 0) return
 
     const message = `${failed.length} file${failed.length === 1 ? "" : "s"} could not be updated.`
-    const detail = failed.map(result => (result.error ? `${result.path}: ${result.error}` : result.path)).join("\n")
+    const details = failed.map(result => (result.error ? `${result.path}: ${result.error}` : result.path)).join("\n")
 
-    window.api.dialogs.error("Some files could not be updated", message, detail)
+    window.api.dialogs.errorWithDetails("Some files could not be updated", message, details)
 }
 
 /**
