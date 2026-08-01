@@ -6,6 +6,7 @@ import gitCommandsApiRoutes from "@preload/routes/gitCommands"
 import lfsCommandsApiRoutes from "@preload/routes/lfsCommands"
 import projectsApiRoutes from "@preload/routes/projects"
 import shellsApiRoutes from "@preload/routes/shells"
+import uprojectApiRoutes from "@preload/routes/uproject"
 import windowsApiRoutes from "@preload/routes/windows"
 import { contextBridge } from "electron"
 import type { ConfirmDialogOptions, DialogOptions } from "@/main/types/dialogs"
@@ -14,6 +15,7 @@ import type { GitBranch, GitCommit, GitStatus } from "@/main/types/gitCommands"
 import type { LfsLock, LfsLockMigration, LfsLockResult } from "@/main/types/lfsCommands"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
 import type { AppPreferences } from "@/main/types/store"
+import type { UProject } from "@/main/types/uproject"
 
 /**
  * A snapshot of the current state of the application window.
@@ -90,6 +92,9 @@ export type GitgameApi = {
     shells: {
         openExternal: (url: string) => void
     }
+    uproject: {
+        open: (dir: string) => Promise<UProject>
+    }
     windows: {
         getState: () => Promise<WindowState>
         onStateChange: (callback: (state: WindowState) => void) => () => void
@@ -117,6 +122,7 @@ const api: GitgameApi = {
     lfsCommands: lfsCommandsApiRoutes,
     projects: projectsApiRoutes,
     shells: shellsApiRoutes,
+    uproject: uprojectApiRoutes,
     windows: windowsApiRoutes,
 } as const
 

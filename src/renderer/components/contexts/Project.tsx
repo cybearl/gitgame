@@ -1,6 +1,8 @@
 import type { ReactNode } from "react"
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
+import CONSTANTS from "@/renderer/lib/constants"
+import { reportError } from "@/renderer/lib/utils/errors"
 
 /**
  * The type for the project context.
@@ -10,12 +12,12 @@ export type ProjectContextType = {
     recentProjects: Project[]
     remoteUrl: string | null
     isLoading: boolean
-    error: Error | null
     addLocalProject: () => Promise<void>
     openProject: (dir: string) => Promise<void>
     removeRecentProject: (dir: string) => Promise<void>
     clearRecentProjects: () => Promise<void>
     closeProject: () => void
+    openInUnrealEditor: () => Promise<void>
 }
 
 /**
@@ -40,7 +42,6 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
     const [recentProjects, setRecentProjects] = useState<Project[]>([])
     const [remoteUrl, setRemoteUrl] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
-    const [error, setError] = useState<Error | null>(null)
 
     /**
      * Refreshes the recent projects list from the store.
@@ -50,8 +51,9 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
     }, [])
 
     /**
-     * Runs an open action, reflecting its outcome in the current project and
-     * error state, and refreshing the recent projects list afterwards.
+     * Runs an open action, reflecting its outcome in the current project and surfacing any
+     * failure through the native error-with-details dialog, and refreshing the recent
+     * projects list afterwards.
      * @param action The open action to run (add local or open by path).
      */
     const runOpen = useCallback(
@@ -61,14 +63,24 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
 
                 if (result.ok) {
                     setCurrentProject(result.project)
-                    setError(null)
                 } else if (result.reason !== "cancelled") {
-                    setError(new Error(result.message ?? "Failed to open the project."))
+                    const message =
+                        CONSTANTS.PROJECT_OPEN_FAILURE_MESSAGES[result.reason] ?? "The project couldn't be opened."
+                    window.api.dialogs.errorWithDetails(
+                        "Can't open project",
+                        message,
+                        result.message ?? "No further details available.",
+                    )
                 }
 
                 await refreshRecentProjects()
             } catch (err) {
-                setError(err instanceof Error ? err : new Error(String(err)))
+                const details = err instanceof Error ? err.message : String(err)
+                window.api.dialogs.errorWithDetails(
+                    "Can't open project",
+                    "An unexpected error occurred while opening the project.",
+                    details,
+                )
             }
         },
         [refreshRecentProjects],
@@ -106,6 +118,24 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
      * Closes the current project without affecting the recent projects list.
      */
     const closeProject = useCallback(() => setCurrentProject(null), [])
+
+    /**
+     * Opens the current project in Unreal Engine, replacing its cached `.uproject`
+     * metadata with the copy the main process resolved at launch time.
+     */
+    const openInUnrealEditor = useCallback(async () => {
+        const root = currentProject?.path
+        if (!root) return
+
+        try {
+            const uproject = await window.api.uproject.open(root)
+
+            // Guards against the project being closed or swapped while the editor was launching
+            setCurrentProject(current => (current?.path === root ? { ...current, uproject } : current))
+        } catch (error) {
+            reportError("Can't open the project in Unreal Editor", error)
+        }
+    }, [currentProject?.path])
 
     // Fetches the current project's origin URL whenever the open project
     // changes, so downstream consumers (e.g. the menu bar) can enable/disable
@@ -152,7 +182,12 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
                     await openProject(projects[0].path)
                 }
             } catch (err) {
-                setError(err instanceof Error ? err : new Error(String(err)))
+                const details = err instanceof Error ? err.message : String(err)
+                window.api.dialogs.errorWithDetails(
+                    "Failed to load recent projects",
+                    "The recent projects list couldn't be loaded on startup.",
+                    details,
+                )
             }
 
             setIsLoading(false)
@@ -168,12 +203,12 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
                 recentProjects,
                 remoteUrl,
                 isLoading,
-                error,
                 addLocalProject,
                 openProject,
                 removeRecentProject,
                 clearRecentProjects,
                 closeProject,
+                openInUnrealEditor,
             }}
         >
             {children}

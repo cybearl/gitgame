@@ -8,6 +8,7 @@ import { registerLfsCommandsHandlers } from "@main/lib/lfsCommands/handlers"
 import { registerProjectsHandlers } from "@main/lib/projects/handlers"
 import { registerShellsHandlers } from "@main/lib/shells/handlers"
 import { startAutoUpdater } from "@main/lib/updater"
+import { registerUProjectHandlers } from "@main/lib/uproject/handlers"
 import { attachWindowStateBroadcaster, registerWindowsControlHandlers } from "@main/lib/windows"
 import { app, BrowserWindow, shell } from "electron"
 
@@ -50,6 +51,7 @@ app.whenReady().then(() => {
     registerLfsCommandsHandlers()
     registerFileTreeHandlers()
     registerProjectsHandlers()
+    registerUProjectHandlers()
     registerShellsHandlers()
     createMainWindow()
     startAutoUpdater()

@@ -65,13 +65,16 @@
         "EXPORTMAP",
         "fguid",
         "gatherable",
+        "Qfecheck",
         "scrollview",
         "SERIALSIZES",
         "SOFTOBJECTPATH",
         "TEMPLATEINDEX",
         "uasset",
         "uassets",
-        "UPACKAGE"
+        "umap",
+        "UPACKAGE",
+        "uproject"
     ],
     "[json]": {
         "editor.defaultFormatter": "biomejs.biome"

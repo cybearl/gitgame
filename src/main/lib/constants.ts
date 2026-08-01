@@ -39,6 +39,8 @@ const CONSTANTS = {
         projectsClearRecent: "projects:clear-recent",
         projectsGetPreferences: "projects:get-preferences",
         projectsSetPreferences: "projects:set-preferences",
+        // UProject
+        uprojectOpen: "uproject:open",
         // Shells
         shellsOpenExternal: "shells:open-external",
         // Dialogs
@@ -48,6 +50,12 @@ const CONSTANTS = {
         dialogsErrorWithDetails: "dialogs:error-with-details",
         dialogsGetOptions: "dialogs:get-options",
         dialogsRespond: "dialogs:respond",
+    },
+    uproject: {
+        missingDirectoryMessage: "The project folder no longer exists on disk.",
+        missingFileMessage: "No .uproject file was found at the root of the project folder.",
+        openFailureMessage:
+            "The system could not open the .uproject file, make sure Unreal Engine is installed and registered as the handler for .uproject files.",
     },
     git: {
         logFieldSeparator: "\x1f",
