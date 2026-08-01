@@ -1,6 +1,7 @@
 import { runGit } from "@main/lib/gitCommands/exec"
 import { getStatus } from "@main/lib/gitCommands/service"
 import { parseLockablePaths, parseLocks } from "@main/lib/lfsCommands/parse"
+import { parallelLimit } from "@main/lib/utils/async"
 import GIT_CONFIG from "@/main/config/git"
 import type { LfsLock, LfsLockMigration, LfsLockResult } from "@/main/types/lfsCommands"
 
@@ -115,7 +116,7 @@ async function expandToLockableFiles(dir: string, paths: string[]): Promise<stri
  * @returns The per-file result.
  */
 async function runLockCommand(dir: string, args: string[], file: string): Promise<LfsLockResult> {
-    const result = await runGit(args, { cwd: dir })
+    const result = await runGit(args, { cwd: dir, timeoutMs: GIT_CONFIG.lockTimeoutMs })
     if (result.exitCode === 0) return { path: file, ok: true }
 
     return {
@@ -126,9 +127,9 @@ async function runLockCommand(dir: string, args: string[], file: string): Promis
 }
 
 /**
- * Locks every lockable file covered by the given paths, in parallel, reporting
- * per-file completion through the optional `onProgress` callback so a caller
- * can render a live progress bar.
+ * Locks every lockable file covered by the given paths, capped at
+ * `GIT_CONFIG.lockConcurrency` in flight to stay under the LFS server's rate
+ * limit, reporting per-file completion through the optional `onProgress`.
  * @param dir A path inside the repository.
  * @param paths The repository-relative paths to lock (files or folders).
  * @param onProgress Called once with `(0, total)` after expansion, then again
@@ -146,20 +147,18 @@ export async function lockPaths(
     onProgress?.(0, total)
 
     let done = 0
-    return Promise.all(
-        files.map(async file => {
-            const result = await runLockCommand(dir, ["lfs", "lock", file], file)
-            done += 1
-            onProgress?.(done, total)
-            return result
-        }),
-    )
+    return parallelLimit(files, GIT_CONFIG.lockConcurrency, async file => {
+        const result = await runLockCommand(dir, ["lfs", "lock", file], file)
+        done += 1
+        onProgress?.(done, total)
+        return result
+    })
 }
 
 /**
- * Unlocks every lockable file covered by the given paths, in parallel, reporting
- * per-file completion through the optional `onProgress` callback so a caller
- * can render a live progress bar.
+ * Unlocks every lockable file covered by the given paths, capped at
+ * `GIT_CONFIG.lockConcurrency` in flight to stay under the LFS server's rate
+ * limit, reporting per-file completion through the optional `onProgress`.
  * @param dir A path inside the repository.
  * @param paths The repository-relative paths to unlock (files or folders).
  * @param force Whether to force-unlock files locked by other users.
@@ -179,15 +178,13 @@ export async function unlockPaths(
     onProgress?.(0, total)
 
     let done = 0
-    return Promise.all(
-        files.map(async file => {
-            const args = force ? ["lfs", "unlock", "--force", file] : ["lfs", "unlock", file]
-            const result = await runLockCommand(dir, args, file)
-            done += 1
-            onProgress?.(done, total)
-            return result
-        }),
-    )
+    return parallelLimit(files, GIT_CONFIG.lockConcurrency, async file => {
+        const args = force ? ["lfs", "unlock", "--force", file] : ["lfs", "unlock", file]
+        const result = await runLockCommand(dir, args, file)
+        done += 1
+        onProgress?.(done, total)
+        return result
+    })
 }
 
 /**
