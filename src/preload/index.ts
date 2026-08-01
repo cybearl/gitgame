@@ -91,6 +91,8 @@ export type GitgameApi = {
     }
     shells: {
         openExternal: (url: string) => void
+        showFolder: (dir: string) => Promise<void>
+        openTerminal: (dir: string) => Promise<void>
     }
     uproject: {
         open: (dir: string) => Promise<UProject>

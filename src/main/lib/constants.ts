@@ -43,6 +43,8 @@ const CONSTANTS = {
         uprojectOpen: "uproject:open",
         // Shells
         shellsOpenExternal: "shells:open-external",
+        shellsShowFolder: "shells:show-folder",
+        shellsOpenTerminal: "shells:open-terminal",
         // Dialogs
         dialogsConfirm: "dialogs:confirm",
         dialogsMessage: "dialogs:message",
@@ -56,6 +58,35 @@ const CONSTANTS = {
         missingFileMessage: "No .uproject file was found at the root of the project folder.",
         openFailureMessage:
             "The system could not open the .uproject file, make sure Unreal Engine is installed and registered as the handler for .uproject files.",
+    },
+    shells: {
+        missingFolderMessage: "The folder no longer exists on disk.",
+        openFolderFailureMessage: "The system could not open the folder in the file manager.",
+        noTerminalMessage: "No terminal could be launched, none of the ones we know about are installed or on PATH.",
+
+        /**
+         * The terminals tried in order when opening a folder in a terminal, the first one that
+         * launches wins.
+         *
+         * Note: Linux has no standard terminal, hence the list, `x-terminal-emulator` comes
+         * first because it is the Debian alternatives symlink pointing at the user's choice.
+         */
+        terminals: {
+            win32: [
+                { command: "wt.exe", args: ["-d"], appendDir: true },
+                { command: "cmd.exe", args: ["/c", "start", "", "cmd.exe"], appendDir: false },
+            ],
+            darwin: [{ command: "open", args: ["-a", "Terminal"], appendDir: true }],
+            linux: [
+                { command: "x-terminal-emulator", args: [], appendDir: false },
+                { command: "gnome-terminal", args: [], appendDir: false },
+                { command: "konsole", args: [], appendDir: false },
+                { command: "xfce4-terminal", args: [], appendDir: false },
+                { command: "alacritty", args: [], appendDir: false },
+                { command: "kitty", args: [], appendDir: false },
+                { command: "xterm", args: [], appendDir: false },
+            ],
+        } as Record<string, { command: string; args: string[]; appendDir: boolean }[]>,
     },
     git: {
         logFieldSeparator: "\x1f",
