@@ -1,5 +1,5 @@
 /**
- * The constants used throughout the application.
+ * The constants for the main process.
  */
 const CONSTANTS = {
     titleBarHeight: 28,

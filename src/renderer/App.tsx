@@ -3,9 +3,10 @@ import FileTreeProvider from "@renderer/components/contexts/FileTree"
 import ProjectProvider, { useProjectContext } from "@renderer/components/contexts/Project"
 import StatusProvider from "@renderer/components/contexts/Status"
 import TreeViewProvider, { useTreeViewContext } from "@renderer/components/contexts/TreeView"
+import useMenuActions from "@renderer/hooks/useMenuActions"
 import useMenuShortcuts from "@renderer/hooks/useMenuShortcuts"
 import useUpdaterStatusTask from "@renderer/hooks/useUpdaterStatusTask"
-import { useCallback, useEffect, useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import MenuBar from "@/renderer/components/bars/Menu"
 import StatusBar from "@/renderer/components/bars/Status"
 import TitleBar from "@/renderer/components/bars/Title"
@@ -16,14 +17,13 @@ import AppRoot from "@/renderer/components/layouts/AppRoot"
 import MainLayout from "@/renderer/components/layouts/main"
 import Workspace from "@/renderer/components/spaces/Workspace"
 import APP_CONFIG from "@/renderer/config/app"
-import { buildTopLevelMenus, type MenuAction } from "@/renderer/config/menus"
+import { buildTopLevelMenus } from "@/renderer/config/menus"
 import { toBrowsableRemoteUrl } from "@/renderer/lib/utils/git"
 
 function AppShell() {
-    const { currentProject, recentProjects, remoteUrl, addLocalProject, openProject, clearRecentProjects } =
-        useProjectContext()
-
-    const treeView = useTreeViewContext()
+    const { isRegex, isAdvancedOpen, isShowingMyLocksOnly } = useTreeViewContext()
+    const { currentProject, recentProjects, remoteUrl } = useProjectContext()
+    const { handleMenuAction } = useMenuActions()
 
     /**
      * The browsable HTTPS URL of the current project's `origin` remote, or
@@ -46,91 +46,11 @@ function AppShell() {
     const menus = useMemo(
         () =>
             buildTopLevelMenus(recentProjects, currentProject, remoteBrowsableUrl, {
-                isRegex: treeView.isRegex,
-                isAdvancedOpen: treeView.isAdvancedOpen,
-                isShowingMyLocksOnly: treeView.isShowingMyLocksOnly,
+                isRegex,
+                isAdvancedOpen,
+                isShowingMyLocksOnly,
             }),
-        [
-            recentProjects,
-            currentProject,
-            remoteBrowsableUrl,
-            treeView.isRegex,
-            treeView.isAdvancedOpen,
-            treeView.isShowingMyLocksOnly,
-        ],
-    )
-
-    /**
-     * Dispatches a menu action to the matching application state handler.
-     * @param action The action selected in the menu bar.
-     */
-    const handleMenuAction = useCallback(
-        async (action: MenuAction) => {
-            switch (action.type) {
-                case "project:add-local":
-                    addLocalProject()
-                    break
-                case "project:open":
-                    openProject(action.path)
-                    break
-                case "project:clear-recent": {
-                    const confirmed = await window.api.dialogs.confirm({
-                        title: "Clear recent projects",
-                        message: "Clear the entire recent projects list?",
-                        detail: "This only forgets the entries here, your project folders on disk are left untouched.",
-                        confirmLabel: "Clear",
-                        isDestructive: true,
-                    })
-
-                    if (confirmed) clearRecentProjects()
-                    break
-                }
-                case "window:close":
-                    window.api.windows.close()
-                    break
-                case "view:reload":
-                    window.location.reload()
-                    break
-                case "shell:open-external":
-                    window.api.shells.openExternal(action.url)
-                    break
-                case "search:toggle-regex":
-                    treeView.setIsRegex(!treeView.isRegex)
-                    break
-                case "search:toggle-advanced":
-                    treeView.setIsAdvancedOpen(!treeView.isAdvancedOpen)
-                    break
-                case "lfs:toggle-show-my-locks":
-                    treeView.setIsShowingMyLocksOnly(!treeView.isShowingMyLocksOnly)
-                    break
-                case "devtools:test-confirm":
-                    window.api.dialogs.confirm({
-                        title: "Test confirm",
-                        message: "This is a test confirm dialog.",
-                        detail: "Use it to preview the Win95 confirm styling from the Dev Tools menu.",
-                        confirmLabel: "Sure",
-                        cancelLabel: "Nope",
-                    })
-                    break
-                case "devtools:test-error":
-                    window.api.dialogs.error("Test error", "This is a test error message.")
-                    break
-                case "devtools:test-error-with-detail":
-                    window.api.dialogs.error(
-                        "Test error with detail",
-                        "5 files could not be updated.",
-                        [
-                            "Content/Characters/Hero/BP_Hero.uasset: locked by john",
-                            "Content/Characters/Hero/SK_Hero.uasset: locked by jane",
-                            "Content/Maps/MainMenu.umap: locked by bob",
-                            "Content/UI/HUD/WBP_HUD.uasset: locked by alice",
-                            "Content/VFX/P_Explosion.uasset",
-                        ].join("\n"),
-                    )
-                    break
-            }
-        },
-        [addLocalProject, openProject, clearRecentProjects, treeView],
+        [recentProjects, currentProject, remoteBrowsableUrl, isRegex, isAdvancedOpen, isShowingMyLocksOnly],
     )
 
     // Bind the menu accelerators (Ctrl+O, Ctrl+Q, ...) to their actions
