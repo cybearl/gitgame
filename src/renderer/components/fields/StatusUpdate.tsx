@@ -1,9 +1,10 @@
 import { cn } from "@cybearl/cypack/frontend"
-import Tooltip from "@renderer/components/ui/Tooltip"
+import downloadIcon from "@react95-icons/Download_16x16_4.png"
+import Icon from "@renderer/components/ui/Icon"
 import useUpdaterState from "@renderer/hooks/useUpdaterState"
+import { buildUpdaterStatusLabel } from "@renderer/lib/utils/updater"
 import { useCallback, useMemo } from "react"
-import { Frame } from "react95"
-import { buildUpdaterStatusLabel } from "@/renderer/lib/utils/updater"
+import { Button, Frame, ProgressBar } from "react95"
 
 type StatusUpdateFieldProps = {
     className?: string
@@ -13,37 +14,57 @@ export default function StatusUpdateField({ className }: StatusUpdateFieldProps)
     const state = useUpdaterState()
 
     /**
-     * The pending update advertised in the status bar, or `null` when there is
-     * nothing waiting on the user.
+     * The chip label matching the current state, `null` when there is nothing
+     * pending on the updater and the chip should stay hidden.
      */
     const label = useMemo(() => (state ? buildUpdaterStatusLabel(state) : null), [state])
 
     /**
-     * Brings the update dialog back up, without starting another check.
+     * The download progress as a rounded percentage, `0` before the first
+     * `download-progress` event lands so the bar starts empty.
      */
-    const handleClick = useCallback(() => {
-        window.api.updater.openDialog()
-    }, [])
+    const downloadPercent = Math.round(state?.progress?.percent ?? 0)
 
-    if (!label) return null
+    /**
+     * Runs the action that matches the current state, restart when the
+     * installer is staged, download when it is only available, falls back to
+     * opening the dialog so non-Windows platforms still have a path forward.
+     */
+    const handleAction = useCallback(() => {
+        if (state?.status === "downloaded") {
+            window.api.updater.install()
+            return
+        }
+
+        if (state?.canAutoInstall) {
+            window.api.updater.download()
+            return
+        }
+
+        window.api.updater.openDialog()
+    }, [state?.canAutoInstall, state?.status])
+
+    if (!state || !label) return null
 
     return (
-        <Tooltip
-            text={
-                state?.status === "downloaded"
-                    ? "The update is downloaded, restart to apply it"
-                    : "Open the update dialog"
-            }
+        <Frame
+            variant="status"
+            className={cn("flex items-center gap-2 p-2 text-xs min-w-48 max-w-1/2 overflow-hidden", className)}
         >
-            <Frame
-                variant="status"
-                className={cn("flex min-w-0 cursor-pointer items-center px-2 py-0.5 text-xs", className)}
-                onClick={handleClick}
-            >
-                <span className={cn("truncate select-none", state?.status === "downloaded" && "font-bold")}>
+            <div className="min-w-0 flex-1 flex items-center pb-1">
+                <Icon src={downloadIcon} isInline />
+                <span className={cn("block truncate select-none", state.status === "downloaded" && "font-bold")}>
                     {label}
                 </span>
-            </Frame>
-        </Tooltip>
+            </div>
+
+            {state.status === "downloading" ? (
+                <ProgressBar variant="tile" value={downloadPercent} hideValue className="w-full! shrink-0 h-8!" />
+            ) : (
+                <Button variant="raised" size="sm" onClick={handleAction} className="w-full! h-8!">
+                    {state.status === "downloaded" ? "Restart" : "Update"}
+                </Button>
+            )}
+        </Frame>
     )
 }
