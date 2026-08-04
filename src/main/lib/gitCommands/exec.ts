@@ -47,7 +47,7 @@ export async function runGit(args: string[], options: RunGitOptions): Promise<Gi
             signal?: NodeJS.Signals | null
         }
 
-        // A missing `git` binary surfaces as a spawn error with a string code (e.g. "ENOENT")
+        // A missing `git` binary surfaces as a spawn error with a string code (e.g "ENOENT")
         if (typeof typedError.code === "string") {
             throw new Error(`Failed to run git (${typedError.code}). Is git installed and on your PATH?`)
         }

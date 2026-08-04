@@ -73,8 +73,8 @@ export default function FlatResultsRow({ index, style, matches }: RowComponentPr
             onClick={() => select(node.path)}
             onContextMenu={event => openMenu(event, node)}
         >
-            <div className="flex w-full items-center gap-1.5">
-                <span className="flex size-4 shrink-0 items-center justify-center">{icon}</span>
+            <div className="flex w-full items-center">
+                <span className="mr-1.5 flex size-4 shrink-0 items-center justify-center">{icon}</span>
                 <span className="min-w-0 truncate">{node.name}</span>
             </div>
             {parentPath && <span className="truncate text-xs opacity-60">{parentPath}</span>}

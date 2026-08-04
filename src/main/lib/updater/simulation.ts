@@ -19,13 +19,11 @@ const SIMULATED_RELEASE_NOTES = [
  * @returns The progress snapshot.
  */
 export function buildSimulatedProgress(percent: number): UpdaterDownloadProgress {
-    const total = UPDATER_CONFIG.simulatedDownload.totalBytes
-
     return {
         percent,
-        transferred: Math.round((total * percent) / 100),
-        total,
-        bytesPerSecond: total / 20,
+        transferred: Math.round((UPDATER_CONFIG.simulatedDownload.totalBytes * percent) / 100),
+        total: UPDATER_CONFIG.simulatedDownload.totalBytes,
+        bytesPerSecond: UPDATER_CONFIG.simulatedDownload.totalBytes / 20,
     }
 }
 

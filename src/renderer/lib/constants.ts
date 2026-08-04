@@ -8,6 +8,39 @@ const CONSTANTS = {
     BYTE_UNITS: ["B", "KB", "MB", "GB"],
 
     /**
+     * The Tailwind sizing classes for each icon scale.
+     */
+    ICON_SIZE_CLASSES: {
+        sm: "size-4",
+        md: "size-8",
+        lg: "size-16",
+        none: "",
+    },
+
+    /**
+     * The gutter an inline icon keeps between itself and the label that follows it.
+     */
+    ICON_INLINE_GUTTER_CLASS: "mr-2",
+
+    /**
+     * The shortest time the boot screen stays up.
+     */
+    BOOT_SCREEN_MINIMUM_DURATION_MS: 1024,
+
+    /**
+     * The delay between two boot progress updates, coarse enough to keep the tiled
+     * progress bar from repainting faster than a tile can appear.
+     */
+    BOOT_SCREEN_PROGRESS_TICK_MS: 128,
+
+    /**
+     * The delay between two status bar countdown-bar samples, small enough to
+     * look smooth against the 5-10 second service intervals without wasting
+     * cycles when nothing else is happening.
+     */
+    STATUS_BAR_TICK_MS: 200,
+
+    /**
      * External resources opened from the `Help` menu.
      */
     EXTERNAL_LINKS: {

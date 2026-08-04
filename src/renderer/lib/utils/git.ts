@@ -1,7 +1,6 @@
 /**
- * Converts a Git remote URL (in either the `scp`-style SSH form git@host:owner/repo.git`
- * or a standard URL form like `https://host/owner/repo.git`) into an HTTPS URL that
- * can be opened in a browser, or returns `null` when the input cannot be normalized.
+ * Converts a Git remote URL (SSH `git@host:owner/repo.git` or HTTPS form) into a
+ * browsable HTTPS URL, or `null` when the input cannot be normalized.
  * @param remoteUrl The raw remote URL as reported by `git remote get-url`.
  * @returns The browsable HTTPS URL, or `null` if unparsable.
  */

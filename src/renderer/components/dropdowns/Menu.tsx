@@ -1,5 +1,6 @@
 import { cn } from "@cybearl/cypack/frontend"
 import tickIcon from "@react95-icons/Tick_16x16_4.png"
+import Icon from "@renderer/components/ui/Icon"
 import { useCallback, useState } from "react"
 import { MenuList, MenuListItem, Separator } from "react95"
 import type { MenuAction, TopLevelMenuEntry } from "@/renderer/config/menus"
@@ -41,18 +42,8 @@ export default function MenuDropdown({ items, onAction, onDismiss, className }: 
                         onDismiss()
                     }}
                 >
-                    <span className="flex items-center gap-1.5">
-                        {entry.isChecked && (
-                            <span className="flex size-4 items-center justify-center">
-                                <img
-                                    src={tickIcon}
-                                    alt=""
-                                    decoding="sync"
-                                    fetchPriority="high"
-                                    className="size-4 [image-rendering:pixelated]"
-                                />
-                            </span>
-                        )}
+                    <span className="flex items-center">
+                        {entry.isChecked && <Icon src={tickIcon} isInline />}
 
                         <span>{entry.label}</span>
                     </span>

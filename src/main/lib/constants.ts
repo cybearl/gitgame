@@ -8,6 +8,7 @@ const CONSTANTS = {
     ipc: {
         // App
         appGetVersion: "app:get-version",
+        appConsumeFirstLoad: "app:consume-first-load",
         // Windows
         windowsGetState: "windows:get-state",
         windowsStateChanged: "windows:state-changed",
@@ -60,6 +61,20 @@ const CONSTANTS = {
         updaterInstall: "updater:install",
         updaterOpenDialog: "updater:open-dialog",
         updaterSimulate: "updater:simulate",
+        // MCP
+        mcpGetState: "mcp:get-state",
+        mcpStateChanged: "mcp:state-changed",
+        mcpProbe: "mcp:probe",
+        mcpGetEditorActivity: "mcp:get-editor-activity",
+        mcpListTools: "mcp:list-tools",
+        mcpCallTool: "mcp:call-tool",
+        // Auto-lock
+        autoLockPreviewTargets: "auto-lock:preview-targets",
+        autoLockReconcile: "auto-lock:reconcile",
+        autoLockGetState: "auto-lock:get-state",
+        autoLockStateChanged: "auto-lock:state-changed",
+        autoLockStart: "auto-lock:start",
+        autoLockStop: "auto-lock:stop",
     },
     updater: {
         devCheckMessage:
@@ -77,11 +92,9 @@ const CONSTANTS = {
         noTerminalMessage: "No terminal could be launched, none of the ones we know about are installed or on PATH.",
 
         /**
-         * The terminals tried in order when opening a folder in a terminal, the first one that
-         * launches wins.
-         *
-         * Note: Linux has no standard terminal, hence the list, `x-terminal-emulator` comes
-         * first because it is the Debian alternatives symlink pointing at the user's choice.
+         * The terminals tried in order when opening a folder, first launch wins, Linux
+         * has no canonical terminal so `x-terminal-emulator` (the Debian alternatives
+         * symlink to the user's default) is tried first, then common fallbacks.
          */
         terminals: {
             win32: [
@@ -104,6 +117,36 @@ const CONSTANTS = {
         logFieldSeparator: "\x1f",
         logRecordSeparator: "\x1e",
         logFormat: ["%H", "%h", "%s", "%an", "%ae", "%aI"], // Joined with field separator and ends with record separator
+    },
+    mcp: {
+        sessionHeader: "mcp-session-id",
+        scratchLevelPrefix: "/Temp/",
+        gamePrefix: "/Game/",
+        contentDir: "Content",
+        assetExtension: ".uasset",
+        levelExtension: ".umap",
+        // The Unreal MCP exposes editor tools through a `call_tool` dispatcher rather
+        // than as first-class MCP tools, so each entry pairs the toolset owning it with
+        // its short name
+        dispatcher: "call_tool",
+        tools: {
+            getOpenAssets: {
+                toolset: "EditorToolset.EditorAppToolset",
+                name: "GetOpenAssets",
+            },
+            getCurrentLevel: {
+                toolset: "editor_toolset.toolsets.scene.SceneTools",
+                name: "get_current_level",
+            },
+            isDirty: {
+                toolset: "editor_toolset.toolsets.asset.AssetTools",
+                name: "is_dirty",
+            },
+            getPluginContentPaths: {
+                toolset: "editor_toolset.toolsets.asset.AssetTools",
+                name: "get_plugin_content_paths",
+            },
+        },
     },
 } as const
 

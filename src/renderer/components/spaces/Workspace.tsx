@@ -1,6 +1,6 @@
 import useResizablePaneWidth from "@renderer/hooks/useResizablePaneWidth"
 import { useCallback, useEffect, useMemo } from "react"
-import DetailsPane from "@/renderer/components/panes/Details"
+import DetailsPane from "@/renderer/components/panes/details"
 import FilesPane from "@/renderer/components/panes/Files"
 import WORKSPACE_CONFIG from "@/renderer/config/workspace"
 

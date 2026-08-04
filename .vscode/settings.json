@@ -56,15 +56,20 @@
     },
     // CSpell
     "cSpell.words": [
+        "Artur",
         "asar",
         "ASSETDATA",
         "asynciterable",
+        "Bień",
         "browsable",
         "CHUNKID",
         "CHUNKIDS",
         "EXPORTMAP",
         "fguid",
         "gatherable",
+        "konsole",
+        "Nwnp",
+        "OFPA",
         "Qfecheck",
         "scrollview",
         "SERIALSIZES",
@@ -74,10 +79,11 @@
         "uassets",
         "umap",
         "UPACKAGE",
-        "uproject"
+        "uproject",
+        "webfonts"
     ],
     "[json]": {
-        "editor.defaultFormatter": "biomejs.biome"
+        "editor.defaultFormatter": "vscode.json-language-features"
     },
     "javascript.preferences.importModuleSpecifier": "shortest",
     "typescript.preferences.importModuleSpecifier": "non-relative"

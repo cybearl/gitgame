@@ -8,9 +8,7 @@ const updaterApiRoutes: GitgameApi["updater"] = {
     getState: () => safeInvoke(CONSTANTS.ipc.updaterGetState),
     onStateChange: callback => {
         const listener = (_: unknown, state: UpdaterState) => callback(state)
-
         ipcRenderer.on(CONSTANTS.ipc.updaterStateChanged, listener)
-
         return () => ipcRenderer.off(CONSTANTS.ipc.updaterStateChanged, listener)
     },
     check: isManualCheck => safeInvoke(CONSTANTS.ipc.updaterCheck, isManualCheck),

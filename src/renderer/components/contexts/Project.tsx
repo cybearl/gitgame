@@ -124,21 +124,31 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
      * metadata with the copy the main process resolved at launch time.
      */
     const openInUnrealEditor = useCallback(async () => {
-        const root = currentProject?.path
-        if (!root) return
+        if (!currentProject) return
 
         try {
-            const uproject = await window.api.uproject.open(root)
+            const uproject = await window.api.uproject.open(currentProject.path)
 
             // Guards against the project being closed or swapped while the editor was launching
-            setCurrentProject(current => (current?.path === root ? { ...current, uproject } : current))
+            setCurrentProject(current => (current?.path === currentProject.path ? { ...current, uproject } : current))
         } catch (error) {
             reportError("Can't open the project in Unreal Editor", error)
         }
+    }, [currentProject])
+
+    // Starts the auto-lock loop whenever a project is open and stops it when
+    // there is none, so the periodic reconcile is scoped to the active project
+    useEffect(() => {
+        if (!currentProject?.path) {
+            window.api.autoLock.stop()
+            return
+        }
+
+        window.api.autoLock.start(currentProject.path)
     }, [currentProject?.path])
 
     // Fetches the current project's origin URL whenever the open project
-    // changes, so downstream consumers (e.g. the menu bar) can enable/disable
+    // changes, so downstream consumers (e.g the menu bar) can enable/disable
     // remote-scoped actions accordingly
     useEffect(() => {
         if (!currentProject?.path) {
@@ -165,7 +175,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
     }, [currentProject?.path])
 
     // On mount, load the recent projects and, when configured to do so, re-open
-    // the most recently opened project.
+    // the most recently opened project
     useEffect(() => {
         const init = async () => {
             setIsLoading(true)

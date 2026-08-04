@@ -4,6 +4,7 @@ import { ipcRenderer } from "electron"
 
 const appApiRoutes: GitgameApi["app"] = {
     version: ipcRenderer.sendSync(CONSTANTS.ipc.appGetVersion) as string,
+    isFirstLoad: ipcRenderer.sendSync(CONSTANTS.ipc.appConsumeFirstLoad) as boolean,
 }
 
 export default appApiRoutes

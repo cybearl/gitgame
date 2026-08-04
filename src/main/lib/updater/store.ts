@@ -1,4 +1,5 @@
 import UPDATER_CONFIG from "@main/config/updater"
+import { ObservableStore } from "@main/lib/stores/observable"
 import type { UpdaterState } from "@/main/types/updater"
 
 /**
@@ -31,91 +32,61 @@ function createInitialState(): UpdaterState {
 }
 
 /**
- * The single source of truth for the updater, owned by the main process so the
- * dialog can be closed and reopened without losing where the update got to.
+ * The updater's observable state store, extends the base with dismissal
+ * tracking and a busy predicate specific to the update lifecycle.
  */
-let state: UpdaterState = createInitialState()
+export class UpdaterStore extends ObservableStore<UpdaterState> {
+    /**
+     * The version whose dialog the user closed without acting, so the periodic
+     * checks stop reopening it, cleared implicitly once the feed offers a
+     * different version.
+     */
+    private _dismissedVersion: string | null = null
 
-/**
- * The subscribers notified on every state transition.
- */
-const listeners = new Set<(next: UpdaterState) => void>()
+    constructor() {
+        super(createInitialState())
+    }
 
-/**
- * The version whose dialog the user closed without acting, so the periodic checks
- * stop reopening it. Cleared implicitly once the feed offers a different version.
- */
-let dismissedVersion: string | null = null
+    /**
+     * Whether a check or a download is already under way, in which case
+     * starting another one would stack dialogs and race two writers onto the
+     * same partial installer.
+     * @returns `true` while the updater is mid-flight.
+     */
+    isBusy(): boolean {
+        const current = this.get()
+        return current.status === "checking" || current.status === "downloading" || current.status === "downloaded"
+    }
 
-/**
- * Reads the current updater state.
- * @returns The current state.
- */
-export function getUpdaterState(): UpdaterState {
-    return state
-}
+    /**
+     * Records the pending version as dismissed, so the periodic checks stop
+     * reopening the dialog for it, only meaningful while an update is merely
+     * `available` since a downloaded one is surfaced by the status bar instead.
+     */
+    dismissAvailableVersion() {
+        const current = this.get()
+        if (current.status === "available" && current.version) this._dismissedVersion = current.version
+    }
 
-/**
- * Notifies every subscriber of the current state, without changing it.
- */
-export function emitUpdaterState() {
-    listeners.forEach(listener => {
-        listener(state)
-    })
-}
+    /**
+     * Whether the pending version is one the user already closed the dialog on.
+     * @returns `true` when the dialog should not be reopened on its own.
+     */
+    isAvailableVersionDismissed(): boolean {
+        const current = this.get()
+        return current.version !== null && current.version === this._dismissedVersion
+    }
 
-/**
- * Applies a partial transition to the updater state and notifies subscribers.
- * @param patch The fields to change.
- */
-export function setUpdaterState(patch: Partial<UpdaterState>) {
-    state = { ...state, ...patch }
-    emitUpdaterState()
-}
-
-/**
- * Subscribes to updater state transitions.
- * @param listener The callback invoked with each new state.
- * @returns A function that removes the subscription.
- */
-export function subscribeToUpdaterState(listener: (next: UpdaterState) => void): () => void {
-    listeners.add(listener)
-
-    return () => {
-        listeners.delete(listener)
+    /**
+     * Forgets any dismissal, so the next available version prompts again.
+     */
+    clearDismissedVersion() {
+        this._dismissedVersion = null
     }
 }
 
 /**
- * Whether a check or a download is already under way, in which case starting
- * another one would stack dialogs and race two writers onto the same partial
- * installer.
- * @returns `true` while the updater is mid-flight.
+ * The single app-wide updater store, subscribed to by every open window so the
+ * dialog and status bar follow the same transitions.
  */
-export function isUpdaterBusy(): boolean {
-    return state.status === "checking" || state.status === "downloading" || state.status === "downloaded"
-}
-
-/**
- * Records the pending version as dismissed, so the periodic checks stop reopening
- * the dialog for it. Only meaningful while an update is merely `available`, since a
- * download that already ran is surfaced by the status bar instead.
- */
-export function dismissAvailableVersion() {
-    if (state.status === "available" && state.version) dismissedVersion = state.version
-}
-
-/**
- * Whether the pending version is one the user already closed the dialog on.
- * @returns `true` when the dialog should not be reopened on its own.
- */
-export function isAvailableVersionDismissed(): boolean {
-    return state.version !== null && state.version === dismissedVersion
-}
-
-/**
- * Forgets any dismissal, so the next available version prompts again.
- */
-export function clearDismissedVersion() {
-    dismissedVersion = null
-}
+export const updaterStore = new UpdaterStore()

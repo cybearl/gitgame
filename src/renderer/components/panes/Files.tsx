@@ -1,6 +1,7 @@
 import { cn } from "@cybearl/cypack/frontend"
 import lockIcon from "@react95-icons/Lock_16x16_4.png"
 import { useTreeViewContext } from "@renderer/components/contexts/TreeView"
+import Icon from "@renderer/components/ui/Icon"
 import { type ChangeEvent, type CSSProperties, useCallback } from "react"
 import { Button, TextInput } from "react95"
 import TreeView from "@/renderer/components/views/TreeView"
@@ -131,13 +132,7 @@ export default function FilesPane({ className, style }: FilesPaneProps) {
                         aria-label="Show only files I have locked"
                         title="Show only files I have locked"
                     >
-                        <img
-                            src={lockIcon}
-                            alt=""
-                            decoding="sync"
-                            fetchPriority="high"
-                            className="size-4 [image-rendering:pixelated]"
-                        />
+                        <Icon src={lockIcon} />
                     </Button>
                 </div>
 

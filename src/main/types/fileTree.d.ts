@@ -4,11 +4,8 @@
 export type FileTreeNodeType = "file" | "folder"
 
 /**
- * A node in the repository file tree.
- *
- * For a file, `isLockable` reflects its `lockable` Git attribute, for a folder,
- * `isLockable` is `true` when it contains at least one lockable descendant, so
- * the UI knows whether a folder-level lock button is meaningful.
+ * A node in the repository file tree, `isLockable` reflects the `lockable` Git
+ * attribute on files, and is `true` on folders with at least one lockable descendant.
  */
 export type FileTreeNode = {
     name: string

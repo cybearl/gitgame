@@ -1,8 +1,9 @@
 import CONSTANTS from "@main/lib/constants"
 import { safeHandle } from "@main/lib/ipc"
 import { openUpdateDialog } from "@main/lib/updater"
-import { checkForUpdates, downloadUpdate, installUpdate, simulateUpdate } from "@main/lib/updater/service"
-import { getUpdaterState } from "@main/lib/updater/store"
+import { checkForUpdates, downloadUpdate, installUpdate } from "@main/lib/updater/service"
+import { updaterSimulator } from "@main/lib/updater/simulator"
+import { updaterStore } from "@main/lib/updater/store"
 import { ipcMain } from "electron"
 import type { UpdaterSimulation } from "@/main/types/updater"
 
@@ -12,7 +13,7 @@ import type { UpdaterSimulation } from "@/main/types/updater"
  * the status bar, and trigger the restart that installs the staged version.
  */
 export function registerUpdaterHandlers() {
-    safeHandle(CONSTANTS.ipc.updaterGetState, () => getUpdaterState())
+    safeHandle(CONSTANTS.ipc.updaterGetState, () => updaterStore.get())
 
     ipcMain.on(CONSTANTS.ipc.updaterOpenDialog, () => openUpdateDialog())
 
@@ -30,6 +31,6 @@ export function registerUpdaterHandlers() {
 
     ipcMain.on(CONSTANTS.ipc.updaterSimulate, (_event, scenario: UpdaterSimulation) => {
         openUpdateDialog()
-        simulateUpdate(scenario)
+        updaterSimulator.start(scenario)
     })
 }

@@ -1,12 +1,7 @@
 /**
- * The lifecycle phase of the auto-updater:
- * - `idle`: nothing has been checked yet, or the last result was dismissed.
- * - `checking`: a check against the release feed is in flight.
- * - `not-available`: the running version is the latest one published.
- * - `available`: a newer version was found and is waiting on the user.
- * - `downloading`: the installer is being fetched.
- * - `downloaded`: the installer is staged and waiting for a restart.
- * - `error`: the last check or download failed.
+ * The lifecycle phase of the auto-updater, moves from `idle` through `checking`
+ * to either `not-available`, `available` (then `downloading` and `downloaded`),
+ * or `error`, drives what the update dialog shows at each transition.
  */
 export type UpdaterStatus = "idle" | "checking" | "not-available" | "available" | "downloading" | "downloaded" | "error"
 

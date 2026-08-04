@@ -1,7 +1,8 @@
 import type { ReactNode } from "react"
 import { createScrollbars } from "react95"
 import originalTheme from "react95/dist/themes/original"
-import { createGlobalStyle, ThemeProvider } from "styled-components"
+import { createGlobalStyle, StyleSheetManager, ThemeProvider } from "styled-components"
+import { shouldForwardStyledProp } from "@/renderer/lib/utils/styled"
 
 /**
  * Applies react95's Win95 scrollbar styling globally.
@@ -16,10 +17,12 @@ type AppRootProps = {
 
 export default function AppRoot({ children }: AppRootProps) {
     return (
-        <ThemeProvider theme={originalTheme}>
-            <GlobalScrollbars />
+        <StyleSheetManager shouldForwardProp={shouldForwardStyledProp}>
+            <ThemeProvider theme={originalTheme}>
+                <GlobalScrollbars />
 
-            {children}
-        </ThemeProvider>
+                {children}
+            </ThemeProvider>
+        </StyleSheetManager>
     )
 }

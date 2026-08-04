@@ -1,19 +1,24 @@
 import appApiRoutes from "@preload/routes/app"
 import audioApiRoutes from "@preload/routes/audio"
+import autoLockApiRoutes from "@preload/routes/autoLock"
 import dialogsApiRoutes from "@preload/routes/dialogs"
 import fileTreeApiRoutes from "@preload/routes/fileTree"
 import gitCommandsApiRoutes from "@preload/routes/gitCommands"
 import lfsCommandsApiRoutes from "@preload/routes/lfsCommands"
+import mcpApiRoutes from "@preload/routes/mcp"
 import projectsApiRoutes from "@preload/routes/projects"
 import shellsApiRoutes from "@preload/routes/shells"
 import updaterApiRoutes from "@preload/routes/updater"
 import uprojectApiRoutes from "@preload/routes/uproject"
 import windowsApiRoutes from "@preload/routes/windows"
 import { contextBridge } from "electron"
+import type { AppSound } from "@/main/types/audio"
+import type { AutoLockReconcileResult, AutoLockState } from "@/main/types/autoLock"
 import type { ConfirmDialogOptions, DialogOptions } from "@/main/types/dialogs"
 import type { FileTreeNode } from "@/main/types/fileTree"
 import type { GitBranch, GitCommit, GitStatus } from "@/main/types/gitCommands"
 import type { LfsLock, LfsLockMigration, LfsLockResult } from "@/main/types/lfsCommands"
+import type { EditorActivity, McpState } from "@/main/types/mcp"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
 import type { AppPreferences } from "@/main/types/store"
 import type { UpdaterSimulation, UpdaterState } from "@/main/types/updater"
@@ -42,9 +47,18 @@ export type GitgameApi = {
     }
     app: {
         version: string
+        isFirstLoad: boolean
     }
     audio: {
-        playError: () => void
+        play: (sound: AppSound) => void
+    }
+    autoLock: {
+        previewTargets: (dir: string) => Promise<string[]>
+        reconcile: (dir: string) => Promise<AutoLockReconcileResult>
+        getState: () => Promise<AutoLockState>
+        onStateChange: (callback: (state: AutoLockState) => void) => () => void
+        start: (dir: string) => Promise<void>
+        stop: () => Promise<void>
     }
     dialogs: {
         confirm: (options: ConfirmDialogOptions) => Promise<boolean>
@@ -81,6 +95,14 @@ export type GitgameApi = {
             onProgress?: (done: number, total: number) => void,
         ) => Promise<LfsLockResult[]>
         migrateLocks: (dir: string) => Promise<LfsLockMigration[]>
+    }
+    mcp: {
+        getState: () => Promise<McpState>
+        onStateChange: (callback: (state: McpState) => void) => () => void
+        probe: () => Promise<McpState>
+        getEditorActivity: () => Promise<EditorActivity>
+        listTools: () => Promise<unknown>
+        callTool: (toolset: string, name: string, args?: Record<string, unknown>) => Promise<unknown>
     }
     projects: {
         addLocal: () => Promise<OpenProjectResult>
@@ -129,10 +151,12 @@ const api: GitgameApi = {
     },
     app: appApiRoutes,
     audio: audioApiRoutes,
+    autoLock: autoLockApiRoutes,
     dialogs: dialogsApiRoutes,
     fileTree: fileTreeApiRoutes,
     gitCommands: gitCommandsApiRoutes,
     lfsCommands: lfsCommandsApiRoutes,
+    mcp: mcpApiRoutes,
     projects: projectsApiRoutes,
     shells: shellsApiRoutes,
     updater: updaterApiRoutes,

@@ -91,14 +91,14 @@ export function buildUpdaterDetails(state: UpdaterState): string | null {
 }
 
 /**
- * Builds the label of the status bar's update indicator, which stands in for the
- * dialog once it has been dismissed.
+ * Builds the short label of the status bar's update chip, the button verb
+ * carries the action so the label only names the noun.
  * @param state The current updater state.
  * @returns The label, or `null` when there is nothing pending to advertise.
  */
 export function buildUpdaterStatusLabel(state: UpdaterState): string | null {
-    if (state.status === "downloaded") return `Restart to update to ${state.version}`
-    if (state.status === "available") return `Update to ${state.version} available`
+    if (state.status === "downloading") return `Downloading: ${state.version}`
+    if (state.status === "downloaded" || state.status === "available") return `Update: ${state.version}`
 
     return null
 }
