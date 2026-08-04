@@ -1,10 +1,14 @@
 import path from "node:path"
 import WINDOWS_CONFIG from "@main/config/windows"
 import { registerAppHandlers } from "@main/lib/app/handlers"
+import { startAutoLock } from "@main/lib/autoLock"
+import { registerAutoLockHandlers } from "@main/lib/autoLock/handlers"
 import { registerDialogsHandlers } from "@main/lib/dialogs"
 import { registerFileTreeHandlers } from "@main/lib/fileTree/handlers"
 import { registerGitCommandsHandlers } from "@main/lib/gitCommands/handlers"
 import { registerLfsCommandsHandlers } from "@main/lib/lfsCommands/handlers"
+import { startMcp } from "@main/lib/mcp"
+import { registerMcpHandlers } from "@main/lib/mcp/handlers"
 import { registerProjectsHandlers } from "@main/lib/projects/handlers"
 import { registerShellsHandlers } from "@main/lib/shells/handlers"
 import { startUpdater } from "@main/lib/updater"
@@ -48,6 +52,7 @@ function createMainWindow(): BrowserWindow {
 
 // Create the main application window when Electron is ready
 app.whenReady().then(() => {
+    // Handlers
     registerAppHandlers()
     registerWindowsControlHandlers()
     registerDialogsHandlers()
@@ -58,8 +63,16 @@ app.whenReady().then(() => {
     registerUProjectHandlers()
     registerShellsHandlers()
     registerUpdaterHandlers()
+    registerMcpHandlers()
+    registerAutoLockHandlers()
+
+    // Create the main window
     createMainWindow()
+
+    // Start services
     startUpdater()
+    startMcp()
+    startAutoLock()
 
     // Re-create a window in the app when the dock icon is clicked (macOS)
     app.on("activate", () => {
