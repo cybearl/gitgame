@@ -49,12 +49,9 @@ export default function TreeViewContextMenu() {
                 Unlock
             </MenuListItem>
 
-            {menu.othersPaths.length > 0 && (
-                <>
-                    <Separator />
-                    <MenuListItem onClick={forceUnlockFromMenu}>Force unlock</MenuListItem>
-                </>
-            )}
+            <MenuListItem disabled={menu.othersPaths.length === 0} onClick={forceUnlockFromMenu}>
+                Force unlock
+            </MenuListItem>
 
             {matches !== null && (
                 <>

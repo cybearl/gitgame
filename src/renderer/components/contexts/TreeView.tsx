@@ -305,21 +305,24 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
     }, [excludeText])
 
     /**
-     * Opens the lock/unlock context menu for the given node, if it is lockable.
+     * Opens the lock/unlock context menu for the given node, opening on every node
+     * rather than lockable ones only so a right-click always answers, each entry
+     * disables itself when it has nothing to act on.
      * @param event The mouse event.
      * @param node The node the menu should target.
      */
     const openMenu = useCallback(
         (event: MouseEvent<HTMLElement>, node: FileTreeNode) => {
-            if (!node.isLockable) return
-
             event.preventDefault()
+
+            const lockablePaths = collectLockablePaths(node)
+
             setMenu({
                 x: event.clientX,
                 y: event.clientY,
                 node,
-                canLock: (lockStates.get(node.path) ?? "unlockable") !== "locked",
-                lockablePaths: collectLockablePaths(node),
+                canLock: lockablePaths.length > 0 && (lockStates.get(node.path) ?? "unlockable") !== "locked",
+                lockablePaths,
                 minePaths: collectLockedPaths(node, locksByPath, true),
                 othersPaths: collectLockedPaths(node, locksByPath, false),
             })
