@@ -1,7 +1,7 @@
 import path from "node:path"
 import STORE_CONFIG from "@main/config/store"
 import { getRepositoryRoot, isRepository } from "@main/lib/gitCommands/service"
-import { getConfig, updateConfig } from "@main/lib/store"
+import { configStore } from "@main/lib/stores/config"
 import { readUProject } from "@main/lib/uproject/service"
 import { pathExists } from "@main/lib/utils/fs"
 import { app, type BrowserWindow, dialog } from "electron"
@@ -24,7 +24,7 @@ async function rememberProject(root: string, uproject: UProject): Promise<Projec
         uproject,
     }
 
-    await updateConfig(config => {
+    await configStore.update(config => {
         const others = config.recentProjects.filter(project => project.path !== root)
         config.recentProjects = [entry, ...others].slice(0, STORE_CONFIG.maxRecentProjects)
 
@@ -35,13 +35,9 @@ async function rememberProject(root: string, uproject: UProject): Promise<Projec
 }
 
 /**
- * Opens an existing repository by path, also validates that it exists and is a Git
- * repository, normalizes the path to the repository root, and records it as the
- * most recently opened project.
- *
- * Note: When the path no longer exists it is dropped from the recent projects list, so
- * this doubles as the safe entry point for re-opening a remembered project on
- * launch.
+ * Opens an existing repository by path, validates and normalizes it to the root,
+ * and records it as the most recently opened project, missing paths are dropped
+ * from the recent list so this is safe to call when re-opening on launch.
  * @param dir A path inside (or at the root of) the repository.
  * @returns The outcome of the open attempt.
  */
@@ -88,7 +84,7 @@ export async function openProject(dir: string): Promise<OpenProjectResult> {
  * @returns The outcome of the open attempt, including cancellation.
  */
 export async function addLocalProject(window: BrowserWindow | null): Promise<OpenProjectResult> {
-    const config = await getConfig()
+    const config = await configStore.get()
     const mostRecent = config.recentProjects[0]
     const defaultPath = mostRecent ? path.dirname(mostRecent.path) : app.getPath("home")
 
@@ -110,7 +106,7 @@ export async function addLocalProject(window: BrowserWindow | null): Promise<Ope
  * @returns The recent projects.
  */
 export async function getRecentProjects(): Promise<Project[]> {
-    return (await getConfig()).recentProjects
+    return (await configStore.get()).recentProjects
 }
 
 /**
@@ -119,7 +115,7 @@ export async function getRecentProjects(): Promise<Project[]> {
  * @returns The updated recent projects list.
  */
 export async function removeRecentProject(dir: string): Promise<Project[]> {
-    const updated = await updateConfig(config => {
+    const updated = await configStore.update(config => {
         config.recentProjects = config.recentProjects.filter(project => project.path !== dir)
         return undefined
     })
@@ -132,7 +128,7 @@ export async function removeRecentProject(dir: string): Promise<Project[]> {
  * @returns The updated recent projects list, which is always empty.
  */
 export async function clearRecentProjects(): Promise<Project[]> {
-    const updated = await updateConfig(config => {
+    const updated = await configStore.update(config => {
         config.recentProjects = []
         return undefined
     })
@@ -145,7 +141,7 @@ export async function clearRecentProjects(): Promise<Project[]> {
  * @returns The preferences.
  */
 export async function getPreferences(): Promise<AppPreferences> {
-    return (await getConfig()).preferences
+    return (await configStore.get()).preferences
 }
 
 /**
@@ -154,7 +150,7 @@ export async function getPreferences(): Promise<AppPreferences> {
  * @returns The updated preferences.
  */
 export async function setPreferences(preferences: Partial<AppPreferences>): Promise<AppPreferences> {
-    const updated = await updateConfig(config => {
+    const updated = await configStore.update(config => {
         config.preferences = {
             ...config.preferences,
             ...preferences,

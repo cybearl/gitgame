@@ -1,7 +1,7 @@
 import CONSTANTS from "@main/lib/constants"
 import { safeHandle } from "@main/lib/ipc"
 import { getLockableFiles, listLocks, lockPaths, migrateLocks, unlockPaths } from "@main/lib/lfsCommands/service"
-import { getConfig, updateConfig } from "@main/lib/store"
+import { configStore } from "@main/lib/stores/config"
 import type { LfsLockProgress } from "@/main/types/lfsCommands"
 
 /**
@@ -11,7 +11,7 @@ export function registerLfsCommandsHandlers() {
     safeHandle(CONSTANTS.ipc.lfsCommandsListLocks, async (_event, dir: string) => {
         const locks = await listLocks(dir)
 
-        updateConfig(config => {
+        configStore.update(config => {
             config.lfsLockCache[dir] = locks
             return config
         })
@@ -20,7 +20,7 @@ export function registerLfsCommandsHandlers() {
     })
 
     safeHandle(CONSTANTS.ipc.lfsCommandsGetCachedLocks, async (_event, dir: string) => {
-        const config = await getConfig()
+        const config = await configStore.get()
         return config.lfsLockCache[dir] ?? []
     })
 
@@ -50,7 +50,7 @@ export function registerLfsCommandsHandlers() {
         // Any migration that actually touched a lock invalidates the cached lock list
         if (migrations.some(m => m.status === "migrated" || m.status === "failed-unlock")) {
             const locks = await listLocks(dir)
-            updateConfig(config => {
+            configStore.update(config => {
                 config.lfsLockCache[dir] = locks
                 return config
             })
