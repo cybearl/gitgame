@@ -7,14 +7,9 @@ type LoadingProps = {
     progress: number
 }
 
-/**
- * Boot screen shown while the app starts up, standing in for the workspace and the welcome
- * view until the project context is done with its initial load, so the Windows 95 startup
- * sound plays over something rather than an empty window.
- */
 export default function Loading({ progress }: LoadingProps) {
     return (
-        <div className="flex h-full w-full items-center justify-center overflow-hidden p-8 select-none">
+        <div className="flex w-full min-h-0 flex-1 items-center justify-center overflow-hidden p-8 select-none">
             <div className="flex w-full max-w-md flex-col gap-4 p-6">
                 <div className="flex flex-col items-center text-center">
                     <Icon src={computerIcon} size="lg" />

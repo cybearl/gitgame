@@ -51,19 +51,18 @@ function AppShell() {
      */
     const statusCaption = useMemo(() => {
         if (currentProject) return currentProject.path
-        return isBooting || isLoading ? "Starting up..." : "No project open"
-    }, [currentProject, isBooting, isLoading])
+        return isLoading ? "Starting up..." : "No project open"
+    }, [currentProject, isLoading])
 
     /**
-     * The view filling the main area, the boot screen until the app is done starting up, the
-     * workspace of the open project, or the welcome view once the project context has settled,
-     * so a reload cannot flash it over the project it is about to reopen.
+     * The view filling the main area, the workspace of the open project, or the welcome view
+     * once the project context has settled, so a reload cannot flash it over the project it
+     * is about to reopen.
      */
     const mainView = useMemo(() => {
-        if (isBooting) return <Loading progress={bootProgress} />
         if (currentProject) return <Workspace />
         return isLoading ? null : <Welcome />
-    }, [isBooting, bootProgress, currentProject, isLoading])
+    }, [currentProject, isLoading])
 
     /**
      * The menus of the application, rebuilt when the recent projects or any
@@ -94,18 +93,24 @@ function AppShell() {
         <MainLayout>
             <TitleBar title={windowTitle} icon={computerIcon} />
 
-            <MenuBar menus={menus} onAction={handleMenuAction} />
+            {isBooting ? (
+                <Loading progress={bootProgress} />
+            ) : (
+                <>
+                    <MenuBar menus={menus} onAction={handleMenuAction} />
 
-            <div className="relative w-full flex-1 overflow-hidden">{mainView}</div>
+                    <div className="relative w-full flex-1 overflow-hidden">{mainView}</div>
 
-            <StatusBar>
-                <StatusBarField grow>{statusCaption}</StatusBarField>
+                    <StatusBar>
+                        <StatusBarField grow>{statusCaption}</StatusBarField>
 
-                <StatusUpdateField />
-                <StatusMcpField />
-                <StatusAutoLockField />
-                <StatusTaskField />
-            </StatusBar>
+                        <StatusUpdateField />
+                        <StatusMcpField />
+                        <StatusAutoLockField />
+                        <StatusTaskField />
+                    </StatusBar>
+                </>
+            )}
         </MainLayout>
     )
 }
