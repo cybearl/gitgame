@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react"
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react"
 import { Button, Separator } from "react95"
 import MenuDropdown from "@/renderer/components/dropdowns/Menu"
 import type { MenuAction, TopLevelMenu } from "@/renderer/config/menus"
@@ -6,9 +6,10 @@ import type { MenuAction, TopLevelMenu } from "@/renderer/config/menus"
 type MenuBarProps = {
     menus: TopLevelMenu[]
     onAction: (action: MenuAction) => void
+    rightSlot?: ReactNode
 }
 
-export default function MenuBar({ menus, onAction }: MenuBarProps) {
+export default function MenuBar({ menus, onAction, rightSlot }: MenuBarProps) {
     const containerRef = useRef<HTMLDivElement>(null)
 
     const [openIndex, setOpenIndex] = useState<number | null>(null)
@@ -62,28 +63,32 @@ export default function MenuBar({ menus, onAction }: MenuBarProps) {
 
     return (
         <div className="w-full z-50">
-            <div ref={containerRef} className="flex items-center px-0.5 py-0.5 gap-0.5">
-                {menus.map((menu, index) => {
-                    return (
-                        <div key={menu.label} className="relative">
-                            <Button
-                                variant="menu"
-                                size="sm"
-                                active={openIndex === index}
-                                onMouseDown={event => event.preventDefault()}
-                                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                                onMouseEnter={() => handleTriggerEnter(index)}
-                                className="px-2! bg-secondary!"
-                            >
-                                {menu.label}
-                            </Button>
+            <div ref={containerRef} className="flex items-center justify-between px-0.5 py-0.5">
+                <div className="flex items-center gap-0.5">
+                    {menus.map((menu, index) => {
+                        return (
+                            <div key={menu.label} className="relative">
+                                <Button
+                                    variant="menu"
+                                    size="sm"
+                                    active={openIndex === index}
+                                    onMouseDown={event => event.preventDefault()}
+                                    onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                                    onMouseEnter={() => handleTriggerEnter(index)}
+                                    className="px-2! bg-secondary!"
+                                >
+                                    {menu.label}
+                                </Button>
 
-                            {openIndex === index && (
-                                <MenuDropdown items={menu.items} onAction={onAction} onDismiss={closeAll} />
-                            )}
-                        </div>
-                    )
-                })}
+                                {openIndex === index && (
+                                    <MenuDropdown items={menu.items} onAction={onAction} onDismiss={closeAll} />
+                                )}
+                            </div>
+                        )
+                    })}
+                </div>
+
+                {rightSlot && <div className="flex items-center gap-0.5 pr-0.5">{rightSlot}</div>}
             </div>
 
             <Separator />

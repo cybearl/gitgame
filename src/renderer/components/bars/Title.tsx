@@ -1,5 +1,6 @@
 import { cn } from "@cybearl/cypack/frontend"
 import CONSTANTS from "@main/lib/constants"
+import Icon from "@renderer/components/ui/Icon"
 import useWindowStates from "@renderer/hooks/useWindowStates"
 import type { CSSProperties } from "react"
 import { Button } from "react95"
@@ -30,10 +31,8 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
             }
             onDoubleClick={() => window.api.windows.toggleMaximize()}
         >
-            <div className="flex min-w-0 flex-1 items-center gap-1 overflow-hidden font-bold max-w-max">
-                {icon && !window.api.platform.isMacOS && (
-                    <img src={icon} alt="" className="size-4 [image-rendering:pixelated]" />
-                )}
+            <div className="flex min-w-0 flex-1 items-center overflow-hidden font-bold max-w-max">
+                {icon && !window.api.platform.isMacOS && <Icon src={icon} isInline />}
 
                 <span title={title} className="truncate text-base">
                     {title}
@@ -51,7 +50,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                                 onClick={() => window.api.windows.minimize()}
                                 className="w-6! h-5.5! min-w-0!"
                             >
-                                <img src="./assets/icons/window/minimize.png" alt="minimize" className="w-4" />
+                                <Icon src="./assets/icons/window/minimize.png" size="none" className="w-4" />
                             </Button>
                             <Button
                                 size="sm"
@@ -60,7 +59,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                                 onClick={() => window.api.windows.toggleMaximize()}
                                 className="w-6! h-5.5! min-w-0!"
                             >
-                                <img src="./assets/icons/window/maximize.png" alt="maximize" className="w-4" />
+                                <Icon src="./assets/icons/window/maximize.png" size="none" className="w-4" />
                             </Button>
                         </>
                     )}
@@ -72,7 +71,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                         onClick={() => (onClose ? onClose() : window.api.windows.close())}
                         className="w-6! h-5.5! min-w-0! ml-1"
                     >
-                        <img src="./assets/icons/window/close.png" alt="close" className="w-4 " />
+                        <Icon src="./assets/icons/window/close.png" size="none" className="w-4" />
                     </Button>
                 </div>
             )}

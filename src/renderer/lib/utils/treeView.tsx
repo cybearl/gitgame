@@ -2,6 +2,7 @@ import { cn } from "@cybearl/cypack/frontend"
 import fileIcon from "@react95-icons/FileText_16x16_4.png"
 import folderIcon from "@react95-icons/Folder_16x16_4.png"
 import lockIcon from "@react95-icons/Lock_16x16_4.png"
+import Icon from "@renderer/components/ui/Icon"
 import Tooltip from "@renderer/components/ui/Tooltip"
 import type { TreeLeaf } from "react95"
 import type { FileTreeNode } from "@/main/types/fileTree"
@@ -64,16 +65,10 @@ export function renderLockIcon(
 
     return (
         <Tooltip text={text}>
-            <img
+            <Icon
                 src={lockIcon}
                 alt="Locked"
-                decoding="sync"
-                fetchPriority="high"
-                className={cn(
-                    "size-4 [image-rendering:pixelated]",
-                    fileLock && !fileLock.isMine && "opacity-60",
-                    lockState === "partial" && "opacity-40",
-                )}
+                className={cn(fileLock && !fileLock.isMine && "opacity-60", lockState === "partial" && "opacity-40")}
             />
         </Tooltip>
     )
@@ -86,15 +81,7 @@ export function renderLockIcon(
  * @returns The type icon element.
  */
 export function renderTypeIcon(node: FileTreeNode) {
-    return (
-        <img
-            src={node.type === "folder" ? folderIcon : fileIcon}
-            alt=""
-            decoding="sync"
-            fetchPriority="high"
-            className="size-4 [image-rendering:pixelated]"
-        />
-    )
+    return <Icon src={node.type === "folder" ? folderIcon : fileIcon} />
 }
 
 /**
@@ -216,7 +203,7 @@ export function resolveNode(target: HTMLElement, container: HTMLElement, roots: 
 
     let item = target.closest<HTMLElement>('li[role="treeitem"]')
     while (item && container.contains(item)) {
-        const list = item.parentElement
+        const { parentElement: list } = item
         if (!list) break
 
         const siblings = Array.from(list.children).filter(child => child.getAttribute("role") === "treeitem")
