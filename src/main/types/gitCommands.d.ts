@@ -8,12 +8,9 @@ export type GitResult = {
 }
 
 /**
- * The staged (index) or unstaged (working tree) state of a single path,
- * expressed with Git's porcelain status codes.
- *
- * Note: `.` means unmodified in that slot, other values follow `git status`
- * conventions (`M` modified, `A` added, `D` deleted, `R` renamed,
- * `C` copied, `U` unmerged, `?` untracked, `!` ignored).
+ * The state of a single path in the staged (index) or unstaged (working tree)
+ * slot, using Git's porcelain codes, `.` means unmodified, other letters follow
+ * `git status` conventions (`M`, `A`, `D`, `R`, `C`, `U`, `?`, `!`).
  */
 export type GitStatusCode = "." | "M" | "A" | "D" | "R" | "C" | "U" | "?" | "!"
 

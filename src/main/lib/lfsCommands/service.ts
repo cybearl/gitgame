@@ -142,15 +142,14 @@ export async function lockPaths(
     onProgress?: (done: number, total: number) => void,
 ): Promise<LfsLockResult[]> {
     const files = await expandToLockableFiles(dir, paths)
-    const total = files.length
 
-    onProgress?.(0, total)
+    onProgress?.(0, files.length)
 
     let done = 0
     return parallelLimit(files, GIT_CONFIG.lockConcurrency, async file => {
         const result = await runLockCommand(dir, ["lfs", "lock", file], file)
         done += 1
-        onProgress?.(done, total)
+        onProgress?.(done, files.length)
         return result
     })
 }
@@ -173,16 +172,15 @@ export async function unlockPaths(
     onProgress?: (done: number, total: number) => void,
 ): Promise<LfsLockResult[]> {
     const files = await expandToLockableFiles(dir, paths)
-    const total = files.length
 
-    onProgress?.(0, total)
+    onProgress?.(0, files.length)
 
     let done = 0
     return parallelLimit(files, GIT_CONFIG.lockConcurrency, async file => {
         const args = force ? ["lfs", "unlock", "--force", file] : ["lfs", "unlock", file]
         const result = await runLockCommand(dir, args, file)
         done += 1
-        onProgress?.(done, total)
+        onProgress?.(done, files.length)
         return result
     })
 }

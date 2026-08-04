@@ -11,11 +11,9 @@ export type Project = {
 }
 
 /**
- * Why an attempt to open a project did not result in an open repository:
- * - `cancelled`: the user dismissed the folder picker.
- * - `not-found`: the path no longer exists on disk.
- * - `not-a-repository`: the path exists but is not inside a Git repository.
- * - `not-a-ue-project`: the repository has no `.uproject` file at its root.
+ * Why opening a project did not result in an open repository, `cancelled` when
+ * the picker was dismissed, `not-found`, `not-a-repository`, and `not-a-ue-project`
+ * cover the disk, git, and UE root-file checks respectively.
  */
 export type OpenProjectFailureReason = "cancelled" | "not-found" | "not-a-repository" | "not-a-ue-project"
 

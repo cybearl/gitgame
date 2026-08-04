@@ -72,10 +72,9 @@ export default function useResizablePaneWidth({
         (event: ReactMouseEvent) => {
             event.preventDefault()
 
-            const startX = event.clientX
-            const startWidth = widthRef.current
-            const previousBodyCursor = document.body.style.cursor
-            const previousBodyUserSelect = document.body.style.userSelect
+            const { clientX: startX } = event
+            const { current: startWidth } = widthRef
+            const { cursor: previousBodyCursor, userSelect: previousBodyUserSelect } = document.body.style
 
             document.body.style.cursor = "col-resize"
             document.body.style.userSelect = "none"
