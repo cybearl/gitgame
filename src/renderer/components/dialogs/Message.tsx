@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from "react"
 import { Button, Frame } from "react95"
 import type { ConfirmDialogOptions } from "@/main/types/dialogs"
 import TitleBar from "@/renderer/components/bars/Title"
+import Icon from "@/renderer/components/ui/Icon"
 
 type MessageDialogProps = {
     options: ConfirmDialogOptions
@@ -37,7 +38,8 @@ export default function MessageDialog({ options, variant }: MessageDialogProps) 
     // Chime alongside the dialog rather than from the caller, so an error opened by
     // the main process (the updater) sounds the same as one raised by the renderer
     useEffect(() => {
-        if (variant === "error" || variant === "error-with-details") window.api.audio.playError()
+        const isError = variant === "error" || variant === "error-with-details"
+        window.api.audio.play(isError ? "chord" : "ding")
     }, [variant])
 
     // Confirm on enter, cancel on escape
@@ -61,15 +63,7 @@ export default function MessageDialog({ options, variant }: MessageDialogProps) 
 
             <div className="flex min-h-0 flex-1 flex-col p-4">
                 <div className="flex min-h-0 flex-1 gap-4 overflow-hidden">
-                    {icon && (
-                        <img
-                            src={icon}
-                            alt=""
-                            decoding="sync"
-                            fetchPriority="high"
-                            className="size-8 shrink-0 [image-rendering:pixelated]"
-                        />
-                    )}
+                    {icon && <Icon src={icon} size="md" />}
 
                     <div className="flex min-w-0 flex-1 flex-col gap-2 overflow-hidden">
                         <p className="text-sm whitespace-pre-wrap">{options.message}</p>

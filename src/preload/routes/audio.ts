@@ -1,9 +1,9 @@
 import type { GitgameApi } from "@preload/index"
-import { getErrorAudio } from "@preload/lib/audio"
+import { getSound } from "@preload/lib/audio"
 
 const audioApiRoutes: GitgameApi["audio"] = {
-    playError: () => {
-        const audio = getErrorAudio()
+    play: sound => {
+        const audio = getSound(sound)
         audio.currentTime = 0
         audio.play().catch(() => null)
     },

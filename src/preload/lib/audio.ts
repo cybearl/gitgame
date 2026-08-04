@@ -1,19 +1,25 @@
-import errorSound from "@main/assets/sounds/error.mp3"
+import CONSTANTS from "@preload/lib/constants"
+import type { AppSound } from "@/main/types/audio"
 
 /**
- * The cached error-chime audio element.
+ * The audio elements built so far, keyed by sound, so each file is only fetched
+ * and decoded the first time it is asked for.
  */
-let errorAudio: HTMLAudioElement | null = null
+const cachedSounds = new Map<AppSound, HTMLAudioElement>()
 
 /**
- * Returns the preloaded Win95 error chime.
- * @returns The cached error-chime audio element.
+ * Returns the preloaded audio element for the given system sound, building and
+ * caching it on first use.
+ * @param sound The sound to get the audio element for.
+ * @returns The cached audio element.
  */
-export function getErrorAudio(): HTMLAudioElement {
-    if (!errorAudio) {
-        errorAudio = new Audio(errorSound)
-        errorAudio.preload = "auto"
-    }
+export function getSound(sound: AppSound): HTMLAudioElement {
+    const cached = cachedSounds.get(sound)
+    if (cached) return cached
 
-    return errorAudio
+    const audio = new Audio(CONSTANTS.SOUND_SOURCES[sound])
+    audio.preload = "auto"
+    cachedSounds.set(sound, audio)
+
+    return audio
 }

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { Button, Frame, ProgressBar } from "react95"
 import type { UpdaterState } from "@/main/types/updater"
 import TitleBar from "@/renderer/components/bars/Title"
+import Icon from "@/renderer/components/ui/Icon"
 import { reportError } from "@/renderer/lib/utils/errors"
 import {
     buildDownloadLabel,
@@ -109,6 +110,14 @@ export default function UpdateDialog({ title }: UpdateDialogProps) {
         return unsubscribe
     }, [])
 
+    // Sound out the transitions worth hearing, keyed on the status alone so the
+    // progress pushes of a running download cannot retrigger anything
+    useEffect(() => {
+        if (state?.status === "available") window.api.audio.play("chimes")
+        if (state?.status === "downloaded") window.api.audio.play("tada")
+        if (state?.status === "error") window.api.audio.play("chord")
+    }, [state?.status])
+
     // Run the primary action on Enter, close on Escape
     useEffect(() => {
         /**
@@ -130,13 +139,7 @@ export default function UpdateDialog({ title }: UpdateDialogProps) {
 
             <div className="flex min-h-0 flex-1 flex-col p-4">
                 <div className="flex shrink-0 gap-4">
-                    <img
-                        src={icon}
-                        alt=""
-                        decoding="sync"
-                        fetchPriority="high"
-                        className="size-8 shrink-0 [image-rendering:pixelated]"
-                    />
+                    <Icon src={icon} size="md" />
 
                     <div className="flex min-w-0 flex-1 flex-col gap-1">
                         <p className="text-sm font-bold">{headline}</p>
