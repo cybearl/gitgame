@@ -2,11 +2,9 @@ import type { FileTreeNode } from "@/main/types/fileTree"
 import type { LfsLock } from "@/main/types/lfsCommands"
 
 /**
- * The lock state of a tree node:
- * - `unlockable`: the node has nothing lockable (no lock button).
- * - `unlocked`: lockable, but nothing is locked.
- * - `locked`: fully locked (a file, or a folder whose lockable descendants are all locked).
- * - `partial`: a folder with some, but not all, lockable descendants locked.
+ * The lock state of a tree node, `unlockable` when nothing beneath it is
+ * lockable, `unlocked`/`locked` when all lockable files are in that state,
+ * `partial` when a folder has a mix of locked and unlocked descendants.
  */
 export type NodeLockState = "unlockable" | "unlocked" | "locked" | "partial"
 
@@ -151,6 +149,32 @@ export function collectLockablePaths(node: FileTreeNode): string[] {
     visit(node)
 
     return paths
+}
+
+/**
+ * The number of locked files held by the current user and by everyone else.
+ */
+export type LockOwnershipCounts = {
+    mine: number
+    others: number
+}
+
+/**
+ * Counts the active locks of a whole project, split between the ones held by
+ * the current user and the ones held by others.
+ * @param locksByPath The active locks keyed by repository-relative path.
+ * @returns The lock counts split by ownership.
+ */
+export function countLocksByOwnership(locksByPath: Map<string, LfsLock>): LockOwnershipCounts {
+    let mine = 0
+    let others = 0
+
+    for (const lock of locksByPath.values()) {
+        if (lock.isMine) mine++
+        else others++
+    }
+
+    return { mine, others }
 }
 
 /**
