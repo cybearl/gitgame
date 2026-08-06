@@ -1,10 +1,22 @@
 import useResizablePaneWidth from "@renderer/hooks/useResizablePaneWidth"
+import useWindowWidth from "@renderer/hooks/useWindowWidth"
 import { useCallback, useEffect, useMemo } from "react"
 import DetailsPane from "@/renderer/components/panes/details"
 import FilesPane from "@/renderer/components/panes/Files"
 import WORKSPACE_CONFIG from "@/renderer/config/workspace"
 
 export default function Workspace() {
+    const windowWidth = useWindowWidth()
+
+    /**
+     * The widest the files pane may go, kept under a share of the window so the
+     * splitter stays within reach however small the window gets.
+     */
+    const maxWidth = useMemo(
+        () => Math.min(WORKSPACE_CONFIG.filesPaneMaxWidth, windowWidth * WORKSPACE_CONFIG.filesPaneMaxWidthRatio),
+        [windowWidth],
+    )
+
     /**
      * Persists the final files pane width to the app preferences, fired when a
      * resize drag ends.
@@ -17,9 +29,15 @@ export default function Workspace() {
     const { width, setWidth, handleDragStart } = useResizablePaneWidth({
         initialWidth: WORKSPACE_CONFIG.filesPaneDefaultWidth,
         minWidth: WORKSPACE_CONFIG.filesPaneMinWidth,
-        maxWidth: WORKSPACE_CONFIG.filesPaneMaxWidth,
+        maxWidth,
         onCommit: persistWidth,
     })
+
+    /**
+     * The inline style applied to the files pane so its width tracks the
+     * resize hook.
+     */
+    const filesPaneStyle = useMemo(() => ({ width }), [width])
 
     // Load the persisted files pane width once on mount, clamped by the hook
     useEffect(() => {
@@ -34,12 +52,6 @@ export default function Workspace() {
             cancelled = true
         }
     }, [setWidth])
-
-    /**
-     * The inline style applied to the files pane so its width tracks the
-     * resize hook.
-     */
-    const filesPaneStyle = useMemo(() => ({ width }), [width])
 
     return (
         <div className="relative h-full w-full">

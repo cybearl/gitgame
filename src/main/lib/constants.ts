@@ -76,6 +76,19 @@ const CONSTANTS = {
         autoLockStart: "auto-lock:start",
         autoLockStop: "auto-lock:stop",
     },
+    windows: {
+        /**
+         * The delay a move or a resize is left to settle before the window's placement
+         * is written to the store.
+         */
+        placementSaveDebounceMs: 300,
+
+        /**
+         * How much of a remembered window has to land on a screen for its position to be
+         * worth restoring.
+         */
+        minimumVisiblePx: 64,
+    },
     updater: {
         devCheckMessage:
             'Update checks are disabled in development builds, use the "Dev Tools" menu to preview the update dialog.',

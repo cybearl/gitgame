@@ -1,23 +1,21 @@
 import { cn } from "@cybearl/cypack/frontend"
-import { Children, Fragment, isValidElement, type ReactNode } from "react"
-import { Separator } from "react95"
+import useStatusBarStacking from "@renderer/hooks/useStatusBarStacking"
+import type { ReactNode } from "react"
+import StatusBarFrame from "@/renderer/components/frames/StatusBar"
 
 type StatusBarProps = {
+    caption: string
     children: ReactNode
     className?: string
 }
 
-export default function StatusBar({ children, className }: StatusBarProps) {
-    const fields = Children.toArray(children).filter(isValidElement)
+export default function StatusBar({ caption, children, className }: StatusBarProps) {
+    const { barRef, isStacked } = useStatusBarStacking()
 
     return (
-        <div className={cn("flex w-full shrink-0 items-stretch gap-0.5 pt-1", className)}>
-            {fields.map((field, index) => (
-                <Fragment key={field.key ?? index}>
-                    {index > 0 && <Separator orientation="vertical" />}
-                    {field}
-                </Fragment>
-            ))}
+        <div ref={barRef} className={cn("flex w-full shrink-0 flex-wrap items-stretch gap-0.5 pt-1", className)}>
+            <StatusBarFrame label={caption} isGrowing className={cn(isStacked && "basis-full")} />
+            {children}
         </div>
     )
 }

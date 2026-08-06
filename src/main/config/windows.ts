@@ -24,6 +24,8 @@ const WINDOWS_CONFIG: {
     main: {
         width: 1280,
         height: 800,
+        minWidth: 640,
+        minHeight: 480,
         show: false,
         frame: false,
         thickFrame: true,
