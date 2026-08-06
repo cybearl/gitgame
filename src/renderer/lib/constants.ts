@@ -41,13 +41,6 @@ const CONSTANTS = {
     STATUS_BAR_TICK_MS: 200,
 
     /**
-     * The extra width the status bar has to win back before its fields climb
-     * from their own row up next to the caption again, keeps a drag that sits
-     * right on the threshold from rattling between the two layouts.
-     */
-    STATUS_BAR_STACKING_SLACK_PX: 16,
-
-    /**
      * External resources opened from the `Help` menu.
      */
     EXTERNAL_LINKS: {

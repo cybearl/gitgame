@@ -15,7 +15,6 @@ import { startUpdater } from "@main/lib/updater"
 import { registerUpdaterHandlers } from "@main/lib/updater/handlers"
 import { registerUProjectHandlers } from "@main/lib/uproject/handlers"
 import { attachWindowStateBroadcaster, registerWindowsControlHandlers, setMainWindow } from "@main/lib/windows"
-import { attachWindowPlacementPersistence, restoreWindowPlacement } from "@main/lib/windows/placement"
 import { app, BrowserWindow, shell } from "electron"
 
 /**
@@ -23,13 +22,8 @@ import { app, BrowserWindow, shell } from "electron"
  * (in development) or the bundled renderer HTML file (in production).
  * @returns The created BrowserWindow instance.
  */
-async function createMainWindow(): Promise<BrowserWindow> {
+function createMainWindow(): BrowserWindow {
     const window = new BrowserWindow(WINDOWS_CONFIG.main)
-
-    // Put the window back where the last session left it, nothing can show it before
-    // the renderer is loaded below, so the move is never on screen
-    await restoreWindowPlacement(window)
-    attachWindowPlacementPersistence(window)
 
     // Show the window when it's ready
     window.on("ready-to-show", () => window.show())
@@ -57,7 +51,7 @@ async function createMainWindow(): Promise<BrowserWindow> {
 }
 
 // Create the main application window when Electron is ready
-app.whenReady().then(async () => {
+app.whenReady().then(() => {
     // Handlers
     registerAppHandlers()
     registerWindowsControlHandlers()
@@ -73,7 +67,7 @@ app.whenReady().then(async () => {
     registerAutoLockHandlers()
 
     // Create the main window
-    await createMainWindow()
+    createMainWindow()
 
     // Start services
     startUpdater()

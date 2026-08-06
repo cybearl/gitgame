@@ -1,8 +1,8 @@
+import { cn } from "@cybearl/cypack/frontend"
 import { useStatusContext } from "@renderer/components/contexts/Status"
 import STATUS_CONFIG from "@renderer/config/status"
 import { useEffect, useMemo, useState } from "react"
-import StatusBarFrame from "@/renderer/components/frames/StatusBar"
-import TileProgressBar from "@/renderer/components/ui/TileProgressBar"
+import { Frame, ProgressBar } from "react95"
 
 type StatusTaskFieldProps = {
     className?: string
@@ -49,12 +49,22 @@ export default function StatusTaskField({ className }: StatusTaskFieldProps) {
     if (!currentTask) return null
 
     return (
-        <StatusBarFrame
-            label={currentTask.label}
-            labelState={tasks.length === 0 ? "muted" : "default"}
-            className={className}
+        <Frame
+            variant="status"
+            className={cn("flex items-center gap-2 p-2 text-xs min-w-48 max-w-1/2 overflow-hidden", className)}
         >
-            <TileProgressBar value={value} hideValue={currentTask.progress == null} />
-        </StatusBarFrame>
+            <div className="min-w-0 flex-1 pb-1">
+                <span className={cn("block truncate select-none", tasks.length === 0 && "opacity-60")}>
+                    {currentTask.label}
+                </span>
+            </div>
+
+            <ProgressBar
+                variant="tile"
+                value={value}
+                hideValue={currentTask.progress == null}
+                className="w-24 shrink-0 h-8!"
+            />
+        </Frame>
     )
 }
