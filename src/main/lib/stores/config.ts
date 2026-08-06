@@ -57,6 +57,10 @@ export class ConfigStore {
                 ...DEFAULT_APP_CONFIG.preferences,
                 ...(partial.preferences ?? {}),
             },
+            windowPlacement: {
+                ...DEFAULT_APP_CONFIG.windowPlacement,
+                ...(partial.windowPlacement ?? {}),
+            },
             recentProjects: Array.isArray(partial.recentProjects) ? partial.recentProjects : [],
             lfsLockCache:
                 partial.lfsLockCache && typeof partial.lfsLockCache === "object" && !Array.isArray(partial.lfsLockCache)
