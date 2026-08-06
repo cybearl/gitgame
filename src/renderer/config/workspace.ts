@@ -13,6 +13,11 @@ const WORKSPACE_CONFIG = {
     filesPaneMaxWidth: 800,
 
     /**
+     * The share of the window width the files pane may take.
+     */
+    filesPaneMaxWidthRatio: 0.75,
+
+    /**
      * The default width for the files pane when no preference is stored, in pixels.
      */
     filesPaneDefaultWidth: 320,
