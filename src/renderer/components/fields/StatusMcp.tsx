@@ -1,11 +1,9 @@
-import { cn } from "@cybearl/cypack/frontend"
 import serverIcon from "@react95-icons/Nwnp32ServerIcon_16x16_4.png"
-import Icon from "@renderer/components/ui/Icon"
-import TileProgressBar from "@renderer/components/ui/TileProgressBar"
 import useMcpState from "@renderer/hooks/useMcpState"
 import { buildMcpStatusLabel, computeProbeProgress } from "@renderer/lib/utils/mcp"
 import { useEffect, useMemo, useState } from "react"
-import { Frame } from "react95"
+import StatusBarFrame, { type StatusBarLabelState } from "@/renderer/components/frames/StatusBar"
+import TileProgressBar from "@/renderer/components/ui/TileProgressBar"
 import CONSTANTS from "@/renderer/lib/constants"
 
 type StatusMcpFieldProps = {
@@ -24,6 +22,14 @@ export default function StatusMcpField({ className }: StatusMcpFieldProps) {
     const label = useMemo(() => (state ? buildMcpStatusLabel(state) : null), [state])
 
     /**
+     * The tone the label takes.
+     */
+    const labelState = useMemo<StatusBarLabelState>(() => {
+        if (state?.status === "connecting") return "pending"
+        return state?.status === "connected" ? "default" : "muted"
+    }, [state?.status])
+
+    /**
      * The countdown bar's fill, expressed as a 0-100 percentage of the elapsed
      * fraction of the probe interval since the last probe landed.
      */
@@ -39,25 +45,8 @@ export default function StatusMcpField({ className }: StatusMcpFieldProps) {
     if (!state || !label) return null
 
     return (
-        <Frame
-            variant="status"
-            className={cn("flex items-center gap-2 p-2 text-xs min-w-48 max-w-1/2 overflow-hidden", className)}
-        >
-            <div className="min-w-0 flex-1 flex items-center pb-1">
-                <Icon
-                    src={serverIcon}
-                    isInline
-                    className={cn(
-                        state.status === "disconnected" && "opacity-50 grayscale",
-                        state.status === "connecting" && "opacity-50 grayscale animate-pulse",
-                    )}
-                />
-                <span className={cn("block truncate select-none", state?.status !== "connected" && "opacity-60")}>
-                    MCP [{label}]
-                </span>
-            </div>
-
-            <TileProgressBar value={progress} muted={state.status !== "connected"} />
-        </Frame>
+        <StatusBarFrame icon={serverIcon} label={`MCP [${label}]`} labelState={labelState} className={className}>
+            <TileProgressBar value={progress} isMuted={state.status !== "connected"} />
+        </StatusBarFrame>
     )
 }
