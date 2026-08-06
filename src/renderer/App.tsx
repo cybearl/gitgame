@@ -12,6 +12,7 @@ import MenuBar from "@/renderer/components/bars/Menu"
 import StatusBar from "@/renderer/components/bars/Status"
 import TitleBar from "@/renderer/components/bars/Title"
 import StatusAutoLockField from "@/renderer/components/fields/StatusAutoLock"
+import StatusBarField from "@/renderer/components/fields/StatusBar"
 import StatusMcpField from "@/renderer/components/fields/StatusMcp"
 import StatusTaskField from "@/renderer/components/fields/StatusTask"
 import StatusUpdateField from "@/renderer/components/fields/StatusUpdate"
@@ -100,7 +101,9 @@ function AppShell() {
 
                     <div className="relative w-full flex-1 overflow-hidden">{mainView}</div>
 
-                    <StatusBar caption={statusCaption}>
+                    <StatusBar>
+                        <StatusBarField grow>{statusCaption}</StatusBarField>
+
                         <StatusUpdateField />
                         <StatusMcpField />
                         <StatusAutoLockField />

@@ -1,9 +1,11 @@
+import { cn } from "@cybearl/cypack/frontend"
 import lockIcon from "@react95-icons/Lock_16x16_4.png"
+import Icon from "@renderer/components/ui/Icon"
+import TileProgressBar from "@renderer/components/ui/TileProgressBar"
 import useAutoLockState from "@renderer/hooks/useAutoLockState"
 import { buildAutoLockFailuresDetails, buildAutoLockLabel, computeAutoLockProgress } from "@renderer/lib/utils/autoLock"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import StatusBarFrame, { type StatusBarLabelState } from "@/renderer/components/frames/StatusBar"
-import TileProgressBar from "@/renderer/components/ui/TileProgressBar"
+import { Frame } from "react95"
 import CONSTANTS from "@/renderer/lib/constants"
 
 type StatusAutoLockFieldProps = {
@@ -22,21 +24,15 @@ export default function StatusAutoLockField({ className }: StatusAutoLockFieldPr
     const label = useMemo(() => (state ? buildAutoLockLabel(state) : null), [state])
 
     /**
-     * The tone the label takes.
-     */
-    const labelState = useMemo<StatusBarLabelState>(() => {
-        if (state?.isReconciling) return "pending"
-        return state?.failures.length ? "muted" : "default"
-    }, [state?.isReconciling, state?.failures.length])
-
-    /**
      * The countdown bar's fill, expressed as a 0-100 percentage of the elapsed
      * fraction of the tick interval since the last reconcile landed.
      */
     const progress = useMemo(() => (state ? computeAutoLockProgress(state, now) : 0), [state, now])
 
     /**
-     * Handles a chip click.
+     * Handles a chip click, opens the failures dialog when the last reconcile
+     * left some files unlocked or unreleased, forces an immediate reconcile
+     * otherwise so a manual click always does something useful.
      */
     const handleClick = useCallback(() => {
         if (!state) return
@@ -53,7 +49,9 @@ export default function StatusAutoLockField({ className }: StatusAutoLockFieldPr
         if (state.dir) window.api.autoLock.reconcile(state.dir)
     }, [state])
 
-    // Re-sample "now" on a short interval so the bar fills smoothly between ticks
+    // Re-sample "now" on a short interval so the bar fills smoothly between
+    // ticks, the state itself only broadcasts on transitions and cannot drive
+    // the animation
     useEffect(() => {
         const id = window.setInterval(() => setNow(Date.now()), CONSTANTS.STATUS_BAR_TICK_MS)
         return () => window.clearInterval(id)
@@ -61,15 +59,23 @@ export default function StatusAutoLockField({ className }: StatusAutoLockFieldPr
 
     if (!state?.enabled || !label) return null
 
+    const hasErrors = state.failures.length > 0
+
     return (
-        <StatusBarFrame
-            icon={lockIcon}
-            label={`Auto-lock [${label}]`}
-            labelState={labelState}
-            className={className}
+        <Frame
+            variant="status"
+            className={cn(
+                "flex items-center gap-2 p-2 text-xs min-w-48 max-w-1/2 overflow-hidden cursor-pointer",
+                className,
+            )}
             onClick={handleClick}
         >
-            <TileProgressBar value={progress} isMuted={state.failures.length > 0} />
-        </StatusBarFrame>
+            <div className="min-w-0 flex-1 flex items-center pb-1">
+                <Icon src={lockIcon} isInline className={cn(state.isReconciling && "animate-pulse")} />
+                <span className={cn("block truncate select-none", hasErrors && "opacity-60")}>Auto-lock [{label}]</span>
+            </div>
+
+            <TileProgressBar value={progress} muted={hasErrors} />
+        </Frame>
     )
 }
