@@ -24,5 +24,5 @@ This project reproduces the Windows 95 look and feel, some of the icons, fonts, 
 originate from Microsoft software and are not covered by the MIT License in [LICENSE](LICENSE), read
 [NOTICE.md](NOTICE.md) before forking this project or redistributing a build of it.
 
-Cybearl is not affiliated with, endorsed by, or sponsored by Microsoft Corporation. Windows and
+Cybearl is not affiliated with, endorsed by, or sponsored by Microsoft Corporation, Windows and
 Windows 95 are trademarks of Microsoft Corporation.

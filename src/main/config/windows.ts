@@ -1,4 +1,5 @@
 import path from "node:path"
+import appIcon from "@main/assets/icon.png?asset"
 import CONSTANTS from "@main/lib/constants"
 import type { BrowserWindowConstructorOptions, WebPreferences } from "electron"
 
@@ -39,6 +40,7 @@ const WINDOWS_CONFIG: {
             y: CONSTANTS.titleBarHeight / 2 - CONSTANTS.macOSTrafficLightsHeight / 2,
         },
         acceptFirstMouse: true,
+        icon: appIcon,
         webPreferences: WEB_PREFERENCES,
     },
     dialog: {
@@ -50,6 +52,7 @@ const WINDOWS_CONFIG: {
         show: false,
         center: true,
         roundedCorners: false,
+        icon: appIcon,
         webPreferences: WEB_PREFERENCES,
     },
 }

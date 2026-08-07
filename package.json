@@ -17,13 +17,14 @@
     "engines": {
         "node": ">=22.0.0"
     },
-    "main": "./out/main/index.js",
+    "main": "./dist/app/main/index.js",
     "scripts": {
         "postinstall": "node node_modules/electron/install.js",
         "dev": "electron-vite dev",
         "build": "electron-vite build",
         "preview": "electron-vite preview",
         "typecheck": "tsc --noEmit",
+        "generate-icons": "tsx scripts/generateIcons.ts",
         "test": "npm run test:unit",
         "test:unit": "vitest",
         "lint": "biome check && eslint \"src/**/*.{ts,tsx}\"",
@@ -61,6 +62,7 @@
         "react": "^19.2.5",
         "react-dom": "^19.2.5",
         "tailwindcss": "^4.3.1",
+        "tsx": "^4.23.9",
         "typescript": "^5.8.3",
         "vite": "^7.0.0",
         "vite-tsconfig-paths": "^5.1.4",

@@ -87,13 +87,13 @@ jobs:
               with:
                   name: installers-${{ matrix.os }}
                   path: |
-                      dist/*.exe
-                      dist/*.dmg
-                      dist/*.AppImage
-                      dist/*.deb
-                      dist/*.zip
-                      dist/*.blockmap
-                      dist/latest*.yml
+                      dist/release/*.exe
+                      dist/release/*.dmg
+                      dist/release/*.AppImage
+                      dist/release/*.deb
+                      dist/release/*.zip
+                      dist/release/*.blockmap
+                      dist/release/latest*.yml
                   if-no-files-found: error
                   retention-days: 7
 
