@@ -11,6 +11,9 @@ const rendererRoot = path.resolve(srcRoot, "renderer")
 const react95IconsRoot = path.resolve(__dirname, "node_modules", "@react95", "icons", "png")
 const react95FontsRoot = path.resolve(__dirname, "node_modules", "react95", "dist", "fonts")
 
+// Every bundle lands under a single output root
+const outRoot = path.resolve(__dirname, "dist", "app")
+
 /**
  * Path aliases for module resolution.
  */
@@ -26,9 +29,11 @@ const aliases = {
 export default defineConfig({
     main: {
         resolve: { alias: aliases },
+        build: { outDir: path.join(outRoot, "main") },
     },
     preload: {
         resolve: { alias: aliases },
+        build: { outDir: path.join(outRoot, "preload") },
     },
     renderer: {
         root: path.resolve(__dirname, "src", "renderer"),
@@ -36,6 +41,7 @@ export default defineConfig({
         resolve: { alias: aliases },
         plugins: [react(), tailwindcss()],
         build: {
+            outDir: path.join(outRoot, "renderer"),
             rollupOptions: {
                 input: path.resolve(__dirname, "src", "renderer", "index.html"),
             },

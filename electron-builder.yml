@@ -3,11 +3,11 @@ productName: GitGame
 copyright: Copyright © ${author}
 
 directories:
-    output: dist
-    buildResources: build
+    output: dist/release
+    buildResources: resources
 
 files:
-    - out/**/*
+    - dist/app/**/*
     - package.json
     - "!**/*.map"
 
@@ -20,6 +20,7 @@ publish:
       releaseType: release
 
 win:
+    icon: resources/icon.ico
     target:
         - target: nsis
           arch: [x64]
@@ -33,6 +34,7 @@ nsis:
     deleteAppDataOnUninstall: false
 
 mac:
+    icon: resources/icon.icns
     category: public.app-category.developer-tools
     target:
         - target: dmg
@@ -42,6 +44,7 @@ mac:
     gatekeeperAssess: false
 
 linux:
+    icon: resources/icons
     target:
         - target: AppImage
           arch: [x64]
