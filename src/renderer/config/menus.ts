@@ -20,6 +20,7 @@ export type MenuAction =
     | { type: "search:toggle-advanced" }
     | { type: "lfs:toggle-show-my-locks" }
     | { type: "updater:check" }
+    | { type: "preferences:open" }
     | { type: "devtools:test-confirm" }
     | { type: "devtools:test-error" }
     | { type: "devtools:test-error-with-details" }
@@ -201,7 +202,7 @@ export function buildTopLevelMenus(
                     type: "item",
                     label: "Options...",
                     accelerator: "Ctrl+,",
-                    isDisabled: true,
+                    action: { type: "preferences:open" },
                 },
                 {
                     type: "separator",

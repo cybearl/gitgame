@@ -1,3 +1,4 @@
+import path from "node:path"
 import CONSTANTS from "@main/lib/constants"
 import type { WindowState } from "@preload/index"
 import { BrowserWindow, ipcMain } from "electron"
@@ -7,6 +8,20 @@ import { BrowserWindow, ipcMain } from "electron"
  * updater) can parent their own windows to it.
  */
 let mainWindow: BrowserWindow | null = null
+
+/**
+ * Loads one of the renderer's hash routes into a window, from the Vite dev
+ * server in development or the bundled HTML file in production.
+ * @param window The window to load into.
+ * @param route The hash route to load, with its leading slash and no `#`.
+ */
+export function loadRendererRoute(window: BrowserWindow, route: string) {
+    if (process.env.ELECTRON_RENDERER_URL) {
+        window.loadURL(`${process.env.ELECTRON_RENDERER_URL}#${route}`)
+    } else {
+        window.loadFile(path.join(__dirname, "..", "renderer", "index.html"), { hash: route })
+    }
+}
 
 /**
  * Registers the main application window and forgets it once it is closed.

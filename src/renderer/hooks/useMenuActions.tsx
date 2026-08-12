@@ -83,6 +83,9 @@ export default function useMenuActions(): UseMenuActionsResult {
                 case "lfs:toggle-show-my-locks":
                     setIsShowingMyLocksOnly(!isShowingMyLocksOnly)
                     break
+                case "preferences:open":
+                    window.api.preferences.openWindow()
+                    break
                 case "updater:check":
                     window.api.updater.check(true).catch(error => reportError("Failed to check for updates", error))
                     break

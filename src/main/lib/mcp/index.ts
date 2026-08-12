@@ -1,6 +1,7 @@
 import CONSTANTS from "@main/lib/constants"
 import { mcpService } from "@main/lib/mcp/service"
 import { mcpStore } from "@main/lib/mcp/store"
+import { preferencesStore } from "@main/lib/stores/preferences"
 import { BrowserWindow } from "electron"
 import type { McpState } from "@/main/types/mcp"
 
@@ -22,5 +23,6 @@ function broadcastMcpState(next: McpState) {
  */
 export function startMcp() {
     mcpStore.subscribe(broadcastMcpState)
+    preferencesStore.subscribe(next => mcpService.reconfigure(next))
     mcpService.start()
 }

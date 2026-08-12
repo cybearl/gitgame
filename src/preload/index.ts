@@ -6,10 +6,12 @@ import fileTreeApiRoutes from "@preload/routes/fileTree"
 import gitCommandsApiRoutes from "@preload/routes/gitCommands"
 import lfsCommandsApiRoutes from "@preload/routes/lfsCommands"
 import mcpApiRoutes from "@preload/routes/mcp"
+import preferencesApiRoutes from "@preload/routes/preferences"
 import projectsApiRoutes from "@preload/routes/projects"
 import shellsApiRoutes from "@preload/routes/shells"
 import updaterApiRoutes from "@preload/routes/updater"
 import uprojectApiRoutes from "@preload/routes/uproject"
+import viewStateApiRoutes from "@preload/routes/viewState"
 import windowsApiRoutes from "@preload/routes/windows"
 import { contextBridge } from "electron"
 import type { AppSound } from "@/main/types/audio"
@@ -20,7 +22,7 @@ import type { GitBranch, GitCommit, GitStatus } from "@/main/types/gitCommands"
 import type { LfsLock, LfsLockMigration, LfsLockResult } from "@/main/types/lfsCommands"
 import type { EditorActivity, McpState } from "@/main/types/mcp"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
-import type { AppPreferences } from "@/main/types/store"
+import type { AppPreferences, AppViewState } from "@/main/types/store"
 import type { UpdaterSimulation, UpdaterState } from "@/main/types/updater"
 import type { UProject } from "@/main/types/uproject"
 
@@ -104,14 +106,19 @@ export type GitgameApi = {
         listTools: () => Promise<unknown>
         callTool: (toolset: string, name: string, args?: Record<string, unknown>) => Promise<unknown>
     }
+    preferences: {
+        initial: AppPreferences
+        get: () => Promise<AppPreferences>
+        set: (patch: Partial<AppPreferences>) => Promise<AppPreferences>
+        onChange: (callback: (preferences: AppPreferences) => void) => () => void
+        openWindow: () => void
+    }
     projects: {
         addLocal: () => Promise<OpenProjectResult>
         open: (dir: string) => Promise<OpenProjectResult>
         getRecent: () => Promise<Project[]>
         removeRecent: (dir: string) => Promise<Project[]>
         clearRecent: () => Promise<Project[]>
-        getPreferences: () => Promise<AppPreferences>
-        setPreferences: (preferences: Partial<AppPreferences>) => Promise<AppPreferences>
     }
     shells: {
         openExternal: (url: string) => void
@@ -129,6 +136,10 @@ export type GitgameApi = {
     }
     uproject: {
         open: (dir: string) => Promise<UProject>
+    }
+    viewState: {
+        get: () => Promise<AppViewState>
+        set: (view: Partial<AppViewState>) => Promise<AppViewState>
     }
     windows: {
         getState: () => Promise<WindowState>
@@ -157,10 +168,12 @@ const api: GitgameApi = {
     gitCommands: gitCommandsApiRoutes,
     lfsCommands: lfsCommandsApiRoutes,
     mcp: mcpApiRoutes,
+    preferences: preferencesApiRoutes,
     projects: projectsApiRoutes,
     shells: shellsApiRoutes,
     updater: updaterApiRoutes,
     uproject: uprojectApiRoutes,
+    viewState: viewStateApiRoutes,
     windows: windowsApiRoutes,
 } as const
 

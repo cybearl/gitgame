@@ -1,6 +1,7 @@
 import CONSTANTS from "@main/lib/constants"
 import { createDialogWindow, openDialog } from "@main/lib/dialogs"
-import { initUpdater } from "@main/lib/updater/service"
+import { preferencesStore } from "@main/lib/stores/preferences"
+import { initUpdater, rescheduleUpdateChecks } from "@main/lib/updater/service"
 import { updaterStore } from "@main/lib/updater/store"
 import { getMainWindow } from "@main/lib/windows"
 import { BrowserWindow } from "electron"
@@ -150,6 +151,8 @@ export function startUpdater() {
         broadcastUpdaterState(next)
         updateDialogController.onStateChange(next)
     })
+
+    preferencesStore.subscribe(() => rescheduleUpdateChecks())
 
     initUpdater()
 }

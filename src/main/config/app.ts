@@ -1,28 +1,24 @@
-import STORE_CONFIG from "@/main/config/store"
+import AUTO_LOCK_CONFIG from "@main/config/autoLock"
+import MCP_CONFIG from "@main/config/mcp"
+import STORE_CONFIG from "@main/config/store"
+import UPDATER_CONFIG from "@main/config/updater"
 import type { AppConfig } from "@/main/types/store"
 
 /**
- * The default configuration used when no config file exists yet, or when the existing
- * one is missing fields.
+ * The default configuration used when no config file exists yet,
+ * or when the existing one is missing fields.
  */
 const DEFAULT_APP_CONFIG: AppConfig = {
     version: STORE_CONFIG.configVersion,
     preferences: {
+        theme: "original",
         startupBehavior: "reopen-last",
-        filesPaneWidth: 320,
-        searchIsRegex: false,
-        isAdvancedSearchOpened: false,
-        searchIncludePatterns: "",
-        searchExcludePatterns: "",
-        isShowingMyLocksOnly: false,
+        autoLockTickIntervalMs: AUTO_LOCK_CONFIG.tickIntervalMs,
+        mcpEndpoint: MCP_CONFIG.endpoint,
+        mcpProbeIntervalMs: MCP_CONFIG.probeIntervalMs,
+        isAutomaticUpdateCheckEnabled: true,
+        updaterCheckIntervalMs: UPDATER_CONFIG.checkIntervalMs,
     },
-    windowPlacement: {
-        bounds: null,
-        isMaximized: false,
-        isFullScreen: false,
-    },
-    recentProjects: [],
-    lfsLockCache: {},
 }
 
 export default DEFAULT_APP_CONFIG

@@ -2,6 +2,7 @@
     /*
      * Inlined from `react95`'s `styleReset` so the renderer no longer needs a
      * styled-components `createGlobalStyle` wrapper just to inject these rules.
+     *
      * Note: should be kept in sync with `node_modules/react95/dist/common/styleReset.mjs`.
      */
     html,
@@ -119,7 +120,6 @@
         padding: 0;
         font-family: var(--font-sans);
         line-height: 1.5;
-        background-color: #c0c0c0;
     }
 
     ol,
@@ -175,10 +175,7 @@
 
 /**
  * Fixes the vertical positioning of the summary element's pseudo-element `+`/`-`
- * glyph. Restoring `content-box` reinstates the intended 13x13 toggle after
- * Tailwind's `border-box` preflight, and `padding-top` nudges the glyph down
- * inside the box so it sits optically centered rather than hugging the top
- * edge of the 9px content area. Tune the padding if the glyph needs more shift.
+ * glyph.
  */
 details > summary::before {
     box-sizing: content-box;
@@ -196,8 +193,7 @@ details > summary::before {
 
 /**
  * Emphasizes the currently selected tree item without cascading into descendants
- * of a selected folder. Uses `text-shadow` to simulate bold so the pixel-font
- * glyph metrics stay identical to the regular weight, avoiding any reflow.
+ * of a selected folder.
  */
 .tree-scrollview li[aria-selected="true"] > button,
 .tree-scrollview li[aria-selected="true"] > details > summary,
@@ -206,12 +202,36 @@ details > summary::before {
 }
 
 /**
- * Draws the classic Win95 sizer-grip pattern in the ScrollView corner between
- * the vertical and horizontal scrollbars.
+ * Restores React95's checkbox and radio chrome to `content-box`.
  */
-.tree-scrollview > div::-webkit-scrollbar-corner {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Cg fill='%23ffffff'%3E%3Crect x='10' y='4' width='2' height='2'/%3E%3Crect x='6' y='8' width='2' height='2'/%3E%3Crect x='10' y='8' width='2' height='2'/%3E%3Crect x='2' y='12' width='2' height='2'/%3E%3Crect x='6' y='12' width='2' height='2'/%3E%3Crect x='10' y='12' width='2' height='2'/%3E%3C/g%3E%3Cg fill='%23808080'%3E%3Crect x='12' y='6' width='2' height='2'/%3E%3Crect x='8' y='10' width='2' height='2'/%3E%3Crect x='12' y='10' width='2' height='2'/%3E%3Crect x='4' y='14' width='2' height='2'/%3E%3Crect x='8' y='14' width='2' height='2'/%3E%3Crect x='12' y='14' width='2' height='2'/%3E%3C/g%3E%3C/svg%3E");
-    background-position: bottom right;
-    background-size: 16px 16px;
-    background-repeat: no-repeat;
+[role="presentation"]::before,
+[role="presentation"]::after,
+[data-testid="checkmarkIcon"]::after,
+[data-testid="indeterminateIcon"]::after {
+    box-sizing: content-box;
+}
+
+/**
+ * Drops the Win95 dotted focus rectangle everywhere.
+ */
+:focus,
+:focus-visible {
+    outline: none;
+}
+
+:focus::after,
+:focus-visible::after,
+:active::after {
+    /* biome-ignore lint/complexity/noImportantStyles: forced against React95 own styling */
+    outline: none !important;
+}
+
+/**
+ * Keeps a selected tab's growth vertical.
+ */
+[role="tab"][aria-selected="true"] {
+    /* biome-ignore lint/complexity/noImportantStyles: forced against React95 own styling */
+    margin-right: 0 !important;
+    margin-left: 0;
+    padding: 0 8px;
 }

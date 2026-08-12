@@ -10,3 +10,15 @@
         height: 100%;
     }
 }
+
+/*
+ * Half of React95's themes give the title bar a `linear-gradient` rather than a
+ * flat color, which `background-color` silently drops.
+ */
+@utility bg-header {
+    background: var(--color-header-background);
+}
+
+@utility bg-header-inactive {
+    background: var(--color-header-not-active-background);
+}

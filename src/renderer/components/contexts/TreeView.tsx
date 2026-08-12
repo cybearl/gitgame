@@ -13,7 +13,7 @@ import {
 import {
     collectMatchingFiles,
     parsePatternList,
-    persistSearchPreferences,
+    persistSearchViewState,
     type SearchFilters,
 } from "@renderer/lib/utils/search"
 import {
@@ -132,24 +132,24 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
         setExpandedPaths([])
     }, [currentProject?.path])
 
-    // Hydrate the persisted search preferences once on mount, so the search
+    // Hydrate the persisted search view state once on mount, so the search
     // scope survives across sessions
     useEffect(() => {
         let cancelled = false
 
-        window.api.projects
-            .getPreferences()
-            .then(preferences => {
+        window.api.viewState
+            .get()
+            .then(view => {
                 if (cancelled) return
 
-                setIsRegex(preferences.searchIsRegex)
-                setIsAdvancedOpen(preferences.isAdvancedSearchOpened)
-                setIncludeText(preferences.searchIncludePatterns)
-                setExcludeText(preferences.searchExcludePatterns)
-                setIsShowingMyLocksOnly(preferences.isShowingMyLocksOnly)
+                setIsRegex(view.searchIsRegex)
+                setIsAdvancedOpen(view.isAdvancedSearchOpened)
+                setIncludeText(view.searchIncludePatterns)
+                setExcludeText(view.searchExcludePatterns)
+                setIsShowingMyLocksOnly(view.isShowingMyLocksOnly)
             })
             .catch(error => {
-                console.error("Failed to load search preferences:", error)
+                console.error("Failed to load the search view state:", error)
             })
 
         return () => {
@@ -268,7 +268,7 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
      */
     const setIsRegexPersisted = useCallback((next: boolean) => {
         setIsRegex(next)
-        persistSearchPreferences({ searchIsRegex: next })
+        persistSearchViewState({ searchIsRegex: next })
     }, [])
 
     /**
@@ -278,7 +278,7 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
      */
     const setIsAdvancedOpenPersisted = useCallback((next: boolean) => {
         setIsAdvancedOpen(next)
-        persistSearchPreferences({ isAdvancedSearchOpened: next })
+        persistSearchViewState({ isAdvancedSearchOpened: next })
     }, [])
 
     /**
@@ -287,21 +287,21 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
      */
     const setIsShowingMyLocksOnlyPersisted = useCallback((next: boolean) => {
         setIsShowingMyLocksOnly(next)
-        persistSearchPreferences({ isShowingMyLocksOnly: next })
+        persistSearchViewState({ isShowingMyLocksOnly: next })
     }, [])
 
     /**
      * Persists the current include-globs text, e.g. when the input loses focus.
      */
     const commitIncludeText = useCallback(() => {
-        persistSearchPreferences({ searchIncludePatterns: includeText })
+        persistSearchViewState({ searchIncludePatterns: includeText })
     }, [includeText])
 
     /**
      * Persists the current exclude-globs text, e.g. when the input loses focus.
      */
     const commitExcludeText = useCallback(() => {
-        persistSearchPreferences({ searchExcludePatterns: excludeText })
+        persistSearchViewState({ searchExcludePatterns: excludeText })
     }, [excludeText])
 
     /**

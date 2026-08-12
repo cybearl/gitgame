@@ -1,6 +1,5 @@
-import path from "node:path"
 import CONSTANTS from "@main/lib/constants"
-import { attachWindowStateBroadcaster } from "@main/lib/windows"
+import { attachWindowStateBroadcaster, loadRendererRoute } from "@main/lib/windows"
 import { BrowserWindow, ipcMain } from "electron"
 import DIALOGS_CONFIG from "@/main/config/dialogs"
 import WINDOWS_CONFIG from "@/main/config/windows"
@@ -77,18 +76,6 @@ class DialogRegistry {
 const dialogRegistry = new DialogRegistry()
 
 /**
- * Loads the renderer's dialog route into the given window, in development or production.
- * @param window The dialog window to load.
- */
-function loadDialog(window: BrowserWindow) {
-    if (process.env.ELECTRON_RENDERER_URL) {
-        window.loadURL(`${process.env.ELECTRON_RENDERER_URL}#/dialog`)
-    } else {
-        window.loadFile(path.join(__dirname, "..", "renderer", "index.html"), { hash: "/dialog" })
-    }
-}
-
-/**
  * Creates a frameless, Win95-styled dialog window sized for its variant and loads
  * the renderer's dialog route into it.
  * @param parent The window that owns the dialog, or `null` to show it detached.
@@ -124,7 +111,7 @@ function createDialog(
     // A window closed without an explicit response resolves as a cancel
     window.on("closed", () => dialogRegistry.forget(window.id))
 
-    loadDialog(window)
+    loadRendererRoute(window, "/dialog")
 
     return window
 }

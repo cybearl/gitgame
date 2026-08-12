@@ -56,6 +56,7 @@
     },
     // CSpell
     "cSpell.words": [
+        "aiee",
         "Artur",
         "asar",
         "ASSETDATA",
@@ -74,12 +75,15 @@
         "iconutil",
         "IEND",
         "konsole",
+        "millenium",
         "Nwnp",
         "OFPA",
         "Paeth",
+        "peggys",
         "Qfecheck",
         "scrollview",
         "SERIALSIZES",
+        "shelbi",
         "SOFTOBJECTPATH",
         "TEMPLATEINDEX",
         "uasset",
@@ -87,7 +91,10 @@
         "umap",
         "UPACKAGE",
         "uproject",
-        "webfonts"
+        "vermillion",
+        "vistaesque",
+        "webfonts",
+        "wmii"
     ],
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features"

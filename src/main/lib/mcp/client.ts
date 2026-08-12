@@ -1,5 +1,6 @@
 import MCP_CONFIG from "@main/config/mcp"
 import CONSTANTS from "@main/lib/constants"
+import { preferencesStore } from "@main/lib/stores/preferences"
 import { app } from "electron"
 import type { McpServerInfo } from "@/main/types/mcp"
 
@@ -65,7 +66,7 @@ export class McpClient {
 
             if (this._sessionId) headers[CONSTANTS.mcp.sessionHeader] = this._sessionId
 
-            const response = await fetch(MCP_CONFIG.endpoint, {
+            const response = await fetch(preferencesStore.get().mcpEndpoint, {
                 method: "POST",
                 headers,
                 body: JSON.stringify(body),

@@ -7,16 +7,24 @@ import type { Project } from "@/main/types/projects"
 export type StartupBehavior = "reopen-last" | "start-clean"
 
 /**
- * The user-facing application preferences.
+ * The user-authored settings.
  */
 export type AppPreferences = {
+    theme: string
     startupBehavior: StartupBehavior
-    filesPaneWidth: number
-    searchIsRegex: boolean
-    isAdvancedSearchOpened: boolean
-    searchIncludePatterns: string
-    searchExcludePatterns: string
-    isShowingMyLocksOnly: boolean
+    autoLockTickIntervalMs: number
+    mcpEndpoint: string
+    mcpProbeIntervalMs: number
+    isAutomaticUpdateCheckEnabled: boolean
+    updaterCheckIntervalMs: number
+}
+
+/**
+ * The full shape of the persisted application configuration file.
+ */
+export type AppConfig = {
+    version: number
+    preferences: AppPreferences
 }
 
 /**
@@ -30,8 +38,9 @@ export type WindowBounds = {
 }
 
 /**
- * The size, position and state a window is put back to on the next launch,
- * `bounds` is `null` until the app has been run once.
+ * The size, position and state a window is put back to on the next launch.
+ *
+ * Note: `bounds` is `null` until the app has been run once.
  */
 export type WindowPlacement = {
     bounds: WindowBounds | null
@@ -40,12 +49,29 @@ export type WindowPlacement = {
 }
 
 /**
- * The full shape of the persisted application configuration file.
+ * The view state the app writes on its own as the user works.
  */
-export type AppConfig = {
-    version: number
-    preferences: AppPreferences
+export type AppViewState = {
+    filesPaneWidth: number
+    searchIsRegex: boolean
+    isAdvancedSearchOpened: boolean
+    searchIncludePatterns: string
+    searchExcludePatterns: string
+    isShowingMyLocksOnly: boolean
+}
+
+/**
+ * The full shape of the persisted application state file.
+ */
+export type AppState = {
     windowPlacement: WindowPlacement
     recentProjects: Project[]
-    lfsLockCache: Record<string, LfsLock[]>
+    view: AppViewState
+}
+
+/**
+ * The full shape of the persisted cache file.
+ */
+export type AppCache = {
+    lfsLocks: Record<string, LfsLock[]>
 }

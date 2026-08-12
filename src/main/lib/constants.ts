@@ -38,8 +38,15 @@ const CONSTANTS = {
         projectsGetRecent: "projects:get-recent",
         projectsRemoveRecent: "projects:remove-recent",
         projectsClearRecent: "projects:clear-recent",
-        projectsGetPreferences: "projects:get-preferences",
-        projectsSetPreferences: "projects:set-preferences",
+        // View state
+        viewStateGet: "view-state:get",
+        viewStateSet: "view-state:set",
+        // Preferences
+        preferencesGetInitial: "preferences:get-initial",
+        preferencesGet: "preferences:get",
+        preferencesSet: "preferences:set",
+        preferencesChanged: "preferences:changed",
+        preferencesOpenWindow: "preferences:open-window",
         // UProject
         uprojectOpen: "uproject:open",
         // Shells
@@ -105,9 +112,7 @@ const CONSTANTS = {
         noTerminalMessage: "No terminal could be launched, none of the ones we know about are installed or on PATH.",
 
         /**
-         * The terminals tried in order when opening a folder, first launch wins, Linux
-         * has no canonical terminal so `x-terminal-emulator` (the Debian alternatives
-         * symlink to the user's default) is tried first, then common fallbacks.
+         * The terminals tried in order when opening a folder.
          */
         terminals: {
             win32: [

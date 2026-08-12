@@ -35,7 +35,7 @@ export default function StatusTaskField({ className }: StatusTaskFieldProps) {
         return Math.max(0, Math.min(100, currentTask.progress))
     }, [currentTask?.progress, tick])
 
-    // Cycle the tick while the task is indeterminate so the react95 bar animates
+    // Cycle the tick while the task is indeterminate so the React95 bar animates
     useEffect(() => {
         if (!currentTask || currentTask.progress != null) return
 

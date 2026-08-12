@@ -181,14 +181,11 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
             setIsLoading(true)
 
             try {
-                const [projects, preferences] = await Promise.all([
-                    window.api.projects.getRecent(),
-                    window.api.projects.getPreferences(),
-                ])
+                const projects = await window.api.projects.getRecent()
 
                 setRecentProjects(projects)
 
-                if (preferences.startupBehavior === "reopen-last" && projects[0]) {
+                if (window.api.preferences.initial.startupBehavior === "reopen-last" && projects[0]) {
                     await openProject(projects[0].path)
                 }
             } catch (err) {
