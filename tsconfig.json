@@ -39,6 +39,9 @@
             // Scripts
             "@scripts/*": ["./scripts/*"],
 
+            // Tests
+            "@tests/*": ["./tests/*"],
+
             // Source
             "@/*": ["./src/*"],
 
