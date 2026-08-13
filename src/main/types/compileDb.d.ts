@@ -25,15 +25,27 @@ export type CompileDbContext = {
 }
 
 /**
+ * One complaint the build tool made about a source file, parsed out of its output
+ * so a failure caused by the project's own C++ can be told apart from one caused
+ * by GitGame or by the engine install, and reported as the diagnostic it is.
+ */
+export type CompileDbDiagnostic = {
+    file: string
+    line: number
+    message: string
+}
+
+/**
  * The outcome of a single regeneration, `output` is the tail of the combined
- * streams so a failure can be read without opening a terminal, and `failedStep`
- * names which of the steps in a `full` run gave up.
+ * streams, `failedStep` names which step of a `full` run gave up, and a non-empty
+ * `diagnostics` marks the failure as the project's own rather than ours.
  */
 export type CompileDbRunResult = {
     kind: CompileDbRunKind
     ok: boolean
     exitCode: number
     failedStep: string | null
+    diagnostics: CompileDbDiagnostic[]
     output: string
     durationMs: number
 }

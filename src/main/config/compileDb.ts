@@ -29,6 +29,19 @@ const COMPILE_DB_CONFIG = {
     maxOutputChars: 8000,
 
     /**
+     * How many source diagnostics are kept out of a failed run, one broken header
+     * can cascade into a wall of them and the first few are what get fixed.
+     */
+    maxDiagnostics: 10,
+
+    /**
+     * Matches how the build tool and the header tool report a complaint against a
+     * file, `path(line): error: message` with an optional column and an optional
+     * compiler error code, in either capitalization.
+     */
+    diagnosticPattern: /^(.*?)\((\d+)(?:,\s*\d+)?\)\s*:\s*(?:fatal\s+)?error\s*(?:[A-Z]+\d+)?\s*:\s*(.+)$/gim,
+
+    /**
      * The engine-relative path of the build entry point, keyed by
      * `process.platform`.
      */

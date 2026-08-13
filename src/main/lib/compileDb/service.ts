@@ -97,6 +97,16 @@ export class CompileDbService {
     }
 
     /**
+     * Whether the last run left the database out of date, either because the build
+     * tool refused the project's sources or because it could not be run at all.
+     * @returns True when the last run did not land a database.
+     */
+    private _hasFailed(): boolean {
+        const { lastResult, lastError } = compileDbStore.get()
+        return Boolean(lastError) || lastResult?.ok === false
+    }
+
+    /**
      * Resolves everything a run needs and caches it, the engine folder comes from
      * the preference override or from wherever the platform records its installs,
      * and the target from the project's own editor target descriptor.
@@ -198,7 +208,11 @@ export class CompileDbService {
         this._knownFiles = next
         compileDbStore.set({ trackedFileCount: next.size })
 
-        if (!hasChanged) return
+        // A failed run leaves the database out of date, and what fixes the usual
+        // cause (a header still half-written when it first appeared) is an edit
+        // rather than another file appearing, so a failure is worth retrying on any
+        // change at all rather than waiting for the set to move again
+        if (!hasChanged && !this._hasFailed()) return
 
         // A build or plugin descriptor can move the solution too, which is left to
         // the user rather than rewritten under an open IDE
