@@ -1,8 +1,15 @@
 import { execFile } from "node:child_process"
+import path from "node:path"
 import { promisify } from "node:util"
 import COMPILE_DB_CONFIG from "@main/config/compileDb"
+import { toPosixPath } from "@main/lib/compileDb/paths"
 import CONSTANTS from "@main/lib/constants"
-import type { CompileDbContext, CompileDbRunKind, CompileDbRunResult } from "@/main/types/compileDb"
+import type {
+    CompileDbContext,
+    CompileDbDiagnostic,
+    CompileDbRunKind,
+    CompileDbRunResult,
+} from "@/main/types/compileDb"
 
 /**
  * Promisified version of `child_process.execFile`.
@@ -191,6 +198,36 @@ function buildSteps(kind: CompileDbRunKind, context: CompileDbContext): CompileD
 }
 
 /**
+ * Pulls the build tool's complaints about individual source files out of a failed
+ * run, so a failure the project's own C++ caused reads as the diagnostic it is
+ * rather than as a wall of build-tool logging.
+ * @param output The failed step's captured output.
+ * @param projectRoot The absolute repository root, trimmed off each path.
+ * @returns The diagnostics, deduplicated and capped.
+ */
+export function collectDiagnostics(output: string, projectRoot: string): CompileDbDiagnostic[] {
+    const collected = new Map<string, CompileDbDiagnostic>()
+
+    for (const match of output.matchAll(COMPILE_DB_CONFIG.diagnosticPattern)) {
+        const [, rawFile, rawLine, rawMessage] = match
+
+        // A path the build tool reports from outside the project (the engine's own
+        // headers) has no shorter form worth showing, so it is kept whole
+        const relativeFile = path.relative(projectRoot, rawFile.trim())
+        const file = !relativeFile || relativeFile.startsWith("..") ? rawFile.trim() : relativeFile
+
+        // The same complaint is routinely logged more than once in a single run
+        collected.set(`${file}:${rawLine}:${rawMessage}`, {
+            file: toPosixPath(file),
+            line: Number(rawLine),
+            message: rawMessage.trim(),
+        })
+    }
+
+    return [...collected.values()].slice(0, COMPILE_DB_CONFIG.maxDiagnostics)
+}
+
+/**
  * Runs a regeneration end to end, stopping at the first invocation that exits
  * non-zero so a broken solution step cannot be followed by a database written
  * against it.
@@ -220,6 +257,7 @@ export async function runRegeneration(
                 ok: false,
                 exitCode,
                 failedStep: step.label,
+                diagnostics: collectDiagnostics(output, context.projectRoot),
                 output: trimTail(outputs.join("\n\n")),
                 durationMs: Date.now() - startedAt,
             }
@@ -231,6 +269,7 @@ export async function runRegeneration(
         ok: true,
         exitCode: 0,
         failedStep: null,
+        diagnostics: [],
         output: trimTail(outputs.join("\n\n")),
         durationMs: Date.now() - startedAt,
     }

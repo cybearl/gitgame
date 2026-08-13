@@ -1,6 +1,11 @@
 import batExecIcon from "@react95-icons/BatExec_16x16_4.png"
 import useCompileDbState from "@renderer/hooks/useCompileDbState"
-import { buildCompileDbFailureDetails, buildCompileDbLabel } from "@renderer/lib/utils/compileDb"
+import {
+    buildCompileDbFailureDetails,
+    buildCompileDbFailureMessage,
+    buildCompileDbFailureTitle,
+    buildCompileDbLabel,
+} from "@renderer/lib/utils/compileDb"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import StatusBarFrame, { type StatusBarLabelState } from "@/renderer/components/frames/StatusBar"
 import TileProgressBar from "@/renderer/components/ui/TileProgressBar"
@@ -55,8 +60,8 @@ export default function StatusCompileDbField({ className }: StatusCompileDbField
 
         if (hasFailed) {
             window.api.dialogs.errorWithDetails(
-                "Compile database: the last regeneration failed",
-                state.lastError ?? "The engine's build tool exited with an error.",
+                buildCompileDbFailureTitle(state),
+                buildCompileDbFailureMessage(state),
                 buildCompileDbFailureDetails(state),
             )
 
