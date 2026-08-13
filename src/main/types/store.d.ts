@@ -15,6 +15,9 @@ export type AppPreferences = {
     autoLockTickIntervalMs: number
     mcpEndpoint: string
     mcpProbeIntervalMs: number
+    isCompileDbAutoRegenEnabled: boolean
+    compileDbDebounceMs: number
+    unrealEngineRoot: string
     isAutomaticUpdateCheckEnabled: boolean
     updaterCheckIntervalMs: number
 }

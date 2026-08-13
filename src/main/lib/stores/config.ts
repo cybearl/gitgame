@@ -21,6 +21,10 @@ function normalizeConfig(partial: Partial<AppConfig>): AppConfig {
                 preferences.autoLockTickIntervalMs ?? DEFAULT_APP_CONFIG.preferences.autoLockTickIntervalMs,
             mcpEndpoint: preferences.mcpEndpoint ?? DEFAULT_APP_CONFIG.preferences.mcpEndpoint,
             mcpProbeIntervalMs: preferences.mcpProbeIntervalMs ?? DEFAULT_APP_CONFIG.preferences.mcpProbeIntervalMs,
+            isCompileDbAutoRegenEnabled:
+                preferences.isCompileDbAutoRegenEnabled ?? DEFAULT_APP_CONFIG.preferences.isCompileDbAutoRegenEnabled,
+            compileDbDebounceMs: preferences.compileDbDebounceMs ?? DEFAULT_APP_CONFIG.preferences.compileDbDebounceMs,
+            unrealEngineRoot: preferences.unrealEngineRoot ?? DEFAULT_APP_CONFIG.preferences.unrealEngineRoot,
             isAutomaticUpdateCheckEnabled:
                 preferences.isAutomaticUpdateCheckEnabled ??
                 DEFAULT_APP_CONFIG.preferences.isAutomaticUpdateCheckEnabled,

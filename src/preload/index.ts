@@ -1,6 +1,7 @@
 import appApiRoutes from "@preload/routes/app"
 import audioApiRoutes from "@preload/routes/audio"
 import autoLockApiRoutes from "@preload/routes/autoLock"
+import compileDbApiRoutes from "@preload/routes/compileDb"
 import dialogsApiRoutes from "@preload/routes/dialogs"
 import fileTreeApiRoutes from "@preload/routes/fileTree"
 import gitCommandsApiRoutes from "@preload/routes/gitCommands"
@@ -16,6 +17,7 @@ import windowsApiRoutes from "@preload/routes/windows"
 import { contextBridge } from "electron"
 import type { AppSound } from "@/main/types/audio"
 import type { AutoLockReconcileResult, AutoLockState } from "@/main/types/autoLock"
+import type { CompileDbRunKind, CompileDbRunResult, CompileDbState } from "@/main/types/compileDb"
 import type { ConfirmDialogOptions, DialogOptions } from "@/main/types/dialogs"
 import type { FileTreeNode } from "@/main/types/fileTree"
 import type { GitBranch, GitCommit, GitStatus } from "@/main/types/gitCommands"
@@ -59,6 +61,13 @@ export type GitgameApi = {
         reconcile: (dir: string) => Promise<AutoLockReconcileResult>
         getState: () => Promise<AutoLockState>
         onStateChange: (callback: (state: AutoLockState) => void) => () => void
+        start: (dir: string) => Promise<void>
+        stop: () => Promise<void>
+    }
+    compileDb: {
+        getState: () => Promise<CompileDbState>
+        onStateChange: (callback: (state: CompileDbState) => void) => () => void
+        regenerate: (kind: CompileDbRunKind) => Promise<CompileDbRunResult | null>
         start: (dir: string) => Promise<void>
         stop: () => Promise<void>
     }
@@ -163,6 +172,7 @@ const api: GitgameApi = {
     app: appApiRoutes,
     audio: audioApiRoutes,
     autoLock: autoLockApiRoutes,
+    compileDb: compileDbApiRoutes,
     dialogs: dialogsApiRoutes,
     fileTree: fileTreeApiRoutes,
     gitCommands: gitCommandsApiRoutes,

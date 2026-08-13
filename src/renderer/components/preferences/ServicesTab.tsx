@@ -65,6 +65,47 @@ export default function ServicesTab({ draft, onChange }: ServicesTabProps) {
                 </div>
             </GroupBox>
 
+            <GroupBox label="C++ compile database">
+                <div className="flex flex-col gap-2">
+                    <Checkbox
+                        label="Regenerate when a source file is added or removed"
+                        checked={draft.isCompileDbAutoRegenEnabled}
+                        onChange={event => onChange("isCompileDbAutoRegenEnabled", event.target.checked)}
+                    />
+
+                    {/* biome-ignore lint/a11y/noLabelWithoutControl: React95 renders the input inside, out of the linter's reach */}
+                    <label className="flex items-center gap-2 text-sm">
+                        <span className="shrink-0">Wait for changes to settle for</span>
+
+                        <NumberInput
+                            width={90}
+                            disabled={!draft.isCompileDbAutoRegenEnabled}
+                            min={PREFERENCES_CONFIG.compileDbDebounceSeconds.min}
+                            max={PREFERENCES_CONFIG.compileDbDebounceSeconds.max}
+                            step={PREFERENCES_CONFIG.compileDbDebounceSeconds.step}
+                            value={toDisplayUnits(draft.compileDbDebounceMs, CONSTANTS.MS_PER_SECOND)}
+                            onChange={value =>
+                                onChange("compileDbDebounceMs", fromDisplayUnits(value, CONSTANTS.MS_PER_SECOND))
+                            }
+                        />
+
+                        <span className="shrink-0">seconds</span>
+                    </label>
+
+                    {/* biome-ignore lint/a11y/noLabelWithoutControl: React95 renders the input inside, out of the linter's reach */}
+                    <label className="flex items-center gap-2 text-sm">
+                        <span className="w-16 shrink-0">Engine</span>
+
+                        <TextInput
+                            fullWidth
+                            placeholder="Detected automatically, set it for a source build"
+                            value={draft.unrealEngineRoot}
+                            onChange={event => onChange("unrealEngineRoot", event.target.value)}
+                        />
+                    </label>
+                </div>
+            </GroupBox>
+
             <GroupBox label="Updates">
                 <div className="flex flex-col gap-2">
                     <Checkbox

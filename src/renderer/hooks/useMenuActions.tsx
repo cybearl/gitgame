@@ -86,6 +86,12 @@ export default function useMenuActions(): UseMenuActionsResult {
                 case "preferences:open":
                     window.api.preferences.openWindow()
                     break
+                case "compile-db:regenerate":
+                    window.api.compileDb
+                        .regenerate(action.kind)
+                        .catch(error => reportError("Can't regenerate the compile database", error))
+
+                    break
                 case "updater:check":
                     window.api.updater.check(true).catch(error => reportError("Failed to check for updates", error))
                     break

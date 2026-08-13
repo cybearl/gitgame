@@ -1,4 +1,5 @@
 import AUTO_LOCK_CONFIG from "@main/config/autoLock"
+import COMPILE_DB_CONFIG from "@main/config/compileDb"
 import MCP_CONFIG from "@main/config/mcp"
 import STORE_CONFIG from "@main/config/store"
 import UPDATER_CONFIG from "@main/config/updater"
@@ -16,6 +17,9 @@ const DEFAULT_APP_CONFIG: AppConfig = {
         autoLockTickIntervalMs: AUTO_LOCK_CONFIG.tickIntervalMs,
         mcpEndpoint: MCP_CONFIG.endpoint,
         mcpProbeIntervalMs: MCP_CONFIG.probeIntervalMs,
+        isCompileDbAutoRegenEnabled: false, // Off by default since it's pretty specific
+        compileDbDebounceMs: COMPILE_DB_CONFIG.debounceMs,
+        unrealEngineRoot: "",
         isAutomaticUpdateCheckEnabled: true,
         updaterCheckIntervalMs: UPDATER_CONFIG.checkIntervalMs,
     },

@@ -3,6 +3,8 @@ import WINDOWS_CONFIG from "@main/config/windows"
 import { registerAppHandlers } from "@main/lib/app/handlers"
 import { startAutoLock } from "@main/lib/autoLock"
 import { registerAutoLockHandlers } from "@main/lib/autoLock/handlers"
+import { startCompileDb } from "@main/lib/compileDb"
+import { registerCompileDbHandlers } from "@main/lib/compileDb/handlers"
 import { registerDialogsHandlers } from "@main/lib/dialogs"
 import { registerFileTreeHandlers } from "@main/lib/fileTree/handlers"
 import { registerGitCommandsHandlers } from "@main/lib/gitCommands/handlers"
@@ -74,6 +76,7 @@ app.whenReady().then(async () => {
     registerUpdaterHandlers()
     registerMcpHandlers()
     registerAutoLockHandlers()
+    registerCompileDbHandlers()
     registerViewStateHandlers()
     registerPreferencesHandlers()
 
@@ -88,6 +91,7 @@ app.whenReady().then(async () => {
     startUpdater()
     startMcp()
     startAutoLock()
+    startCompileDb()
 
     // Re-create a window in the app when the dock icon is clicked (macOS)
     app.on("activate", () => {

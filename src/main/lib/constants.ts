@@ -82,6 +82,12 @@ const CONSTANTS = {
         autoLockStateChanged: "auto-lock:state-changed",
         autoLockStart: "auto-lock:start",
         autoLockStop: "auto-lock:stop",
+        // Compile database
+        compileDbGetState: "compile-db:get-state",
+        compileDbStateChanged: "compile-db:state-changed",
+        compileDbRegenerate: "compile-db:regenerate",
+        compileDbStart: "compile-db:start",
+        compileDbStop: "compile-db:stop",
     },
     windows: {
         /**
@@ -105,6 +111,15 @@ const CONSTANTS = {
         missingFileMessage: "No .uproject file was found at the root of the project folder.",
         openFailureMessage:
             "The system could not open the .uproject file, make sure Unreal Engine is installed and registered as the handler for .uproject files.",
+    },
+    compileDb: {
+        missingEngineMessage:
+            "No Unreal Engine install could be found for this project, set the engine folder by hand in the options if you build the engine from source.",
+        missingBuildScriptMessage:
+            "The engine folder resolved for this project holds no build script, so it is either incomplete or not an engine root at all.",
+        spawnFailureMessage: "The engine's build script could not be launched.",
+        timedOutMessage: "The engine's build script did not finish in time and was stopped.",
+        noProjectMessage: "No project is open, so there is nothing to regenerate the compile database for.",
     },
     shells: {
         missingFolderMessage: "The folder no longer exists on disk.",

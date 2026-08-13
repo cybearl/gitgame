@@ -147,6 +147,17 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
         window.api.autoLock.start(currentProject.path)
     }, [currentProject?.path])
 
+    // Binds the compile-database watcher to the open project the same way, so the
+    // source trees it watches follow the project rather than the app
+    useEffect(() => {
+        if (!currentProject?.path) {
+            window.api.compileDb.stop()
+            return
+        }
+
+        window.api.compileDb.start(currentProject.path)
+    }, [currentProject?.path])
+
     // Fetches the current project's origin URL whenever the open project
     // changes, so downstream consumers (e.g the menu bar) can enable/disable
     // remote-scoped actions accordingly

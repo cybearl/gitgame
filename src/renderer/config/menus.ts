@@ -1,3 +1,4 @@
+import type { CompileDbRunKind } from "@/main/types/compileDb"
 import type { Project } from "@/main/types/projects"
 import type { UpdaterSimulation } from "@/main/types/updater"
 import CONSTANTS from "@/renderer/lib/constants"
@@ -19,6 +20,7 @@ export type MenuAction =
     | { type: "search:toggle-regex" }
     | { type: "search:toggle-advanced" }
     | { type: "lfs:toggle-show-my-locks" }
+    | { type: "compile-db:regenerate"; kind: CompileDbRunKind }
     | { type: "updater:check" }
     | { type: "preferences:open" }
     | { type: "devtools:test-confirm" }
@@ -318,6 +320,19 @@ export function buildTopLevelMenus(
                     label: "View on Git Source",
                     isDisabled: !remoteBrowsableUrl,
                     action: remoteBrowsableUrl ? { type: "shell:open-external", url: remoteBrowsableUrl } : undefined,
+                },
+                { type: "separator" },
+                {
+                    type: "item",
+                    label: "Regenerate Compile Database",
+                    isDisabled: !currentProject,
+                    action: { type: "compile-db:regenerate", kind: "fast" },
+                },
+                {
+                    type: "item",
+                    label: "Regenerate Project Files",
+                    isDisabled: !currentProject,
+                    action: { type: "compile-db:regenerate", kind: "full" },
                 },
                 { type: "separator" },
                 {
