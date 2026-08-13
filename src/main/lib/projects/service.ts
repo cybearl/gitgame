@@ -1,12 +1,11 @@
 import path from "node:path"
 import STORE_CONFIG from "@main/config/store"
 import { getRepositoryRoot, isRepository } from "@main/lib/gitCommands/service"
-import { configStore } from "@main/lib/stores/config"
+import { stateStore } from "@main/lib/stores/state"
 import { readUProject } from "@main/lib/uproject/service"
 import { pathExists } from "@main/lib/utils/fs"
 import { app, type BrowserWindow, dialog } from "electron"
 import type { OpenProjectResult, Project } from "@/main/types/projects"
-import type { AppPreferences } from "@/main/types/store"
 import type { UProject } from "@/main/types/uproject"
 
 /**
@@ -24,9 +23,9 @@ async function rememberProject(root: string, uproject: UProject): Promise<Projec
         uproject,
     }
 
-    await configStore.update(config => {
-        const others = config.recentProjects.filter(project => project.path !== root)
-        config.recentProjects = [entry, ...others].slice(0, STORE_CONFIG.maxRecentProjects)
+    await stateStore.update(state => {
+        const others = state.recentProjects.filter(project => project.path !== root)
+        state.recentProjects = [entry, ...others].slice(0, STORE_CONFIG.maxRecentProjects)
 
         return undefined
     })
@@ -84,8 +83,8 @@ export async function openProject(dir: string): Promise<OpenProjectResult> {
  * @returns The outcome of the open attempt, including cancellation.
  */
 export async function addLocalProject(window: BrowserWindow | null): Promise<OpenProjectResult> {
-    const config = await configStore.get()
-    const mostRecent = config.recentProjects[0]
+    const { recentProjects } = await stateStore.get()
+    const mostRecent = recentProjects[0]
     const defaultPath = mostRecent ? path.dirname(mostRecent.path) : app.getPath("home")
 
     const options: Electron.OpenDialogOptions = { properties: ["openDirectory"], defaultPath }
@@ -106,7 +105,7 @@ export async function addLocalProject(window: BrowserWindow | null): Promise<Ope
  * @returns The recent projects.
  */
 export async function getRecentProjects(): Promise<Project[]> {
-    return (await configStore.get()).recentProjects
+    return (await stateStore.get()).recentProjects
 }
 
 /**
@@ -115,8 +114,8 @@ export async function getRecentProjects(): Promise<Project[]> {
  * @returns The updated recent projects list.
  */
 export async function removeRecentProject(dir: string): Promise<Project[]> {
-    const updated = await configStore.update(config => {
-        config.recentProjects = config.recentProjects.filter(project => project.path !== dir)
+    const updated = await stateStore.update(state => {
+        state.recentProjects = state.recentProjects.filter(project => project.path !== dir)
         return undefined
     })
 
@@ -128,36 +127,10 @@ export async function removeRecentProject(dir: string): Promise<Project[]> {
  * @returns The updated recent projects list, which is always empty.
  */
 export async function clearRecentProjects(): Promise<Project[]> {
-    const updated = await configStore.update(config => {
-        config.recentProjects = []
+    const updated = await stateStore.update(state => {
+        state.recentProjects = []
         return undefined
     })
 
     return updated.recentProjects
-}
-
-/**
- * Returns the current application preferences.
- * @returns The preferences.
- */
-export async function getPreferences(): Promise<AppPreferences> {
-    return (await configStore.get()).preferences
-}
-
-/**
- * Merges the given fields into the application preferences and persists them.
- * @param preferences The preference fields to update.
- * @returns The updated preferences.
- */
-export async function setPreferences(preferences: Partial<AppPreferences>): Promise<AppPreferences> {
-    const updated = await configStore.update(config => {
-        config.preferences = {
-            ...config.preferences,
-            ...preferences,
-        }
-
-        return undefined
-    })
-
-    return updated.preferences
 }

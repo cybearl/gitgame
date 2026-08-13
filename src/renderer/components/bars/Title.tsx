@@ -1,6 +1,7 @@
 import { cn } from "@cybearl/cypack/frontend"
 import CONSTANTS from "@main/lib/constants"
 import Icon from "@renderer/components/ui/Icon"
+import WindowGlyph from "@renderer/components/ui/WindowGlyph"
 import useWindowStates from "@renderer/hooks/useWindowStates"
 import type { CSSProperties } from "react"
 import { Button } from "react95"
@@ -19,7 +20,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
         <div
             className={cn(
                 "z-10 flex shrink-0 items-center gap-8 select-none justify-between",
-                states?.isFocused ? "bg-active text-primary" : "bg-inactive text-secondary",
+                states?.isFocused ? "bg-header text-header-text" : "bg-header-inactive text-header-not-active-text",
                 window.api.platform.isMacOS ? "pr-1.5" : "px-1.5",
             )}
             style={
@@ -50,7 +51,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                                 onClick={() => window.api.windows.minimize()}
                                 className="w-6! h-5.5! min-w-0!"
                             >
-                                <Icon src="./assets/icons/window/minimize.png" size="none" className="w-4" />
+                                <WindowGlyph variant="minimize" />
                             </Button>
                             <Button
                                 size="sm"
@@ -59,7 +60,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                                 onClick={() => window.api.windows.toggleMaximize()}
                                 className="w-6! h-5.5! min-w-0!"
                             >
-                                <Icon src="./assets/icons/window/maximize.png" size="none" className="w-4" />
+                                <WindowGlyph variant="maximize" />
                             </Button>
                         </>
                     )}
@@ -71,7 +72,7 @@ export default function TitleBar({ title, icon, mode = "full", onClose }: TitleB
                         onClick={() => (onClose ? onClose() : window.api.windows.close())}
                         className="w-6! h-5.5! min-w-0! ml-1"
                     >
-                        <Icon src="./assets/icons/window/close.png" size="none" className="w-4" />
+                        <WindowGlyph variant="close" />
                     </Button>
                 </div>
             )}

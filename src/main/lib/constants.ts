@@ -38,8 +38,15 @@ const CONSTANTS = {
         projectsGetRecent: "projects:get-recent",
         projectsRemoveRecent: "projects:remove-recent",
         projectsClearRecent: "projects:clear-recent",
-        projectsGetPreferences: "projects:get-preferences",
-        projectsSetPreferences: "projects:set-preferences",
+        // View state
+        viewStateGet: "view-state:get",
+        viewStateSet: "view-state:set",
+        // Preferences
+        preferencesGetInitial: "preferences:get-initial",
+        preferencesGet: "preferences:get",
+        preferencesSet: "preferences:set",
+        preferencesChanged: "preferences:changed",
+        preferencesOpenWindow: "preferences:open-window",
         // UProject
         uprojectOpen: "uproject:open",
         // Shells
@@ -75,6 +82,12 @@ const CONSTANTS = {
         autoLockStateChanged: "auto-lock:state-changed",
         autoLockStart: "auto-lock:start",
         autoLockStop: "auto-lock:stop",
+        // Compile database
+        compileDbGetState: "compile-db:get-state",
+        compileDbStateChanged: "compile-db:state-changed",
+        compileDbRegenerate: "compile-db:regenerate",
+        compileDbStart: "compile-db:start",
+        compileDbStop: "compile-db:stop",
     },
     windows: {
         /**
@@ -99,15 +112,22 @@ const CONSTANTS = {
         openFailureMessage:
             "The system could not open the .uproject file, make sure Unreal Engine is installed and registered as the handler for .uproject files.",
     },
+    compileDb: {
+        missingEngineMessage:
+            "No Unreal Engine install could be found for this project, set the engine folder by hand in the options if you build the engine from source.",
+        missingBuildScriptMessage:
+            "The engine folder resolved for this project holds no build script, so it is either incomplete or not an engine root at all.",
+        spawnFailureMessage: "The engine's build script could not be launched.",
+        timedOutMessage: "The engine's build script did not finish in time and was stopped.",
+        noProjectMessage: "No project is open, so there is nothing to regenerate the compile database for.",
+    },
     shells: {
         missingFolderMessage: "The folder no longer exists on disk.",
         openFolderFailureMessage: "The system could not open the folder in the file manager.",
         noTerminalMessage: "No terminal could be launched, none of the ones we know about are installed or on PATH.",
 
         /**
-         * The terminals tried in order when opening a folder, first launch wins, Linux
-         * has no canonical terminal so `x-terminal-emulator` (the Debian alternatives
-         * symlink to the user's default) is tried first, then common fallbacks.
+         * The terminals tried in order when opening a folder.
          */
         terminals: {
             win32: [

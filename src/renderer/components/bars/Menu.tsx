@@ -75,7 +75,7 @@ export default function MenuBar({ menus, onAction, rightSlot }: MenuBarProps) {
                                     onMouseDown={event => event.preventDefault()}
                                     onClick={() => setOpenIndex(openIndex === index ? null : index)}
                                     onMouseEnter={() => handleTriggerEnter(index)}
-                                    className="px-2! bg-secondary!"
+                                    className="px-2! bg-material!"
                                 >
                                     {menu.label}
                                 </Button>

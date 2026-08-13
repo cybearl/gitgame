@@ -1,6 +1,6 @@
-import AUTO_LOCK_CONFIG from "@main/config/autoLock"
 import { reconcileAutoLock } from "@main/lib/autoLock/reconcile"
 import { autoLockStore } from "@main/lib/stores/autoLock"
+import { preferencesStore } from "@main/lib/stores/preferences"
 import { convertErrorToMessage } from "@main/lib/utils/errors"
 import type { AutoLockReconcileResult } from "@/main/types/autoLock"
 
@@ -26,6 +26,13 @@ export class AutoLockService {
      * The repository directory the loop is bound to, `null` when stopped.
      */
     private _dir: string | null = null
+
+    /**
+     * The interval the loop is currently running at, compared on every
+     * preference change so an unrelated one does not restart the timer and
+     * push the countdown out of step with the last reconcile.
+     */
+    private _tickIntervalMs = preferencesStore.get().autoLockTickIntervalMs
 
     /**
      * Runs a single reconcile pass, updates the store with the outcome, and
@@ -64,6 +71,20 @@ export class AutoLockService {
     }
 
     /**
+     * Restarts the tick timer at the interval the preferences currently carry,
+     * kept apart from `start` so a preference change can reschedule the loop
+     * without rebinding the directory.
+     */
+    private _restartTimer() {
+        const { autoLockTickIntervalMs } = preferencesStore.get()
+
+        if (this._timer) clearInterval(this._timer)
+        this._timer = setInterval(() => this._tick(), autoLockTickIntervalMs)
+
+        autoLockStore.set({ tickIntervalMs: autoLockTickIntervalMs })
+    }
+
+    /**
      * Runs a reconcile pass on demand, mostly a hook for a "reconcile now"
      * button and the initial tick after `start`.
      * @returns The reconcile result, or `null` when the tick was skipped.
@@ -74,8 +95,8 @@ export class AutoLockService {
 
     /**
      * Starts the periodic reconcile loop bound to a repository directory,
-     * fires an immediate tick then repeats at `AUTO_LOCK_CONFIG.tickIntervalMs`,
-     * a no-op re-bind when the same directory is already active.
+     * fires an immediate tick then repeats at the preferred interval, a no-op
+     * re-bind when the same directory is already active.
      * @param dir A path inside the repository to reconcile against.
      */
     start(dir: string) {
@@ -90,7 +111,19 @@ export class AutoLockService {
         })
 
         this._tick()
-        this._timer = setInterval(() => this._tick(), AUTO_LOCK_CONFIG.tickIntervalMs)
+        this._restartTimer()
+    }
+
+    /**
+     * Reschedules the loop when the preferred tick interval has moved, any
+     * other preference change leaves the running timer alone.
+     */
+    reconfigure() {
+        const { autoLockTickIntervalMs } = preferencesStore.get()
+        if (autoLockTickIntervalMs === this._tickIntervalMs) return
+
+        this._tickIntervalMs = autoLockTickIntervalMs
+        if (this._timer) this._restartTimer()
     }
 
     /**

@@ -1,5 +1,6 @@
 import App from "@renderer/App"
 import DialogApp from "@renderer/DialogApp"
+import PreferencesApp from "@renderer/PreferencesApp"
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 
@@ -10,9 +11,14 @@ const root = document.getElementById("root")
 if (!root) throw new Error("Root element #root not found in index.html.")
 
 /**
- * The dialog windows load the same bundle on the `#/dialog` route, rendering the
- * Win95-styled dialog instead of the main application shell.
+ * The shell this window renders, picked from the route it was loaded on.
+ * @returns The root component for this window.
  */
-const isDialogWindow = window.location.hash.startsWith("#/dialog")
+function resolveApp() {
+    if (window.location.hash.startsWith("#/dialog")) return <DialogApp />
+    if (window.location.hash.startsWith("#/preferences")) return <PreferencesApp />
 
-createRoot(root).render(<StrictMode>{isDialogWindow ? <DialogApp /> : <App />}</StrictMode>)
+    return <App />
+}
+
+createRoot(root).render(<StrictMode>{resolveApp()}</StrictMode>)

@@ -1,6 +1,6 @@
 import picomatch from "picomatch"
 import type { FileTreeNode } from "@/main/types/fileTree"
-import type { AppPreferences } from "@/main/types/store"
+import type { AppViewState } from "@/main/types/store"
 
 /**
  * The user-facing search filters applied on top of the file tree.
@@ -103,12 +103,12 @@ export function collectMatchingFiles(nodes: FileTreeNode[], filters: SearchFilte
 }
 
 /**
- * Persists a subset of the search preferences without awaiting the result, so
- * the UI stays responsive; failures are logged but do not surface.
- * @param patch The preference fields to persist.
+ * Persists a subset of the search view state without awaiting the result, so
+ * the UI stays responsive, failures are logged but do not surface.
+ * @param patch The view state fields to persist.
  */
-export function persistSearchPreferences(patch: Partial<AppPreferences>) {
-    window.api.projects.setPreferences(patch).catch(error => {
-        console.error("Failed to persist search preferences:", error)
+export function persistSearchViewState(patch: Partial<AppViewState>) {
+    window.api.viewState.set(patch).catch(error => {
+        console.error("Failed to persist the search view state:", error)
     })
 }

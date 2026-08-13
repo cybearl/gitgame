@@ -1,9 +1,11 @@
 /**
- * The configuration options for the persisted application store.
+ * The configuration options for the persisted application stores.
  */
 const STORE_CONFIG = {
     dirName: "gitgame",
-    fileName: "config.json",
+    configFileName: "config.json",
+    stateFileName: "state.json",
+    cacheFileName: "cache.json",
     configVersion: 1,
     maxRecentProjects: 10,
 }

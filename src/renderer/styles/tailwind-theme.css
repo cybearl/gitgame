@@ -1,9 +1,23 @@
 @theme {
-    /* Overall colors */
-    --color-primary: #ffffff;
-    --color-secondary: #c6c6c6;
-    --color-inactive: #808080;
-    --color-active: #000080;
+    /*
+     * The React95 theme tokens, named exactly as React95 names them so the runtime
+     * bridge in `AppRoot` can mirror the active theme onto them mechanically. The
+     * values here are `original`'s, and only ever show through before that bridge
+     * mounts.
+     */
+    --color-material: #c6c6c6;
+    --color-material-text: #0a0a0a;
+    --color-material-text-disabled: #848584;
+    --color-header-background: #060084;
+    --color-header-text: #fefefe;
+    --color-header-not-active-background: #7f787f;
+    --color-header-not-active-text: #c6c6c6;
+    --color-border-lightest: #fefefe;
+    --color-border-light: #dfdfdf;
+    --color-border-dark: #848584;
+    --color-border-darkest: #0a0a0a;
+    --color-canvas: #ffffff;
+    --color-canvas-text: #0a0a0a;
 
     /* The MS Sans Serif font registered in `./fonts.css`, with system fallbacks */
     --font-sans: "ms_sans_serif", "Microsoft Sans Serif", system-ui, sans-serif;

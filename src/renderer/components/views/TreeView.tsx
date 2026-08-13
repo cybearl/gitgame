@@ -24,7 +24,7 @@ export default function TreeView() {
     } = useTreeViewContext()
 
     /**
-     * The visible file tree mapped to react95 tree leaves, only built when not
+     * The visible file tree mapped to React95 tree leaves, only built when not
      * searching so the flat-results path skips the tree work entirely.
      */
     const tree = useMemo(

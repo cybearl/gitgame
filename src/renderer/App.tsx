@@ -12,6 +12,7 @@ import MenuBar from "@/renderer/components/bars/Menu"
 import StatusBar from "@/renderer/components/bars/Status"
 import TitleBar from "@/renderer/components/bars/Title"
 import StatusAutoLockField from "@/renderer/components/fields/StatusAutoLock"
+import StatusCompileDbField from "@/renderer/components/fields/StatusCompileDb"
 import StatusMcpField from "@/renderer/components/fields/StatusMcp"
 import StatusTaskField from "@/renderer/components/fields/StatusTask"
 import StatusUpdateField from "@/renderer/components/fields/StatusUpdate"
@@ -104,6 +105,7 @@ function AppShell() {
                         <StatusUpdateField />
                         <StatusMcpField />
                         <StatusAutoLockField />
+                        <StatusCompileDbField />
                         <StatusTaskField />
                     </StatusBar>
                 </>

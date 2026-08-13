@@ -1,11 +1,25 @@
 import UPDATER_CONFIG from "@main/config/updater"
 import CONSTANTS from "@main/lib/constants"
+import { preferencesStore } from "@main/lib/stores/preferences"
 import { normalizeReleaseNotes, parseDownloadProgress } from "@main/lib/updater/parse"
 import { updaterSimulator } from "@main/lib/updater/simulator"
 import { CLEARED_RELEASE_FIELDS, updaterStore } from "@main/lib/updater/store"
 import { convertErrorToMessage } from "@main/lib/utils/errors"
 import { app } from "electron"
 import { autoUpdater, type ProgressInfo, type UpdateInfo } from "electron-updater"
+
+/**
+ * The periodic background check timer, held so a preference change can
+ * reschedule it, `null` while automatic checks are off.
+ */
+let checkTimer: NodeJS.Timeout | null = null
+
+/**
+ * The interval the running check timer was scheduled at, `null` while automatic
+ * checks are off, compared on every preference change so only a real change to
+ * the cadence reschedules.
+ */
+let scheduledCheckIntervalMs: number | null = null
 
 /**
  * Mirrors the `autoUpdater` lifecycle onto the updater state.
@@ -142,6 +156,26 @@ export function installUpdate() {
 }
 
 /**
+ * Reschedules the periodic background check onto the current preferences.
+ */
+export function rescheduleUpdateChecks() {
+    const { isAutomaticUpdateCheckEnabled, updaterCheckIntervalMs } = preferencesStore.get()
+
+    const isUnchanged = scheduledCheckIntervalMs === (isAutomaticUpdateCheckEnabled ? updaterCheckIntervalMs : null)
+    if (isUnchanged) return
+
+    if (checkTimer) {
+        clearInterval(checkTimer)
+        checkTimer = null
+    }
+
+    scheduledCheckIntervalMs = isAutomaticUpdateCheckEnabled ? updaterCheckIntervalMs : null
+    if (!app.isPackaged || !isAutomaticUpdateCheckEnabled) return
+
+    checkTimer = setInterval(() => checkForUpdates(), updaterCheckIntervalMs)
+}
+
+/**
  * Configures the auto-updater to hand every decision to the user, then schedules
  * the periodic background checks in packaged builds.
  */
@@ -154,6 +188,9 @@ export function initUpdater() {
 
     if (!app.isPackaged) return
 
-    setTimeout(() => checkForUpdates(), UPDATER_CONFIG.startupCheckDelayMs)
-    setInterval(() => checkForUpdates(), UPDATER_CONFIG.checkIntervalMs)
+    setTimeout(() => {
+        if (preferencesStore.get().isAutomaticUpdateCheckEnabled) checkForUpdates()
+    }, UPDATER_CONFIG.startupCheckDelayMs)
+
+    rescheduleUpdateChecks()
 }

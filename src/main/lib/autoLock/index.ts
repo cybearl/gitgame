@@ -1,6 +1,7 @@
 import { autoLockService } from "@main/lib/autoLock/service"
 import CONSTANTS from "@main/lib/constants"
 import { autoLockStore } from "@main/lib/stores/autoLock"
+import { preferencesStore } from "@main/lib/stores/preferences"
 import { BrowserWindow } from "electron"
 import type { AutoLockState } from "@/main/types/autoLock"
 
@@ -23,6 +24,7 @@ function broadcastAutoLockState(next: AutoLockState) {
  */
 export function startAutoLock() {
     autoLockStore.subscribe(broadcastAutoLockState)
+    preferencesStore.subscribe(() => autoLockService.reconfigure())
 }
 
 export { autoLockService }

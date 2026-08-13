@@ -1,5 +1,5 @@
 import CONSTANTS from "@main/lib/constants"
-import { configStore } from "@main/lib/stores/config"
+import { stateStore } from "@main/lib/stores/state"
 import { type BrowserWindow, type Rectangle, screen } from "electron"
 import type { WindowBounds, WindowPlacement } from "@/main/types/store"
 
@@ -87,7 +87,7 @@ function readPlacement(window: BrowserWindow): WindowPlacement {
  * @param window The window to restore.
  */
 export async function restoreWindowPlacement(window: BrowserWindow): Promise<void> {
-    const { windowPlacement } = await configStore.get()
+    const { windowPlacement } = await stateStore.get()
 
     if (isUsableBounds(windowPlacement.bounds)) {
         window.setBounds(fitBoundsToScreen(windowPlacement.bounds))
@@ -112,9 +112,9 @@ export function attachWindowPlacementPersistence(window: BrowserWindow) {
     const save = () => {
         if (window.isDestroyed() || window.isMinimized()) return
 
-        configStore.update(config => {
-            config.windowPlacement = readPlacement(window)
-            return config
+        stateStore.update(state => {
+            state.windowPlacement = readPlacement(window)
+            return state
         })
     }
 

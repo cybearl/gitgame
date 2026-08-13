@@ -23,7 +23,7 @@ export default function Workspace() {
      * @param finalWidth The width to persist, in pixels.
      */
     const persistWidth = useCallback((finalWidth: number) => {
-        window.api.projects.setPreferences({ filesPaneWidth: finalWidth })
+        window.api.viewState.set({ filesPaneWidth: finalWidth })
     }, [])
 
     const { width, setWidth, handleDragStart } = useResizablePaneWidth({
@@ -43,9 +43,9 @@ export default function Workspace() {
     useEffect(() => {
         let cancelled = false
 
-        window.api.projects.getPreferences().then(preferences => {
+        window.api.viewState.get().then(view => {
             if (cancelled) return
-            setWidth(preferences.filesPaneWidth)
+            setWidth(view.filesPaneWidth)
         })
 
         return () => {
@@ -59,7 +59,7 @@ export default function Workspace() {
                 <FilesPane className="shrink-0" style={filesPaneStyle} />
 
                 <div onMouseDown={handleDragStart} className="group relative w-1 shrink-0 cursor-col-resize">
-                    <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-black/20 group-hover:bg-black/40 group-active:bg-black/60" />
+                    <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border-dark group-hover:bg-border-darkest group-active:bg-border-darkest" />
                 </div>
 
                 <DetailsPane className="min-w-0 flex-1" />

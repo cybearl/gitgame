@@ -3,17 +3,22 @@ import WINDOWS_CONFIG from "@main/config/windows"
 import { registerAppHandlers } from "@main/lib/app/handlers"
 import { startAutoLock } from "@main/lib/autoLock"
 import { registerAutoLockHandlers } from "@main/lib/autoLock/handlers"
+import { startCompileDb } from "@main/lib/compileDb"
+import { registerCompileDbHandlers } from "@main/lib/compileDb/handlers"
 import { registerDialogsHandlers } from "@main/lib/dialogs"
 import { registerFileTreeHandlers } from "@main/lib/fileTree/handlers"
 import { registerGitCommandsHandlers } from "@main/lib/gitCommands/handlers"
 import { registerLfsCommandsHandlers } from "@main/lib/lfsCommands/handlers"
 import { startMcp } from "@main/lib/mcp"
 import { registerMcpHandlers } from "@main/lib/mcp/handlers"
+import { startPreferences } from "@main/lib/preferences"
+import { registerPreferencesHandlers } from "@main/lib/preferences/handlers"
 import { registerProjectsHandlers } from "@main/lib/projects/handlers"
 import { registerShellsHandlers } from "@main/lib/shells/handlers"
 import { startUpdater } from "@main/lib/updater"
 import { registerUpdaterHandlers } from "@main/lib/updater/handlers"
 import { registerUProjectHandlers } from "@main/lib/uproject/handlers"
+import { registerViewStateHandlers } from "@main/lib/viewState/handlers"
 import { attachWindowStateBroadcaster, registerWindowsControlHandlers, setMainWindow } from "@main/lib/windows"
 import { attachWindowPlacementPersistence, restoreWindowPlacement } from "@main/lib/windows/placement"
 import { app, BrowserWindow, shell } from "electron"
@@ -71,6 +76,13 @@ app.whenReady().then(async () => {
     registerUpdaterHandlers()
     registerMcpHandlers()
     registerAutoLockHandlers()
+    registerCompileDbHandlers()
+    registerViewStateHandlers()
+    registerPreferencesHandlers()
+
+    // Hydrate the preferences before anything paints, the renderer reads the theme
+    // synchronously at preload and would otherwise flash the default one
+    await startPreferences()
 
     // Create the main window
     await createMainWindow()
@@ -79,6 +91,7 @@ app.whenReady().then(async () => {
     startUpdater()
     startMcp()
     startAutoLock()
+    startCompileDb()
 
     // Re-create a window in the app when the dock icon is clicked (macOS)
     app.on("activate", () => {
