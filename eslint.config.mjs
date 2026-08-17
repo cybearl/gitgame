@@ -2,7 +2,7 @@ import nitpicker from "@alien_intelligence/eslint-plugin-nitpicker"
 import tsParser from "@typescript-eslint/parser"
 
 /**
- * ESLint flat config, layers Nitpicker on top of Biome for nit-level enforcement,
+ * ESLint flat config, it exists only to host Nitpicker for nit-level enforcement,
  * Biome still owns formatting and the broader lint rules.
  */
 export default [
