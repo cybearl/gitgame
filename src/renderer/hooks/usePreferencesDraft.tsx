@@ -23,8 +23,6 @@ export default function usePreferencesDraft(): UsePreferencesDraftResult {
     const { preferences } = usePreferences()
     const [draft, setDraft] = useState<AppPreferences>(preferences)
 
-    const isDirty = !arePreferencesEqual(draft, preferences)
-
     /**
      * Records an edit to one field of the draft.
      * @param key The field to change.
@@ -42,5 +40,10 @@ export default function usePreferencesDraft(): UsePreferencesDraftResult {
         await window.api.preferences.set(draft)
     }, [draft])
 
-    return { draft, isDirty, setField, apply }
+    return {
+        draft,
+        isDirty: !arePreferencesEqual(draft, preferences),
+        setField,
+        apply,
+    }
 }

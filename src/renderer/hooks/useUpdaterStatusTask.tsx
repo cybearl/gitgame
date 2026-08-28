@@ -14,7 +14,7 @@ export default function useUpdaterStatusTask() {
      */
     const taskRef = useRef<StatusTaskHandle | null>(null)
 
-    // Depends on `startTask` alone, which is stable, since the context value itself
+    // Depends on "startTask" alone, which is stable, since the context value itself
     // changes on every task update and would otherwise tear the task down mid-download
     useEffect(() => {
         const unsubscribe = window.api.updater.onStateChange(state => {

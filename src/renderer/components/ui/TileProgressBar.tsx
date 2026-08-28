@@ -4,7 +4,7 @@ import styled, { css } from "styled-components"
 
 /**
  * Recolors the tiles to `theme.borderDark` when muted, so
- * the inactive bar shows as light shadow-grey.
+ * the inactive bar shows as light shadow-gray.
  */
 const Wrapper = styled.div<{ $muted: boolean }>`
     display: contents;

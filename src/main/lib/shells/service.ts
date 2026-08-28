@@ -24,7 +24,11 @@ async function assertDirectory(dir: string): Promise<void> {
  */
 function trySpawn(command: string, args: string[], cwd: string): Promise<boolean> {
     return new Promise(resolve => {
-        const child = spawn(command, args, { cwd, detached: true, stdio: "ignore" })
+        const child = spawn(command, args, {
+            cwd,
+            detached: true,
+            stdio: "ignore",
+        })
 
         child.once("spawn", () => {
             // Lets the terminal outlive the app rather than dying alongside it

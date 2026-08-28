@@ -63,7 +63,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
 
                 if (result.ok) {
                     setCurrentProject(result.project)
-                } else if (result.reason !== "cancelled") {
+                } else if (result.reason !== "canceled") {
                     const message =
                         CONSTANTS.PROJECT_OPEN_FAILURE_MESSAGES[result.reason] ?? "The project couldn't be opened."
                     window.api.dialogs.errorWithDetails(
@@ -74,8 +74,8 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
                 }
 
                 await refreshRecentProjects()
-            } catch (err) {
-                const details = err instanceof Error ? err.message : String(err)
+            } catch (error) {
+                const details = error instanceof Error ? error.message : String(error)
                 window.api.dialogs.errorWithDetails(
                     "Can't open project",
                     "An unexpected error occurred while opening the project.",
@@ -167,21 +167,21 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
             return
         }
 
-        let cancelled = false
+        let canceled = false
 
         window.api.gitCommands
             .getRemoteUrl(currentProject.path)
             .then(url => {
-                if (cancelled) return
+                if (canceled) return
                 setRemoteUrl(url)
             })
             .catch(() => {
-                if (cancelled) return
+                if (canceled) return
                 setRemoteUrl(null)
             })
 
         return () => {
-            cancelled = true
+            canceled = true
         }
     }, [currentProject?.path])
 
@@ -199,8 +199,8 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
                 if (window.api.preferences.initial.startupBehavior === "reopen-last" && projects[0]) {
                     await openProject(projects[0].path)
                 }
-            } catch (err) {
-                const details = err instanceof Error ? err.message : String(err)
+            } catch (error) {
+                const details = error instanceof Error ? error.message : String(error)
                 window.api.dialogs.errorWithDetails(
                     "Failed to load recent projects",
                     "The recent projects list couldn't be loaded on startup.",

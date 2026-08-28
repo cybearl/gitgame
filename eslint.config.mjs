@@ -14,12 +14,7 @@ export default [
             sourceType: "module",
         },
         plugins: { nitpicker },
-        rules: {
-            ...nitpicker.configs.recommended.rules,
-            // TODO: re-enable once the upstream `e.charAt is not a function` crash is fixed,
-            // it currently trips on any TS `import type` line and aborts the whole lint run.
-            "nitpicker/no-british-english": "off",
-        },
+        rules: nitpicker.configs.recommended.rules,
     },
     {
         files: ["src/renderer/**/*.tsx", "src/renderer/**/*.ts"],

@@ -11,11 +11,11 @@ export type Project = {
 }
 
 /**
- * Why opening a project did not result in an open repository, `cancelled` when
+ * Why opening a project did not result in an open repository, `canceled` when
  * the picker was dismissed, `not-found`, `not-a-repository`, and `not-a-ue-project`
  * cover the disk, git, and UE root-file checks respectively.
  */
-export type OpenProjectFailureReason = "cancelled" | "not-found" | "not-a-repository" | "not-a-ue-project"
+export type OpenProjectFailureReason = "canceled" | "not-found" | "not-a-repository" | "not-a-ue-project"
 
 /**
  * The outcome of attempting to open or add a project.

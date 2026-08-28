@@ -62,7 +62,7 @@ export function classifySourcePath(relativePath: string): CompileDbFileKind | nu
 
     const extension = path.posix.extname(posixPath).toLowerCase()
 
-    // A plugin's own descriptor sits above its `Source` tree rather than inside it,
+    // A plugin's own descriptor sits above its "Source" tree rather than inside it,
     // and enabling a module in one moves the build with no source file moving
     if (extension === COMPILE_DB_CONFIG.pluginDescriptorExtension) {
         return isInsidePlugins(posixPath) ? "descriptor" : null

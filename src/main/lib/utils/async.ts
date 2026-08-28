@@ -16,7 +16,6 @@ export async function parallelLimit<T, R>(
 
     /**
      * Runs the worker on the next item in the queue.
-     * @returns A promise that resolves when the worker is done.
      */
     const run = async (): Promise<void> => {
         while (cursor < items.length) {

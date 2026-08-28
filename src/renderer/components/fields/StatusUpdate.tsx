@@ -19,7 +19,7 @@ export default function StatusUpdateField() {
      * The download progress as a rounded percentage, `0` before the first
      * `download-progress` event lands so the bar starts empty.
      */
-    const downloadPercentage = Math.round(state?.progress?.percent ?? 0)
+    const downloadPercentage = useMemo(() => Math.round(state?.progress?.percent ?? 0), [state?.progress?.percent])
 
     /**
      * Runs the action that matches the current state.

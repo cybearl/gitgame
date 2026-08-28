@@ -288,7 +288,11 @@ export class CompileDbService {
         if (unrealEngineRoot !== this._engineRootOverride) {
             this._engineRootOverride = unrealEngineRoot
             this._context = null
-            compileDbStore.set({ engineRoot: null, target: null, lastError: null })
+            compileDbStore.set({
+                engineRoot: null,
+                target: null,
+                lastError: null,
+            })
         }
 
         if (isCompileDbAutoRegenEnabled === this._isEnabled) return

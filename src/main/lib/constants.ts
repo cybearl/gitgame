@@ -131,18 +131,60 @@ const CONSTANTS = {
          */
         terminals: {
             win32: [
-                { command: "wt.exe", args: ["-d"], appendDir: true },
-                { command: "cmd.exe", args: ["/c", "start", "", "cmd.exe"], appendDir: false },
+                {
+                    command: "wt.exe",
+                    args: ["-d"],
+                    appendDir: true,
+                },
+                {
+                    command: "cmd.exe",
+                    args: ["/c", "start", "", "cmd.exe"],
+                    appendDir: false,
+                },
             ],
-            darwin: [{ command: "open", args: ["-a", "Terminal"], appendDir: true }],
+            darwin: [
+                {
+                    command: "open",
+                    args: ["-a", "Terminal"],
+                    appendDir: true,
+                },
+            ],
             linux: [
-                { command: "x-terminal-emulator", args: [], appendDir: false },
-                { command: "gnome-terminal", args: [], appendDir: false },
-                { command: "konsole", args: [], appendDir: false },
-                { command: "xfce4-terminal", args: [], appendDir: false },
-                { command: "alacritty", args: [], appendDir: false },
-                { command: "kitty", args: [], appendDir: false },
-                { command: "xterm", args: [], appendDir: false },
+                {
+                    command: "x-terminal-emulator",
+                    args: [],
+                    appendDir: false,
+                },
+                {
+                    command: "gnome-terminal",
+                    args: [],
+                    appendDir: false,
+                },
+                {
+                    command: "konsole",
+                    args: [],
+                    appendDir: false,
+                },
+                {
+                    command: "xfce4-terminal",
+                    args: [],
+                    appendDir: false,
+                },
+                {
+                    command: "alacritty",
+                    args: [],
+                    appendDir: false,
+                },
+                {
+                    command: "kitty",
+                    args: [],
+                    appendDir: false,
+                },
+                {
+                    command: "xterm",
+                    args: [],
+                    appendDir: false,
+                },
             ],
         } as Record<string, { command: string; args: string[]; appendDir: boolean }[]>,
     },
@@ -158,7 +200,7 @@ const CONSTANTS = {
         contentDir: "Content",
         assetExtension: ".uasset",
         levelExtension: ".umap",
-        // The Unreal MCP exposes editor tools through a `call_tool` dispatcher rather
+        // The Unreal MCP exposes editor tools through a "call_tool" dispatcher rather
         // than as first-class MCP tools, so each entry pairs the toolset owning it with
         // its short name
         dispatcher: "call_tool",
