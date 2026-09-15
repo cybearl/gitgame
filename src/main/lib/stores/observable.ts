@@ -14,6 +14,11 @@ export class ObservableStore<T extends object> {
      */
     private _listeners = new Set<(next: T) => void>()
 
+    /**
+     * Creates the store around a starting state, no listener runs until the
+     * first transition.
+     * @param initialState The state the store starts from.
+     */
     constructor(initialState: T) {
         this._state = initialState
     }

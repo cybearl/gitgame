@@ -42,6 +42,7 @@ function isInsideSourceTree(posixPath: string): boolean {
     const segments = posixPath.split("/")
 
     if (segments[0] === COMPILE_DB_CONFIG.sourceRootDirName) return true
+
     if (segments[0] === COMPILE_DB_CONFIG.pluginsDirName) {
         return segments.slice(2).includes(COMPILE_DB_CONFIG.sourceRootDirName)
     }

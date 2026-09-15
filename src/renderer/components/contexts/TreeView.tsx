@@ -144,6 +144,7 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
 
                 setIsRegex(view.searchIsRegex)
                 setIsAdvancedOpen(view.isAdvancedSearchOpened)
+
                 setIncludeText(view.searchIncludePatterns)
                 setExcludeText(view.searchExcludePatterns)
                 setIsShowingMyLocksOnly(view.isShowingMyLocksOnly)

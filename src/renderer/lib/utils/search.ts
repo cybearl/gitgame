@@ -91,6 +91,7 @@ export function collectMatchingFiles(nodes: FileTreeNode[], filters: SearchFilte
             if (matchesExclude?.(node.path)) return
 
             results.push(node)
+
             return
         }
 

@@ -33,8 +33,16 @@ export type LfsLockProgress = {
  * the old path's lock was carried over to the new path.
  */
 export type LfsLockMigration = {
+    /**
+     * The staged rename's old path, whose lock is the one being carried over.
+     */
     from: string
+
+    /**
+     * The staged rename's new path, the one the lock is carried to.
+     */
     to: string
+
     /**
      * The migration status, `migrated` on success, `skipped-*` when the migration
      * did not apply, `failed-*` when a step errored, self-describing suffixes.
@@ -46,5 +54,9 @@ export type LfsLockMigration = {
         | "skipped-not-lockable"
         | "failed-lock"
         | "failed-unlock"
+
+    /**
+     * What went wrong, set only alongside a `failed-*` status.
+     */
     error?: string
 }

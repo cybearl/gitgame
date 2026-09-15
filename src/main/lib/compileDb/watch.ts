@@ -17,9 +17,9 @@ export async function watchSourceTrees(root: string, onChange: () => void): Prom
     for (const watchRoot of resolveWatchRoots(root)) {
         if (!(await pathExists(watchRoot))) continue
 
-        // A tree can still go away between that check and this call, and a watcher
-        // can die later on for the same reason, neither of which is worth taking
-        // the main process down over, the next project bind sets things up again
+        // A tree can go away between that check and this call, and a watcher can die
+        // later for the same reason, neither worth taking the main process down over
+        // since the next project bind sets things up again
         try {
             const watcher = watch(watchRoot, { recursive: true, persistent: false }, () => onChange())
 

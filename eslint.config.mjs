@@ -17,7 +17,25 @@ export default [
         rules: nitpicker.configs.recommended.rules,
     },
     {
+        files: ["src/**/*.ts", "src/**/*.tsx"],
+        ...nitpicker.configs.breathing,
+    },
+    {
         files: ["src/renderer/**/*.tsx", "src/renderer/**/*.ts"],
         ...nitpicker.configs.react,
+    },
+    {
+        files: ["src/renderer/**/*.tsx"],
+        ignores: ["src/renderer/components/ui/**"],
+        ...nitpicker.configs.design,
+        rules: {
+            ...nitpicker.configs.design.rules,
+            // The react95 "Button" is beveled window chrome, a flat list row or theme
+            // option is a "<button>" for the semantics alone and must not carry it
+            "nitpicker/no-raw-control-element": [
+                "warn",
+                { allowIn: ["**/rows/FlatResults.tsx", "**/preferences/AppearanceTab.tsx"] },
+            ],
+        },
     },
 ]

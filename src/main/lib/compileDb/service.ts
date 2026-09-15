@@ -208,10 +208,9 @@ export class CompileDbService {
         this._knownFiles = next
         compileDbStore.set({ trackedFileCount: next.size })
 
-        // A failed run leaves the database out of date, and what fixes the usual
-        // cause (a header still half-written when it first appeared) is an edit
-        // rather than another file appearing, so a failure is worth retrying on any
-        // change at all rather than waiting for the set to move again
+        // A failed run leaves the database out of date, and its usual cause (a
+        // half-written header) is fixed by an edit rather than by a new file, so a
+        // failure is worth retrying on any change
         if (!hasChanged && !this._hasFailed()) return
 
         // A build or plugin descriptor can move the solution too, which is left to

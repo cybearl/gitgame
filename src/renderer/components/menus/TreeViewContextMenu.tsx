@@ -13,7 +13,9 @@ export default function TreeViewContextMenu() {
         /**
          * Dismisses the menu on a pointer press anywhere in the document.
          */
-        const handlePointerDown = () => dismissMenu()
+        const handlePointerDown = () => {
+            dismissMenu()
+        }
 
         /**
          * Dismisses the menu when the escape key is pressed.

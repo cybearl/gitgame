@@ -36,6 +36,7 @@ type ProjectProviderProps = {
 /**
  * Provides the current project and recent projects to the component tree, backed
  * by the `window.api.projects` bridge.
+ * @param children The tree that reads the project context.
  */
 export default function ProjectProvider({ children }: ProjectProviderProps) {
     const [currentProject, setCurrentProject] = useState<Project | null>(null)
@@ -188,6 +189,10 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
     // On mount, load the recent projects and, when configured to do so, re-open
     // the most recently opened project
     useEffect(() => {
+        /**
+         * Loads the recent projects and, when the preference asks for it, reopens
+         * the most recent one.
+         */
         const init = async () => {
             setIsLoading(true)
 

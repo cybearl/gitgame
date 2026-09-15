@@ -44,6 +44,7 @@ type StatusProviderProps = {
 /**
  * Provides the status task stack to the component tree, backed by an in-memory
  * store.
+ * @param children The tree that reads the status context.
  */
 export default function StatusProvider({ children }: StatusProviderProps) {
     const [tasks, setTasks] = useState<StatusTask[]>([])
