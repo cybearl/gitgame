@@ -7,6 +7,7 @@ const shellsApiRoutes: GitgameApi["shells"] = {
     openExternal: url => ipcRenderer.send(CONSTANTS.ipc.shellsOpenExternal, url),
     showFolder: dir => safeInvoke<void>(CONSTANTS.ipc.shellsShowFolder, dir),
     openTerminal: dir => safeInvoke<void>(CONSTANTS.ipc.shellsOpenTerminal, dir),
+    openEditor: dir => safeInvoke<void>(CONSTANTS.ipc.shellsOpenEditor, dir),
 }
 
 export default shellsApiRoutes

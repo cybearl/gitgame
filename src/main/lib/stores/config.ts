@@ -17,6 +17,7 @@ function normalizeConfig(partial: Partial<AppConfig>): AppConfig {
         preferences: {
             theme: preferences.theme ?? DEFAULT_APP_CONFIG.preferences.theme,
             startupBehavior: preferences.startupBehavior ?? DEFAULT_APP_CONFIG.preferences.startupBehavior,
+            codeEditorPath: preferences.codeEditorPath ?? DEFAULT_APP_CONFIG.preferences.codeEditorPath,
             autoLockTickIntervalMs:
                 preferences.autoLockTickIntervalMs ?? DEFAULT_APP_CONFIG.preferences.autoLockTickIntervalMs,
             mcpEndpoint: preferences.mcpEndpoint ?? DEFAULT_APP_CONFIG.preferences.mcpEndpoint,

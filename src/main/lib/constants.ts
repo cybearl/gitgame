@@ -53,6 +53,7 @@ const CONSTANTS = {
         shellsOpenExternal: "shells:open-external",
         shellsShowFolder: "shells:show-folder",
         shellsOpenTerminal: "shells:open-terminal",
+        shellsOpenEditor: "shells:open-editor",
         // Dialogs
         dialogsConfirm: "dialogs:confirm",
         dialogsMessage: "dialogs:message",
@@ -125,6 +126,18 @@ const CONSTANTS = {
         missingFolderMessage: "The folder no longer exists on disk.",
         openFolderFailureMessage: "The system could not open the folder in the file manager.",
         noTerminalMessage: "No terminal could be launched, none of the ones we know about are installed or on PATH.",
+        noEditorMessage:
+            "No code editor could be found, none of the ones we know about are installed, set the path to yours under File > Options > General.",
+        openEditorFailureMessage: "The code editor set in the options is not where it is expected to be.",
+
+        /**
+         * How macOS is asked to open a folder with a given application, the editors are
+         * application bundles there rather than executables of their own.
+         */
+        macOpen: {
+            command: "open",
+            appFlag: "-a",
+        },
 
         /**
          * The terminals tried in order when opening a folder.
@@ -187,6 +200,30 @@ const CONSTANTS = {
                 },
             ],
         } as Record<string, { command: string; args: string[]; appendDir: boolean }[]>,
+
+        /**
+         * The code editors tried in order when opening a project folder.
+         */
+        editors: {
+            win32: [
+                "%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\Code.exe",
+                "%ProgramFiles%\\Microsoft VS Code\\Code.exe",
+                "%LOCALAPPDATA%\\Programs\\cursor\\Cursor.exe",
+                "%LOCALAPPDATA%\\Programs\\Microsoft VS Code Insiders\\Code - Insiders.exe",
+                "%LOCALAPPDATA%\\Programs\\Windsurf\\Windsurf.exe",
+                "%LOCALAPPDATA%\\Programs\\Rider\\bin\\rider64.exe",
+                "%ProgramFiles%\\Sublime Text\\sublime_text.exe",
+            ],
+            darwin: [
+                "/Applications/Visual Studio Code.app",
+                "/Applications/Cursor.app",
+                "/Applications/Visual Studio Code - Insiders.app",
+                "/Applications/Windsurf.app",
+                "/Applications/Rider.app",
+                "/Applications/Sublime Text.app",
+            ],
+            linux: ["code", "cursor", "code-insiders", "windsurf", "rider", "subl", "zed"],
+        } as Record<string, string[]>,
     },
     git: {
         logFieldSeparator: "\x1f",

@@ -1,4 +1,4 @@
-import { GroupBox, Radio } from "react95"
+import { GroupBox, Radio, TextInput } from "react95"
 import type { AppPreferences, StartupBehavior } from "@/main/types/store"
 
 type GeneralTabProps = {
@@ -27,6 +27,20 @@ export default function GeneralTab({ draft, onChange }: GeneralTabProps) {
                         onChange={event => onChange("startupBehavior", event.target.value as StartupBehavior)}
                     />
                 </div>
+            </GroupBox>
+
+            <GroupBox label="Code editor">
+                {/* biome-ignore lint/a11y/noLabelWithoutControl: React95 renders the input inside, out of the linter's reach */}
+                <label className="flex items-center gap-2 text-sm">
+                    <span className="w-16 shrink-0">Editor</span>
+
+                    <TextInput
+                        fullWidth
+                        placeholder="Detected automatically, set a path to override it"
+                        value={draft.codeEditorPath}
+                        onChange={event => onChange("codeEditorPath", event.target.value)}
+                    />
+                </label>
             </GroupBox>
         </div>
     )

@@ -1,6 +1,8 @@
 import { spawn } from "node:child_process"
 import { stat } from "node:fs/promises"
 import CONSTANTS from "@main/lib/constants"
+import { listEditorCandidates, resolveEditorLaunch } from "@main/lib/shells/editors"
+import { preferencesStore } from "@main/lib/stores/preferences"
 import { shell } from "electron"
 
 /**
@@ -70,4 +72,34 @@ export async function openTerminal(dir: string): Promise<void> {
     }
 
     throw new Error(CONSTANTS.shells.noTerminalMessage)
+}
+
+/**
+ * Open a folder in a code editor, the one set in the preferences when there is one, and
+ * otherwise the first of the editors we know about that turns out to be installed.
+ * @param dir Absolute path to the folder to open.
+ * @throws When the path is not a directory, when the editor set in the preferences could
+ * not be launched, or when no editor could be found at all.
+ */
+export async function openEditor(dir: string): Promise<void> {
+    await assertDirectory(dir)
+
+    const { codeEditorPath } = preferencesStore.get()
+    const preferred = codeEditorPath.trim()
+
+    // A hand-picked editor is never fallen back on, silently opening another one would
+    // read as the setting being ignored
+    if (preferred) {
+        const launch = await resolveEditorLaunch(preferred, dir)
+        if (launch && (await trySpawn(launch.command, launch.args, dir))) return
+
+        throw new Error(`${CONSTANTS.shells.openEditorFailureMessage}\n\n${preferred}`)
+    }
+
+    for (const candidate of listEditorCandidates()) {
+        const launch = await resolveEditorLaunch(candidate, dir)
+        if (launch && (await trySpawn(launch.command, launch.args, dir))) return
+    }
+
+    throw new Error(CONSTANTS.shells.noEditorMessage)
 }

@@ -133,6 +133,7 @@ export type GitgameApi = {
         openExternal: (url: string) => void
         showFolder: (dir: string) => Promise<void>
         openTerminal: (dir: string) => Promise<void>
+        openEditor: (dir: string) => Promise<void>
     }
     updater: {
         getState: () => Promise<UpdaterState>
