@@ -12,6 +12,9 @@
         "editor.defaultFormatter": "biomejs.biome",
         "editor.formatOnSave": true
     },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
     // Exclude common build and cache directories from the file explorer
     "files.exclude": {
         "**/.git": true,
@@ -102,9 +105,7 @@
         "webfonts",
         "wmii"
     ],
-    "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    },
+    // Import settings
     "javascript.preferences.importModuleSpecifier": "shortest",
     "typescript.preferences.importModuleSpecifier": "non-relative"
 }

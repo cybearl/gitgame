@@ -52,6 +52,7 @@ export function computeLockStates(
 
             const locked = locksByPath.has(node.path)
             states.set(node.path, locked ? "locked" : "unlocked")
+
             return [1, locked ? 1 : 0]
         }
 
@@ -71,6 +72,7 @@ export function computeLockStates(
         else state = "partial"
 
         states.set(node.path, state)
+
         return [lockable, locked]
     }
 
@@ -116,6 +118,7 @@ export function computeLockOwners(
         )
 
         owners.set(node.path, sorted)
+
         return counts
     }
 

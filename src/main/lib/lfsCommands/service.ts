@@ -150,6 +150,7 @@ export async function lockPaths(
         const result = await runLockCommand(dir, ["lfs", "lock", file], file)
         done += 1
         onProgress?.(done, files.length)
+
         return result
     })
 }
@@ -181,6 +182,7 @@ export async function unlockPaths(
         const result = await runLockCommand(dir, args, file)
         done += 1
         onProgress?.(done, files.length)
+
         return result
     })
 }

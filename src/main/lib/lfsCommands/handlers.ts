@@ -29,7 +29,11 @@ export function registerLfsCommandsHandlers() {
     safeHandle(CONSTANTS.ipc.lfsCommandsLockPaths, (event, dir: string, paths: string[], requestId: string | null) =>
         lockPaths(dir, paths, (done, total) => {
             if (!requestId || event.sender.isDestroyed()) return
-            const payload: LfsLockProgress = { requestId, done, total }
+            const payload: LfsLockProgress = {
+                requestId,
+                done,
+                total,
+            }
             event.sender.send(CONSTANTS.ipc.lfsCommandsLockProgress, payload)
         }),
     )
@@ -39,7 +43,11 @@ export function registerLfsCommandsHandlers() {
         (event, dir: string, paths: string[], force: boolean | undefined, requestId: string | null) =>
             unlockPaths(dir, paths, force, (done, total) => {
                 if (!requestId || event.sender.isDestroyed()) return
-                const payload: LfsLockProgress = { requestId, done, total }
+                const payload: LfsLockProgress = {
+                    requestId,
+                    done,
+                    total,
+                }
                 event.sender.send(CONSTANTS.ipc.lfsCommandsLockProgress, payload)
             }),
     )

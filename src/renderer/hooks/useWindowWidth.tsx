@@ -11,7 +11,12 @@ export default function useWindowWidth(): number {
     // Sample the width again on every resize, the window carries no state change for
     // it and the initial read would otherwise stand for the whole session
     useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth)
+        /**
+         * Samples the window width again after a resize.
+         */
+        const handleResize = () => {
+            setWidth(window.innerWidth)
+        }
 
         window.addEventListener("resize", handleResize)
         return () => window.removeEventListener("resize", handleResize)

@@ -61,7 +61,7 @@ const WINDOWS_CONFIG: {
         icon: appIcon,
         webPreferences: WEB_PREFERENCES,
     },
-    // Sized per variant by the dialogs service, from `DIALOGS_CONFIG`
+    // Sized per variant by the dialogs service, from "DIALOGS_CONFIG"
     dialog: SECONDARY_WINDOW,
     preferences: {
         ...SECONDARY_WINDOW,

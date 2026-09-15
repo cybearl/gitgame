@@ -93,7 +93,7 @@ export async function addLocalProject(window: BrowserWindow | null): Promise<Ope
     if (selection.canceled || selection.filePaths.length === 0) {
         return {
             ok: false,
-            reason: "cancelled",
+            reason: "canceled",
         }
     }
 

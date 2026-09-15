@@ -12,16 +12,16 @@ export default function useWindowStates() {
     // Fetch the initial state on mount and subscribe to subsequent changes so
     // the first render already reflects the actual window focus
     useEffect(() => {
-        let cancelled = false
+        let canceled = false
 
         window.api.windows.getState().then(state => {
-            if (!cancelled) setStates(state)
+            if (!canceled) setStates(state)
         })
 
         const unsubscribe = window.api.windows.onStateChange(setStates)
 
         return () => {
-            cancelled = true
+            canceled = true
             unsubscribe()
         }
     }, [])

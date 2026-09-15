@@ -117,5 +117,9 @@ export default function useResizablePaneWidth({
         document.addEventListener("mouseup", handleUp)
     }, [])
 
-    return { width, setWidth, handleDragStart }
+    return {
+        width,
+        setWidth,
+        handleDragStart,
+    }
 }

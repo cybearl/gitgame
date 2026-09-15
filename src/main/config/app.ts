@@ -14,6 +14,7 @@ const DEFAULT_APP_CONFIG: AppConfig = {
     preferences: {
         theme: "original",
         startupBehavior: "reopen-last",
+        codeEditorPath: "", // Empty means the installed editors are detected instead
         autoLockTickIntervalMs: AUTO_LOCK_CONFIG.tickIntervalMs,
         mcpEndpoint: MCP_CONFIG.endpoint,
         mcpProbeIntervalMs: MCP_CONFIG.probeIntervalMs,

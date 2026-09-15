@@ -135,15 +135,16 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
     // Hydrate the persisted search view state once on mount, so the search
     // scope survives across sessions
     useEffect(() => {
-        let cancelled = false
+        let canceled = false
 
         window.api.viewState
             .get()
             .then(view => {
-                if (cancelled) return
+                if (canceled) return
 
                 setIsRegex(view.searchIsRegex)
                 setIsAdvancedOpen(view.isAdvancedSearchOpened)
+
                 setIncludeText(view.searchIncludePatterns)
                 setExcludeText(view.searchExcludePatterns)
                 setIsShowingMyLocksOnly(view.isShowingMyLocksOnly)
@@ -153,7 +154,7 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
             })
 
         return () => {
-            cancelled = true
+            canceled = true
         }
     }, [])
 
@@ -179,7 +180,11 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
         [debouncedQuery, isRegex, debouncedInclude, debouncedExclude],
     )
 
-    const isSearching = filters.query.trim().length > 0
+    /**
+     * Whether a query is currently narrowing the tree, it keys off the debounced
+     * value so a keystroke still in flight does not flip the tree.
+     */
+    const isSearching = useMemo(() => filters.query.trim().length > 0, [filters.query])
 
     /**
      * The tree the user actually sees, optionally pruned to files locked by the
@@ -387,6 +392,10 @@ export default function TreeViewProvider({ children }: TreeViewProviderProps) {
         reveal(menu.node.path)
     }, [menu, dismissMenu, reveal])
 
+    /**
+     * The value handed to consumers, memoized so a provider re-render that leaves
+     * the selection and the visible tree untouched does not invalidate every consumer.
+     */
     const value = useMemo<TreeViewContextType>(
         () => ({
             expandedPaths,

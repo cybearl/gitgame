@@ -23,7 +23,10 @@ export default function StatusCompileDbField({ className }: StatusCompileDbField
     /**
      * Whether the last regeneration failed.
      */
-    const hasFailed = Boolean(state?.lastError || state?.lastResult?.ok === false)
+    const hasFailed = useMemo(
+        () => Boolean(state?.lastError || state?.lastResult?.ok === false),
+        [state?.lastError, state?.lastResult?.ok],
+    )
 
     /**
      * The chip label built from the current watcher state, `null` while the first

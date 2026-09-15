@@ -12,6 +12,7 @@ export type StartupBehavior = "reopen-last" | "start-clean"
 export type AppPreferences = {
     theme: string
     startupBehavior: StartupBehavior
+    codeEditorPath: string
     autoLockTickIntervalMs: number
     mcpEndpoint: string
     mcpProbeIntervalMs: number

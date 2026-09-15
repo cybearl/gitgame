@@ -63,20 +63,28 @@ async function createMainWindow(): Promise<BrowserWindow> {
 
 // Create the main application window when Electron is ready
 app.whenReady().then(async () => {
-    // Handlers
+    // Handlers, the app shell itself
     registerAppHandlers()
     registerWindowsControlHandlers()
     registerDialogsHandlers()
+
+    // Handlers reaching the repository
     registerGitCommandsHandlers()
     registerLfsCommandsHandlers()
     registerFileTreeHandlers()
+
+    // Handlers reaching the project on disk
     registerProjectsHandlers()
     registerUProjectHandlers()
     registerShellsHandlers()
+
+    // Handlers backing the long-running services
     registerUpdaterHandlers()
     registerMcpHandlers()
     registerAutoLockHandlers()
     registerCompileDbHandlers()
+
+    // Handlers owning the persisted state
     registerViewStateHandlers()
     registerPreferencesHandlers()
 

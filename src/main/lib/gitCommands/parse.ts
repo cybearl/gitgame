@@ -136,6 +136,7 @@ export function parseStatus(output: string): GitStatus {
     }
 
     status.isClean = status.changes.length === 0
+
     return status
 }
 

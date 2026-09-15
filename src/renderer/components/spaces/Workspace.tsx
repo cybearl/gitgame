@@ -1,3 +1,4 @@
+import { cn } from "@cybearl/cypack/frontend"
 import useResizablePaneWidth from "@renderer/hooks/useResizablePaneWidth"
 import useWindowWidth from "@renderer/hooks/useWindowWidth"
 import { useCallback, useEffect, useMemo } from "react"
@@ -41,15 +42,15 @@ export default function Workspace() {
 
     // Load the persisted files pane width once on mount, clamped by the hook
     useEffect(() => {
-        let cancelled = false
+        let canceled = false
 
         window.api.viewState.get().then(view => {
-            if (cancelled) return
+            if (canceled) return
             setWidth(view.filesPaneWidth)
         })
 
         return () => {
-            cancelled = true
+            canceled = true
         }
     }, [setWidth])
 
@@ -59,7 +60,12 @@ export default function Workspace() {
                 <FilesPane className="shrink-0" style={filesPaneStyle} />
 
                 <div onMouseDown={handleDragStart} className="group relative w-1 shrink-0 cursor-col-resize">
-                    <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border-dark group-hover:bg-border-darkest group-active:bg-border-darkest" />
+                    <div
+                        className={cn(
+                            "pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border-dark",
+                            "group-hover:bg-border-darkest group-active:bg-border-darkest",
+                        )}
+                    />
                 </div>
 
                 <DetailsPane className="min-w-0 flex-1" />

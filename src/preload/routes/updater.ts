@@ -7,7 +7,14 @@ import type { UpdaterState } from "@/main/types/updater"
 const updaterApiRoutes: GitgameApi["updater"] = {
     getState: () => safeInvoke(CONSTANTS.ipc.updaterGetState),
     onStateChange: callback => {
-        const listener = (_: unknown, state: UpdaterState) => callback(state)
+        /**
+         * Forwards a broadcast updater state to the subscriber.
+         * @param _ The Electron event, unused.
+         * @param state The updater state the main process broadcast.
+         */
+        const listener = (_: unknown, state: UpdaterState) => {
+            callback(state)
+        }
         ipcRenderer.on(CONSTANTS.ipc.updaterStateChanged, listener)
         return () => ipcRenderer.off(CONSTANTS.ipc.updaterStateChanged, listener)
     },

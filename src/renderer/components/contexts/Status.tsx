@@ -44,6 +44,7 @@ type StatusProviderProps = {
 /**
  * Provides the status task stack to the component tree, backed by an in-memory
  * store.
+ * @param children The tree that reads the status context.
  */
 export default function StatusProvider({ children }: StatusProviderProps) {
     const [tasks, setTasks] = useState<StatusTask[]>([])
@@ -62,7 +63,14 @@ export default function StatusProvider({ children }: StatusProviderProps) {
         nextId.current += 1
         const id = `task-${nextId.current}`
 
-        setTasks(previous => [...previous, { id, label, progress: null }])
+        setTasks(previous => [
+            ...previous,
+            {
+                id,
+                label,
+                progress: null,
+            },
+        ])
 
         return {
             setLabel: nextLabel =>
@@ -112,6 +120,10 @@ export default function StatusProvider({ children }: StatusProviderProps) {
         [startTask],
     )
 
+    /**
+     * The value handed to consumers, memoized so a provider re-render that leaves
+     * the tasks and their helpers untouched does not invalidate every consumer.
+     */
     const value = useMemo<StatusContextType>(
         () => ({
             tasks,

@@ -5,7 +5,14 @@ import { ipcRenderer } from "electron"
 const windowsApiRoutes: GitgameApi["windows"] = {
     getState: () => ipcRenderer.invoke(CONSTANTS.ipc.windowsGetState),
     onStateChange: callback => {
-        const listener = (_: unknown, state: WindowState) => callback(state)
+        /**
+         * Forwards a broadcast window state to the subscriber.
+         * @param _ The Electron event, unused.
+         * @param state The window state the main process broadcast.
+         */
+        const listener = (_: unknown, state: WindowState) => {
+            callback(state)
+        }
         ipcRenderer.on(CONSTANTS.ipc.windowsStateChanged, listener)
         return () => ipcRenderer.off(CONSTANTS.ipc.windowsStateChanged, listener)
     },

@@ -2,7 +2,7 @@ import nitpicker from "@alien_intelligence/eslint-plugin-nitpicker"
 import tsParser from "@typescript-eslint/parser"
 
 /**
- * ESLint flat config, layers Nitpicker on top of Biome for nit-level enforcement,
+ * ESLint flat config, it exists only to host Nitpicker for nit-level enforcement,
  * Biome still owns formatting and the broader lint rules.
  */
 export default [
@@ -14,15 +14,28 @@ export default [
             sourceType: "module",
         },
         plugins: { nitpicker },
-        rules: {
-            ...nitpicker.configs.recommended.rules,
-            // TODO: re-enable once the upstream `e.charAt is not a function` crash is fixed,
-            // it currently trips on any TS `import type` line and aborts the whole lint run.
-            "nitpicker/no-british-english": "off",
-        },
+        rules: nitpicker.configs.recommended.rules,
+    },
+    {
+        files: ["src/**/*.ts", "src/**/*.tsx"],
+        ...nitpicker.configs.breathing,
     },
     {
         files: ["src/renderer/**/*.tsx", "src/renderer/**/*.ts"],
         ...nitpicker.configs.react,
+    },
+    {
+        files: ["src/renderer/**/*.tsx"],
+        ignores: ["src/renderer/components/ui/**"],
+        ...nitpicker.configs.design,
+        rules: {
+            ...nitpicker.configs.design.rules,
+            // The react95 "Button" is beveled window chrome, a flat list row or theme
+            // option is a "<button>" for the semantics alone and must not carry it
+            "nitpicker/no-raw-control-element": [
+                "warn",
+                { allowIn: ["**/rows/FlatResults.tsx", "**/preferences/AppearanceTab.tsx"] },
+            ],
+        },
     },
 ]

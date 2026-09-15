@@ -38,6 +38,10 @@ export class JsonStore<T extends object> {
      */
     private _writeCounter = 0
 
+    /**
+     * Creates the store, nothing reaches disk until the first read or write.
+     * @param options The file name, defaults and normalizer to own the file with.
+     */
     constructor(options: JsonStoreOptions<T>) {
         this._options = options
     }
@@ -113,6 +117,7 @@ export class JsonStore<T extends object> {
             await this._save(result)
 
             this._cache = result
+
             return result
         })
 

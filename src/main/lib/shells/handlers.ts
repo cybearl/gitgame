@@ -1,6 +1,6 @@
 import CONSTANTS from "@main/lib/constants"
 import { safeHandle } from "@main/lib/ipc"
-import { openTerminal, showFolder } from "@main/lib/shells/service"
+import { openEditor, openTerminal, showFolder } from "@main/lib/shells/service"
 import { ipcMain, shell } from "electron"
 
 /**
@@ -13,12 +13,13 @@ const ALLOWED_PROTOCOLS = new Set(["http:", "https:"])
 
 /**
  * Registers the IPC handlers that open an external URL in the user's default browser
- * (ignoring any URL that is malformed or uses a disallowed protocol) and that reveal a
- * folder in the OS file manager.
+ * (ignoring any URL that is malformed or uses a disallowed protocol) and that hand a
+ * folder to the OS file manager, to a terminal or to a code editor.
  */
 export function registerShellsHandlers() {
     safeHandle(CONSTANTS.ipc.shellsShowFolder, (_event, dir: string) => showFolder(dir))
     safeHandle(CONSTANTS.ipc.shellsOpenTerminal, (_event, dir: string) => openTerminal(dir))
+    safeHandle(CONSTANTS.ipc.shellsOpenEditor, (_event, dir: string) => openEditor(dir))
 
     ipcMain.on(CONSTANTS.ipc.shellsOpenExternal, (_event, url: string) => {
         let parsed: URL

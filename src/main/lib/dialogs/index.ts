@@ -61,7 +61,7 @@ class DialogRegistry {
     }
 
     /**
-     * Drops the entry for a closed window, cancelling any still-pending
+     * Drops the entry for a closed window, canceling any still-pending
      * awaiter, called from the window's `closed` handler.
      * @param id The window id.
      */
@@ -137,7 +137,7 @@ export function createDialogWindow(
  * (a close counts as a cancel).
  * @param parent The window that owns the dialog, or `null` to show it detached.
  * @param options The dialog contents and variant.
- * @returns `true` when confirmed, `false` when cancelled or closed.
+ * @returns `true` when confirmed, `false` when canceled or closed.
  */
 export function openDialog(parent: BrowserWindow | null, options: DialogOptions): Promise<boolean> {
     return new Promise(resolve => {
@@ -155,11 +155,19 @@ export function registerDialogsHandlers() {
     )
 
     ipcMain.on(CONSTANTS.ipc.dialogsMessage, (event, title: string, message: string) => {
-        openDialog(BrowserWindow.fromWebContents(event.sender), { variant: "message", title, message })
+        openDialog(BrowserWindow.fromWebContents(event.sender), {
+            variant: "message",
+            title,
+            message,
+        })
     })
 
     ipcMain.on(CONSTANTS.ipc.dialogsError, (event, title: string, message: string) => {
-        openDialog(BrowserWindow.fromWebContents(event.sender), { variant: "error", title, message })
+        openDialog(BrowserWindow.fromWebContents(event.sender), {
+            variant: "error",
+            title,
+            message,
+        })
     })
 
     ipcMain.on(CONSTANTS.ipc.dialogsErrorWithDetails, (event, title: string, message: string, details: string) => {

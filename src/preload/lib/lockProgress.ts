@@ -17,6 +17,12 @@ export async function withLockProgress<T>(
     if (!onProgress) return invoke(null)
 
     const requestId = randomUUID()
+    /**
+     * Reports a progress tick, ignoring the ticks belonging to another caller's
+     * in-flight request.
+     * @param _ The Electron event, unused.
+     * @param payload The progress tick the main process broadcast.
+     */
     const listener = (_: unknown, payload: LfsLockProgress) => {
         if (payload.requestId === requestId) onProgress(payload.done, payload.total)
     }

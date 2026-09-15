@@ -9,7 +9,14 @@ const autoLockApiRoutes: GitgameApi["autoLock"] = {
     reconcile: (dir: string) => safeInvoke(CONSTANTS.ipc.autoLockReconcile, dir),
     getState: () => safeInvoke(CONSTANTS.ipc.autoLockGetState),
     onStateChange: callback => {
-        const listener = (_: unknown, state: AutoLockState) => callback(state)
+        /**
+         * Forwards a broadcast auto-lock state to the subscriber.
+         * @param _ The Electron event, unused.
+         * @param state The auto-lock state the main process broadcast.
+         */
+        const listener = (_: unknown, state: AutoLockState) => {
+            callback(state)
+        }
         ipcRenderer.on(CONSTANTS.ipc.autoLockStateChanged, listener)
         return () => ipcRenderer.off(CONSTANTS.ipc.autoLockStateChanged, listener)
     },

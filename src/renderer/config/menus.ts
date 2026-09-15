@@ -17,6 +17,7 @@ export type MenuAction =
     | { type: "shell:open-external"; url: string }
     | { type: "shell:show-folder"; path: string }
     | { type: "shell:open-terminal"; path: string }
+    | { type: "shell:open-editor"; path: string }
     | { type: "search:toggle-regex" }
     | { type: "search:toggle-advanced" }
     | { type: "lfs:toggle-show-my-locks" }
@@ -314,6 +315,12 @@ export function buildTopLevelMenus(
                     label: "Open in Terminal",
                     isDisabled: !currentProject,
                     action: currentProject ? { type: "shell:open-terminal", path: currentProject.path } : undefined,
+                },
+                {
+                    type: "item",
+                    label: "Open in Code Editor",
+                    isDisabled: !currentProject,
+                    action: currentProject ? { type: "shell:open-editor", path: currentProject.path } : undefined,
                 },
                 {
                     type: "item",

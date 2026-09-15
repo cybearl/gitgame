@@ -35,7 +35,12 @@ export function buildComboSignature(combo: KeyCombo): string {
  * @returns The canonical signature string.
  */
 function parseAccelerator(accelerator: string): string {
-    const combo: KeyCombo = { primary: false, shift: false, alt: false, key: "" }
+    const combo: KeyCombo = {
+        primary: false,
+        shift: false,
+        alt: false,
+        key: "",
+    }
 
     for (const token of accelerator.split("+")) {
         switch (token.trim().toLowerCase()) {

@@ -105,7 +105,7 @@ export async function checkForUpdates(isManualCheck = false) {
     try {
         await autoUpdater.checkForUpdates()
     } catch {
-        // Swallowed on purpose: electron-updater emits `error` before rethrowing, so
+        // Swallowed on purpose: electron-updater emits "error" before rethrowing, so
         // the listener has already recorded it and reacting here would broadcast twice
     }
 }
@@ -136,7 +136,7 @@ export async function downloadUpdate() {
     try {
         await autoUpdater.downloadUpdate()
     } catch {
-        // Swallowed for the same reason as in `checkForUpdates`, the `error` listener owns it
+        // Swallowed for the same reason as in "checkForUpdates", the "error" listener owns it
     }
 }
 

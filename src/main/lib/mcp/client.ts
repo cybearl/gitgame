@@ -12,6 +12,11 @@ import type { McpServerInfo } from "@/main/types/mcp"
 export class McpError extends Error {
     readonly code: number
 
+    /**
+     * Creates an error from what the MCP server reported.
+     * @param code The numeric JSON-RPC error code.
+     * @param message The human-readable message that came back.
+     */
     constructor(code: number, message: string) {
         super(message)
         this.name = "McpError"

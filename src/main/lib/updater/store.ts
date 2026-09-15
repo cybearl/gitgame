@@ -43,6 +43,9 @@ export class UpdaterStore extends ObservableStore<UpdaterState> {
      */
     private _dismissedVersion: string | null = null
 
+    /**
+     * Creates the store on a fresh idle state, with nothing dismissed yet.
+     */
     constructor() {
         super(createInitialState())
     }

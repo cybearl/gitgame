@@ -7,7 +7,14 @@ import type { McpState } from "@/main/types/mcp"
 const mcpApiRoutes: GitgameApi["mcp"] = {
     getState: () => safeInvoke(CONSTANTS.ipc.mcpGetState),
     onStateChange: callback => {
-        const listener = (_: unknown, state: McpState) => callback(state)
+        /**
+         * Forwards a broadcast MCP state to the subscriber.
+         * @param _ The Electron event, unused.
+         * @param state The MCP state the main process broadcast.
+         */
+        const listener = (_: unknown, state: McpState) => {
+            callback(state)
+        }
         ipcRenderer.on(CONSTANTS.ipc.mcpStateChanged, listener)
         return () => ipcRenderer.off(CONSTANTS.ipc.mcpStateChanged, listener)
     },

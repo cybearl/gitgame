@@ -128,7 +128,11 @@ export class McpService {
 
         if (hasEndpointChanged) {
             mcpClient.resetSession()
-            mcpStore.set({ status: "disconnected", server: null, error: null })
+            mcpStore.set({
+                status: "disconnected",
+                server: null,
+                error: null,
+            })
         }
 
         if (hasIntervalChanged && this._probeTimer) this._restartTimer()

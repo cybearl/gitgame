@@ -74,6 +74,12 @@ export default function useMenuActions(): UseMenuActionsResult {
                         .catch(error => reportError("Can't open a terminal", error))
 
                     break
+                case "shell:open-editor":
+                    window.api.shells
+                        .openEditor(action.path)
+                        .catch(error => reportError("Can't open a code editor", error))
+
+                    break
                 case "search:toggle-regex":
                     setIsRegex(!isRegex)
                     break
